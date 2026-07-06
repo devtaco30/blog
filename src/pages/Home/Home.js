@@ -10,6 +10,7 @@ import {
 import GitHubIcon from '@mui/icons-material/GitHub';
 import EmailIcon from '@mui/icons-material/Email';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
+import { Helmet } from 'react-helmet-async';
 import { getAllPosts } from '../../services/posts';
 
 
@@ -58,6 +59,10 @@ const Home = () => {
       position: 'relative',
       backgroundColor: '#ffffff'
     }}>
+      <Helmet>
+        <title>DevTaco Blog — Java · Kotlin 백엔드 개발자 박종혁</title>
+        <meta name="description" content="Java · Kotlin 백엔드 개발 경험과 학습 기록을 공유하는 기술 블로그" />
+      </Helmet>
       {/* Main Content */}
       <Box sx={{ 
         textAlign: 'center',

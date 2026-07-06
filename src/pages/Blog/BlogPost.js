@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useParams, Link as RouterLink, useNavigate, useSearchParams } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import ReactMarkdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
 import rehypeKatex from 'rehype-katex';
@@ -690,8 +691,25 @@ const BlogPost = () => {
     });
   };
 
+  const excerptText = Array.isArray(post.excerpt)
+    ? post.excerpt.filter(Boolean).join(' ')
+    : (post.excerpt || '');
+
   return (
     <Box sx={{ p: { xs: 2, md: 4 } }}>
+      {post && (
+        <Helmet>
+          {/* react-helmet-async v3(React 19 경로)는 <title>의 자식이 여러 개(표현식+문자열)면
+              hoist하지 못하고 빈 <title />을 렌더링함 → 반드시 단일 표현식(템플릿 리터럴)으로 전달 */}
+          <title>{`${post.title} | DevTaco Blog`}</title>
+          <meta name="description" content={excerptText} />
+          <meta property="og:title" content={post.title} />
+          <meta property="og:description" content={excerptText} />
+          <meta property="og:type" content="article" />
+          <meta property="og:url" content={`https://devtaco30.github.io/devtaco-blog/posts/${post.id}`} />
+          <meta name="twitter:card" content="summary" />
+        </Helmet>
+      )}
       {/* Breadcrumbs */}
       <Breadcrumbs sx={{ mb: 3 }}>
         <Link 

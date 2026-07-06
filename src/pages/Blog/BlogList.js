@@ -15,6 +15,7 @@ import {
 import { useNavigate, useSearchParams, useNavigationType } from 'react-router-dom';
 import SearchIcon from '@mui/icons-material/Search';
 import FilterListIcon from '@mui/icons-material/FilterList';
+import { Helmet } from 'react-helmet-async';
 import { getPostsWithPageNumber, searchPostsWithPageNumber } from '../../services/posts';
 import { getAllCategories, getPostCountsByAllCategories } from '../../services/categories';
 
@@ -477,6 +478,10 @@ const BlogList = () => {
   if (loading) {
     return (
       <Box sx={{ p: { xs: 2, md: 4 } }}>
+        <Helmet>
+          <title>게시글 목록 | DevTaco Blog</title>
+          <meta name="description" content="Java · Kotlin 백엔드 개발 경험과 학습 기록을 공유하는 기술 블로그의 게시글 목록" />
+        </Helmet>
         <Typography variant="h4" sx={{ mb: 4 }}>
           게시글 목록
         </Typography>
@@ -508,6 +513,10 @@ const BlogList = () => {
 
   return (
     <Box sx={{ p: { xs: 2, md: 4 } }}>
+      <Helmet>
+        <title>게시글 목록 | DevTaco Blog</title>
+        <meta name="description" content="Java · Kotlin 백엔드 개발 경험과 학습 기록을 공유하는 기술 블로그의 게시글 목록" />
+      </Helmet>
       <Typography variant="h4" sx={{ mb: 2 }}>
         우아하고 싶은 포스트
       </Typography>

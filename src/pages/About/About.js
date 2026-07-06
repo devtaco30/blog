@@ -7,6 +7,7 @@ import {
   Divider,
 } from '@mui/material';
 import { motion } from 'framer-motion';
+import { Helmet } from 'react-helmet-async';
 import WorkExperienceSection from './components/WorkExperienceSection';
 import EducationSection from './components/EducationSection';
 import TechnicalSkillsSection from './components/TechnicalSkillsSection';
@@ -21,6 +22,10 @@ const About = () => {
       backgroundColor: '#ffffff',
       minHeight: '100vh'
     }}>
+      <Helmet>
+        <title>소개 | DevTaco Blog</title>
+        <meta name="description" content="Java · Kotlin 백엔드 개발자 박종혁(DevTaco)의 경력, 기술 스택, 프로젝트 소개" />
+      </Helmet>
       {/* 헤더 섹션 */}
       <motion.div
         initial={{ opacity: 0, y: 50 }}
