@@ -27,6 +27,9 @@ jobs:
     - name: Clean Install
       run: npm ci
 
+    - name: Ensure Chromium for Puppeteer
+      run: npx puppeteer browsers install chrome
+
     - name: Create env file
       run: |
 
@@ -38,6 +41,9 @@ jobs:
 
     - name: Build
       run: npm run build
+
+    - name: Prerender
+      run: npm run prerender
 
     - name: Setup Pages
       uses: actions/configure-pages@v4

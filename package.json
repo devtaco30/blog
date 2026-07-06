@@ -36,7 +36,7 @@
     "web-vitals": "^4.2.4"
   },
   "scripts": {
-    "predeploy": "npm run build:prod",
+    "predeploy": "npm run build:prod && npm run prerender",
     "deploy": "gh-pages -d build",
     "start": "npm run generate-posts-list && react-scripts start",
     "start:local": "npm run generate-posts-list && PUBLIC_URL='' react-scripts start",
