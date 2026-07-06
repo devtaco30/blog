@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { 
+import { useNavigate } from 'react-router-dom';
+import {
   Box, 
   Typography, 
   Button, 
@@ -43,10 +44,10 @@ import {
 import { getAllCategories } from '../../services/categories';
 import { useImageUpload } from '../../hooks/useImageUpload';
 import { useAuth } from '../../contexts/AuthContext';
-import { HASH_ROUTES } from '../../constants/routes';
 
 const PostManager = () => {
   const { user, signOut } = useAuth();
+  const navigate = useNavigate();
   const [posts, setPosts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [newPost, setNewPost] = useState({
@@ -524,8 +525,10 @@ const PostManager = () => {
     
     try {
       // 🔥 먼저 홈페이지로 이동 (ProtectedRoute가 리다이렉트하기 전에)
-      window.location.hash = HASH_ROUTES.HOME;
-      
+      // BrowserRouter 전환 이후 해시(#/)는 단순 프래그먼트일 뿐 실제 네비게이션을
+      // 일으키지 않으므로, react-router의 navigate로 실제 이동시킨다.
+      navigate('/');
+
       const { error } = await signOut();
       if (error) {
         showSnackbar('로그아웃 중 오류가 발생했습니다.', 'error');
@@ -792,7 +795,7 @@ const PostManager = () => {
                     setEditingPost({
                       ...post,
                       category_key: post.category_key || 'general',
-                      is_published: Boolean(post.is_published), // boolean으로 명시적 변환
+                      is_published: post.is_published === true, // boolean으로 명시적 변환
                       is_featured: post.is_featured !== undefined ? post.is_featured : true,
                       excerpt: Array.isArray(post.excerpt) ? [...post.excerpt, '', '', ''].slice(0, 3) : ['', '', '']
                     });
