@@ -1,8 +1,704 @@
 [
   {
+    "id": 68,
+    "slug": "post-68",
+    "title": "[Java Deep Dive] Serializable 깊이 파기 — Part 2: 바이트에서 다시 객체로, 그리고 함정들",
+    "date": "2026-04-05",
+    "tags": [],
+    "excerpt": []
+  },
+  {
+    "id": 67,
+    "slug": "post-67",
+    "title": "[Java Deep Dive] Serializable 깊이 파기 — Part 1: 객체가 바이트가 되는 과정",
+    "date": "2026-04-05",
+    "tags": [],
+    "excerpt": []
+  },
+  {
+    "id": 66,
+    "slug": "post-66",
+    "title": "[Java Deep Dive] 주식 거래 엔진 직접 만들기 - Part 3: 오더북을 어떻게 구현할 것인가",
+    "date": "2026-03-27",
+    "tags": [],
+    "excerpt": []
+  },
+  {
+    "id": 65,
+    "slug": "post-65",
+    "title": "[Java Deep Dive] 주식 거래 엔진 직접 만들기 - Part 2: Phase 1 — 모놀리식으로 시작하기",
+    "date": "2026-03-26",
+    "tags": [
+      "Java",
+      "Spring Boot",
+      "JPA",
+      "비관적락",
+      "Transactional"
+    ],
+    "excerpt": []
+  },
+  {
+    "id": 64,
+    "slug": "post-64",
+    "title": "[Java Deep Dive] 주식 거래 엔진 직접 만들기 - Part 1: 왜 주식 거래 엔진인가",
+    "date": "2026-03-26",
+    "tags": [
+      "Java",
+      "Spring Boot",
+      "Kafka",
+      "Redis",
+      "동시성",
+      "분산시스템",
+      "멘토링",
+      "사이드프로젝트"
+    ],
+    "excerpt": []
+  },
+  {
+    "id": 63,
+    "slug": "post-63",
+    "title": "[개발자가 직접 써봤어요] Claude Code 완전 가이드: 설치부터 멀티에이전트까지",
+    "date": "2026-03-09",
+    "tags": [
+      "Claude Code",
+      "AI",
+      "Developer Tools",
+      "Productivity",
+      "Automation",
+      "MCP",
+      "Agent"
+    ],
+    "excerpt": []
+  },
+  {
+    "id": 62,
+    "slug": "post-62",
+    "title": "EST AI - YOLO : 객체 탐지 실습 · 세그멘테이션 · 트래킹",
+    "date": "2026-03-09",
+    "tags": [
+      "YOLO",
+      "Object Detection",
+      "Segmentation",
+      "Tracking",
+      "Roboflow",
+      "Ultralytics",
+      "Instance Segmentation"
+    ],
+    "excerpt": []
+  },
+  {
+    "id": 61,
+    "slug": "post-61",
+    "title": "EST AI - YOLO : 객체 탐지 기초 & 이미지 분류 실습",
+    "date": "2026-03-09",
+    "tags": [
+      "YOLO",
+      "Ultralytics",
+      "Object Detection",
+      "Image Classification",
+      "YOLOv8",
+      "mAP",
+      "IoU"
+    ],
+    "excerpt": []
+  },
+  {
+    "id": 60,
+    "slug": "post-60",
+    "title": "EST AI - OpenCV : 마우스 이벤트 & 반자동 문서 스캔",
+    "date": "2026-03-09",
+    "tags": [
+      "OpenCV",
+      "MouseCallback",
+      "Perspective Transform",
+      "warpPerspective",
+      "OCR",
+      "Tesseract"
+    ],
+    "excerpt": []
+  },
+  {
+    "id": 59,
+    "slug": "post-59",
+    "title": "EST AI - OpenCV : 동영상 출력 & 캠 제어",
+    "date": "2026-03-09",
+    "tags": [
+      "OpenCV",
+      "VideoCapture",
+      "동영상"
+    ],
+    "excerpt": []
+  },
+  {
+    "id": 58,
+    "slug": "post-58",
+    "title": "EST AI - OpenCV : NumPy 리뷰 & 이미지 기초",
+    "date": "2026-03-09",
+    "tags": [],
+    "excerpt": []
+  },
+  {
+    "id": 57,
+    "slug": "post-57",
+    "title": "EST AI - 자연어처리 : BERTopic 심화 & 토픽 비교 분석",
+    "date": "2026-03-09",
+    "tags": [
+      "NLP",
+      "BERTopic",
+      "SBERT",
+      "Siamese Network",
+      "UMAP",
+      "HDBSCAN",
+      "Topic Modeling",
+      "Visualization"
+    ],
+    "excerpt": []
+  },
+  {
+    "id": 55,
+    "slug": "post-55",
+    "title": "EST AI - 자연어처리 : BERTopic & 텍스트 마이닝 파이프라인",
+    "date": "2026-01-20",
+    "tags": [
+      "NLP",
+      "BERTopic",
+      "Text Mining",
+      "Summarization",
+      "Embedding",
+      "Clustering",
+      "SBERT",
+      "KoT5"
+    ],
+    "excerpt": []
+  },
+  {
+    "id": 54,
+    "slug": "post-54",
+    "title": "EST AI - 자연어처리 : Transformer & Hugging Face",
+    "date": "2026-01-20",
+    "tags": [
+      "NLP",
+      "Transformer",
+      "Attention",
+      "Self-Attention",
+      "Positional Encoding",
+      "Hugging Face"
+    ],
+    "excerpt": []
+  },
+  {
+    "id": 53,
+    "slug": "post-53",
+    "title": "EST AI - 자연어처리 : RNN & LSTM & GRU & Word Embedding",
+    "date": "2026-01-20",
+    "tags": [
+      "Deep Learning",
+      "RNN",
+      "SimpleRNN",
+      "LSTM",
+      "GRU",
+      "Word2Vec",
+      "Embedding"
+    ],
+    "excerpt": []
+  },
+  {
+    "id": 52,
+    "slug": "post-52",
+    "title": "EST AI - 딥러닝 : CNN & 데이터 증강 & 전이학습",
+    "date": "2026-01-20",
+    "tags": [
+      "Deep Learning",
+      "CNN"
+    ],
+    "excerpt": []
+  },
+  {
+    "id": 51,
+    "slug": "post-51",
+    "title": "[6년차 쯤 되면 좀 알자] HashMap putVal과 resize - 2부 -",
+    "date": "2026-01-13",
+    "tags": [
+      "Java",
+      "HashMap"
+    ],
+    "excerpt": []
+  },
+  {
+    "id": 50,
+    "slug": "post-50",
+    "title": "[6년차 쯤 되면 좀 알자] HashMap putVal과 resize - 1부 -",
+    "date": "2026-01-13",
+    "tags": [
+      "Java",
+      "HashMap"
+    ],
+    "excerpt": []
+  },
+  {
+    "id": 49,
+    "slug": "post-49",
+    "title": "EST AI - 딥러닝  : 활성화 함수 & 최적화 함수",
+    "date": "2026-01-13",
+    "tags": [
+      "Deep Learning",
+      "Activation Function",
+      "Optimizer",
+      "SGD",
+      "Adam",
+      "ReLU"
+    ],
+    "excerpt": []
+  },
+  {
+    "id": 48,
+    "slug": "post-48",
+    "title": "EST AI - 딥러닝 : 손글씨 데이터 분류 실습",
+    "date": "2026-01-13",
+    "tags": [
+      "Deep Learning",
+      "MNIST",
+      "Multi-Classification",
+      "MLP"
+    ],
+    "excerpt": []
+  },
+  {
+    "id": 47,
+    "slug": "post-47",
+    "title": "EST AI - 딥러닝 : 퍼셉트론",
+    "date": "2026-01-12",
+    "tags": [
+      "Deep Learning",
+      "Perceptron",
+      "Multi-Layer Perceptron",
+      "MLP"
+    ],
+    "excerpt": []
+  },
+  {
+    "id": 46,
+    "slug": "post-46",
+    "title": "EST AI - 딥러닝 : 신경망 구조와 작동 원리",
+    "date": "2026-01-09",
+    "tags": [
+      "Deep Learning",
+      "TensorFlow",
+      "Keras",
+      "Neural Network"
+    ],
+    "excerpt": []
+  },
+  {
+    "id": 45,
+    "slug": "post-45",
+    "title": "EST AI - 딥러닝 기초 (TensorFlow, Keras)",
+    "date": "2026-01-09",
+    "tags": [
+      "Deep Learning",
+      "TensorFlow",
+      "Keras",
+      "Neural Networ"
+    ],
+    "excerpt": []
+  },
+  {
+    "id": 44,
+    "slug": "post-44",
+    "title": "[6년차 쯤 되면 좀 알자] thread 알고 쓰는거니? - 2부 -",
+    "date": "2026-01-07",
+    "tags": [
+      "OS",
+      "Thread",
+      "Java",
+      "JVM",
+      "Operating System",
+      "Kotlin",
+      "Backend",
+      "Concurrency"
+    ],
+    "excerpt": []
+  },
+  {
+    "id": 43,
+    "slug": "post-43",
+    "title": "[6년차 쯤 되면 좀 알자] thread 알고 쓰는거니? - 1부 -",
+    "date": "2026-01-07",
+    "tags": [
+      "OS",
+      "Thread",
+      "Process",
+      "Operating System",
+      "Java",
+      "Kotlin",
+      "Backend",
+      "Concurrency"
+    ],
+    "excerpt": []
+  },
+  {
+    "id": 42,
+    "slug": "post-42",
+    "title": "[6년차 쯤 되면 좀 알자] 그럼 GC 는 뭔데? - 2부 -",
+    "date": "2025-12-30",
+    "tags": [
+      "JVM",
+      "GC",
+      "G1GC",
+      "Garbage Collection",
+      "Java",
+      "Kotlin",
+      "Backend",
+      "Performance"
+    ],
+    "excerpt": []
+  },
+  {
+    "id": 41,
+    "slug": "post-41",
+    "title": "[6년차 쯤 되면 좀 알자] 그럼 GC 는 뭔데? - 1부 -",
+    "date": "2025-12-22",
+    "tags": [
+      "JVM",
+      "GC",
+      "G1GC",
+      "Garbage Collection",
+      "Java"
+    ],
+    "excerpt": []
+  },
+  {
+    "id": 39,
+    "slug": "post-39",
+    "title": "[6년차 쯤 되면 좀 알자] Application 이 실행될 때 JVM 에선 어떤일이 일어날까?",
+    "date": "2025-12-21",
+    "tags": [
+      "JVM",
+      "ClassLoader",
+      "Memory",
+      "Java",
+      "Kotlin",
+      "Backend"
+    ],
+    "excerpt": []
+  },
+  {
+    "id": 38,
+    "slug": "post-38",
+    "title": "EST AI - 비지도 학습 (Unsupervised Learning)",
+    "date": "2025-12-17",
+    "tags": [
+      "Machine Learning",
+      "Unsupervised Learning",
+      "Clustering",
+      "K-Means",
+      "ARI",
+      "AMI",
+      "Silhouette Analysis"
+    ],
+    "excerpt": []
+  },
+  {
+    "id": 37,
+    "slug": "post-37",
+    "title": "EST AI - 선형 분류 모델 (직원 이직 예측)",
+    "date": "2025-12-15",
+    "tags": [
+      "Machine Learning",
+      "Classification",
+      "Linear Classification"
+    ],
+    "excerpt": []
+  },
+  {
+    "id": 36,
+    "slug": "post-36",
+    "title": "EST AI - 선형 회귀 (Linear Regression)",
+    "date": "2025-12-12",
+    "tags": [
+      "Machine Learning",
+      "Regression",
+      "Linear Regression",
+      "Gradient Descent",
+      "MSE",
+      "RMSE",
+      "R2 Score"
+    ],
+    "excerpt": []
+  },
+  {
+    "id": 35,
+    "slug": "post-35",
+    "title": "EST AI - Machine Learning 실습 (타이타닉 데이터 시각화 및 특성공학)",
+    "date": "2025-12-11",
+    "tags": [],
+    "excerpt": []
+  },
+  {
+    "id": 34,
+    "slug": "post-34",
+    "title": "EST AI - Machine Learning 실습 (타이타닉 데이터 결측치 보정)",
+    "date": "2025-12-10",
+    "tags": [
+      "Machine Learning"
+    ],
+    "excerpt": []
+  },
+  {
+    "id": 33,
+    "slug": "post-33",
+    "title": "EST AI - Decision Tree",
+    "date": "2025-12-10",
+    "tags": [],
+    "excerpt": []
+  },
+  {
+    "id": 32,
+    "slug": "post-32",
+    "title": "[6년차 쯤 되면 좀 알자] VM은 알겠어, 그럼 Kernel 은 뭐야?",
+    "date": "2025-12-09",
+    "tags": [
+      "kernel",
+      "operating-system",
+      "system-call"
+    ],
+    "excerpt": []
+  },
+  {
+    "id": 31,
+    "slug": "post-31",
+    "title": "EST AI - KNN Algorithm",
+    "date": "2025-12-09",
+    "tags": [
+      "Machine Learning",
+      "KNN",
+      "scikit-learn"
+    ],
+    "excerpt": []
+  },
+  {
+    "id": 30,
+    "slug": "post-30",
+    "title": "[6년차 쯤 되면 좀 알자] 시스템 가상머신과 컨테이너: 하이퍼바이저부터 Docker까지",
+    "date": "2025-12-08",
+    "tags": [
+      "VM",
+      "Container",
+      "Docker",
+      "Hypervisor"
+    ],
+    "excerpt": []
+  },
+  {
+    "id": 29,
+    "slug": "post-29",
+    "title": "EST AI - Machine Learning 실습 (BMI 데이터 분석)",
+    "date": "2025-12-08",
+    "tags": [
+      "Machine Learning",
+      "KNN",
+      "scikit-learn"
+    ],
+    "excerpt": []
+  },
+  {
+    "id": 28,
+    "slug": "post-28",
+    "title": "EST AI - Machine Learning (Overview)",
+    "date": "2025-12-08",
+    "tags": [
+      "Machine Learning",
+      "AI"
+    ],
+    "excerpt": []
+  },
+  {
+    "id": 27,
+    "slug": "post-27",
+    "title": "EST AI - Python(HR data)",
+    "date": "2025-12-05",
+    "tags": [
+      "Python",
+      "Programming",
+      "Pandas"
+    ],
+    "excerpt": []
+  },
+  {
+    "id": 26,
+    "slug": "post-26",
+    "title": "EST AI - Python(mile per gallon data)",
+    "date": "2025-12-04",
+    "tags": [
+      "ython",
+      "Programming",
+      "Data Visualization"
+    ],
+    "excerpt": []
+  },
+  {
+    "id": 25,
+    "slug": "post-25",
+    "title": "EST AI - Python(apply,lambda)",
+    "date": "2025-12-03",
+    "tags": [
+      "Python",
+      "Programming",
+      "Pandas",
+      "apply",
+      "lambda"
+    ],
+    "excerpt": []
+  },
+  {
+    "id": 24,
+    "slug": "post-24",
+    "title": "EST AI - Python(matplotlib)",
+    "date": "2025-12-03",
+    "tags": [
+      "Python",
+      "Programming",
+      "Matplotlib"
+    ],
+    "excerpt": []
+  },
+  {
+    "id": 23,
+    "slug": "post-23",
+    "title": "EST AI - Python(pandas-advenced)",
+    "date": "2025-12-02",
+    "tags": [
+      "Python",
+      "Programming",
+      "Pandas",
+      "DataFrame"
+    ],
+    "excerpt": []
+  },
+  {
+    "id": 22,
+    "slug": "post-22",
+    "title": "EST AI - Python(pandas)",
+    "date": "2025-12-01",
+    "tags": [
+      "Python",
+      "Programming",
+      "Pandas"
+    ],
+    "excerpt": []
+  },
+  {
+    "id": 21,
+    "slug": "post-21",
+    "title": "EST AI - Python(numpy-advenced, data analysis )",
+    "date": "2025-12-01",
+    "tags": [
+      "Python",
+      "Programming",
+      "Numpy",
+      "Array"
+    ],
+    "excerpt": []
+  },
+  {
+    "id": 20,
+    "slug": "post-20",
+    "title": "EST AI - Python(numpy)",
+    "date": "2025-11-28",
+    "tags": [
+      "Python",
+      "Programming",
+      "Numpy",
+      "Array"
+    ],
+    "excerpt": []
+  },
+  {
+    "id": 19,
+    "slug": "post-19",
+    "title": "Go로 CLI 도구 만들기: Cobra 라이브러리 활용",
+    "date": "2025-11-27",
+    "tags": [
+      "CLI",
+      "Cobra",
+      "Command Line",
+      "Go"
+    ],
+    "excerpt": [
+      "CLI 개념을 정리하면서 직접 CLI 도구를 만들어보기"
+    ]
+  },
+  {
+    "id": 18,
+    "slug": "post-18",
+    "title": "EST AI - 기초통계",
+    "date": "2025-11-26",
+    "tags": [
+      "Statistics",
+      "Data Analysis",
+      "Descriptive Statistics"
+    ],
+    "excerpt": []
+  },
+  {
+    "id": 17,
+    "slug": "post-17",
+    "title": "EST AI - Python(dictionary, function)",
+    "date": "2025-11-26",
+    "tags": [
+      "Python",
+      "Programming",
+      "Dictionary",
+      "Function"
+    ],
+    "excerpt": []
+  },
+  {
+    "id": 16,
+    "slug": "post-16",
+    "title": "EST AI - Python(loop - advenced)",
+    "date": "2025-11-25",
+    "tags": [
+      "Python",
+      "Programming",
+      "NestedLoop"
+    ],
+    "excerpt": []
+  },
+  {
+    "id": 15,
+    "slug": "post-15",
+    "title": "매일 쓰지만 정확히는 모르는 CLI: 터미널, 셸, CLI의 차이와 개발 효율성",
+    "date": "2025-11-24",
+    "tags": [
+      "CLI",
+      "Terminal",
+      "Shell",
+      "Command Line",
+      "Development Tools",
+      "Git",
+      "AWS CLI"
+    ],
+    "excerpt": [
+      "CLI의 기본 개념과 터미널, 셸, CLI의 차이점을 명확히 구분하여 설명합니다.",
+      "일상에서 사용하는 CLI 도구들(git, java, gradlew, python, AWS CLI 등)의 활용 방법을 알아봅니다.",
+      "CLI의 작동 원리와 자동화를 통한 개발 효율성 향상 방법을 정리합니다."
+    ]
+  },
+  {
+    "id": 14,
+    "slug": "post-14",
+    "title": "EST AI - Python(list,tuple,condition,loop)",
+    "date": "2025-11-24",
+    "tags": [
+      "Python"
+    ],
+    "excerpt": []
+  },
+  {
     "id": 13,
     "slug": "post-13",
-    "title": "EST AI 모델 부트캠프 - (2)",
+    "title": "EST AI - Python(base)",
     "date": "2025-11-20",
     "tags": [
       "Python",
@@ -14,7 +710,7 @@
   {
     "id": 12,
     "slug": "post-12",
-    "title": "EST AI 모델 부트캠프 - (1)",
+    "title": "EST AI - Orientation (AI, Orange)",
     "date": "2025-11-19",
     "tags": [
       "AI Ethics",
@@ -28,7 +724,7 @@
   {
     "id": 11,
     "slug": "post-11",
-    "title": "EST AI 모델 부트캠프 - (0)",
+    "title": "EST AI - Orientation(AI)",
     "date": "2025-11-18",
     "tags": [
       "AI",
