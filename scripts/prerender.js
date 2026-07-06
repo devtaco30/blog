@@ -79,6 +79,11 @@ async function main() {
     server.listen(PORT, resolve);
   });
 
+  // 본문 텍스트 대기 타임아웃, 혹은 대기 후에도 본문이 지나치게 비어 있는 라우트를
+  // 여기에 모아둔다. 루프가 끝난 뒤 이 목록이 비어있지 않으면 프로세스를 실패(exit 1)
+  // 시켜 "미완성 캡처가 조용히 배포되는" 상황을 CI에서 반드시 잡아낸다.
+  const failedRoutes = [];
+
   const browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
   try {
     for (const route of routes) {
@@ -88,6 +93,7 @@ async function main() {
       await page.waitForSelector('#root *', { timeout: 30000 });
       // 본문 텍스트(마크다운 렌더 결과)가 실제로 채워질 때까지 대기 (데이터 fetch가
       // networkidle0 이후에도 setState → 리렌더로 이어질 수 있어 보강)
+      let contentWaitTimedOut = false;
       try {
         await page.waitForFunction(
           () => {
@@ -98,9 +104,21 @@ async function main() {
         );
       } catch (e) {
         console.warn(`  경고: ${route} 본문 텍스트 대기 타임아웃 (계속 진행)`);
+        contentWaitTimedOut = true;
       }
       // mermaid 등 client-side 비동기 렌더링 유예 시간
       await new Promise((r) => setTimeout(r, CLIENT_RENDER_GRACE_MS));
+
+      // 최종 캡처 직전 본문 텍스트 길이를 다시 측정한다. waitForFunction이 타임아웃
+      // 났던 경우는 물론, 타임아웃 없이 통과했더라도(예: grace 유예 중 콘텐츠가 다시
+      // 비워지는 등) 최종 산출물이 비정상적으로 비어 있으면 함께 실패 목록에 넣는다.
+      const bodyTextLength = await page.evaluate(() => {
+        const root = document.querySelector('#root');
+        return root && root.innerText ? root.innerText.trim().length : 0;
+      });
+      if (contentWaitTimedOut || bodyTextLength <= 50) {
+        failedRoutes.push({ route, bodyTextLength });
+      }
 
       const html = await page.content();
 
@@ -114,6 +132,14 @@ async function main() {
     await browser.close();
     server.close();
     fs.rmSync(serveRoot, { recursive: true, force: true });
+  }
+
+  if (failedRoutes.length > 0) {
+    console.error('\n프리렌더 실패: 다음 라우트가 본문 캡처에 실패했습니다 (CI 실패 처리):');
+    failedRoutes.forEach(({ route, bodyTextLength }) => {
+      console.error(`  - ${route} (본문 텍스트 길이: ${bodyTextLength})`);
+    });
+    process.exit(1);
   }
 }
 
