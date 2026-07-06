@@ -44,7 +44,9 @@
     "build:prod": "npm run generate-posts-list && PUBLIC_URL='/devtaco-blog' react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "generate-posts-list": "node scripts/generate-posts-list.js"
+    "generate-posts-list": "node scripts/generate-posts-list.js",
+    "prerender": "node scripts/prerender.js",
+    "build:prerender": "npm run build && npm run prerender"
   },
   "eslintConfig": {
     "extends": [
