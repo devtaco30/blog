@@ -49,11 +49,15 @@ export const AuthProvider = ({ children }) => {
                 console.error('❌ [AuthContext] 세션 설정 실패:', error);
               } else if (data?.user) {
                 setUser(data.user);
-                // 세션 설정 성공 후 URL에서 토큰 해시 제거 (경로는 유지)
-                window.history.replaceState(null, '', window.location.pathname);
               }
             } catch (sessionError) {
               console.error('💥 [AuthContext] 세션 설정 중 오류:', sessionError);
+            } finally {
+              // ⚠️ SECURITY: setSession이 성공하든, error를 반환하든, 예외를 던지든
+              // access_token이 담긴 URL 해시는 항상 제거해야 한다.
+              // 성공 분기에서만 지우면 실패·예외 경로에서 bearer 토큰이 URL과
+              // 브라우저 히스토리에 그대로 남아 탈취 위험이 생긴다.
+              window.history.replaceState(null, '', window.location.pathname);
             }
           }
         }
