@@ -15,12 +15,8 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     // 현재 세션 확인
     const getSession = async () => {
-      
-      
       // 🔥 에러 URL 감지 및 처리
       if (window.location.search.includes('error=server_error')) {
-        console.log('❌ Supabase Auth Hook 에러 감지');
-        
         // 에러 메시지 표시
         alert('허용되지 않은 GitHub 계정입니다. 홈페이지로 돌아갑니다.');
         
@@ -35,52 +31,53 @@ export const AuthProvider = ({ children }) => {
       try {
         // URL 해시에서 토큰 확인
         const hash = window.location.hash;
+
         if (hash.includes('access_token=')) {
-          
-          
           // URL에서 토큰 파싱 (해시 구조 수정)
-          
-          
           // #/#access_token=... 형태 처리
-          const tokenPart = hash.split('#access_token=')[1];
+          const tokenPart = hash.split('#access_token=')[1] || hash.split('access_token=')[1];
           if (tokenPart) {
             const accessToken = tokenPart.split('&')[0];
             const refreshTokenPart = tokenPart.split('&refresh_token=')[1];
             const refreshToken = refreshTokenPart ? refreshTokenPart.split('&')[0] : '';
-            
 
-            
             if (accessToken) {
-            
-            
-            // Supabase 세션 수동 설정
-            try {
-                          const { error } = await supabase.auth.setSession({
-              access_token: accessToken,
-              refresh_token: refreshToken || ''
-            });
-            
-            if (error) {
-              console.error('❌ 세션 설정 실패:', error);
-            }
-            } catch (sessionError) {
-              console.error('💥 세션 설정 중 오류:', sessionError);
+              // Supabase 세션 수동 설정
+              try {
+                const { data, error } = await supabase.auth.setSession({
+                  access_token: accessToken,
+                  refresh_token: refreshToken || ''
+                });
+
+                if (error) {
+                  console.error('❌ [AuthContext] 세션 설정 실패:', error);
+                } else if (data?.user) {
+                  setUser(data.user);
+                }
+              } catch (sessionError) {
+                console.error('💥 [AuthContext] 세션 설정 중 오류:', sessionError);
+              }
             }
           }
         }
-        
+
         // 해시 정리 - 자동 리다이렉트 제거
-      }
-        
+        if (hash.includes('access_token=')) {
+          window.location.hash = '';
+        }
+
         // 브라우저 초기화 시간 대기
         await new Promise(resolve => setTimeout(resolve, 500));
-        
+
         // 세션 확인
         const { data: { session } } = await supabase.auth.getSession();
-        
 
-        
-        setUser(session?.user ?? null);
+        if (session?.user) {
+          setUser(session.user);
+        } else {
+          setUser(null);
+        }
+
         setLoading(false);
       } catch (error) {
         console.error('💥 세션 조회 중 예외:', error);
@@ -99,31 +96,25 @@ export const AuthProvider = ({ children }) => {
     // 인증 상태 변경 리스너
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
+        // SIGNED_IN: GitHub OAuth 로그인 완료 - 자동 리다이렉트 제거, 사용자가 직접 관리자 페이지로 이동
 
-        
-        if (event === 'SIGNED_IN') {
-          
-          // GitHub OAuth 로그인 완료 - 자동 리다이렉트 제거
-          // 사용자가 직접 관리자 페이지로 이동하도록 함
-        } else if (event === 'SIGNED_OUT') {
-
-        } else if (event === 'TOKEN_REFRESHED') {
-  
-        } else if (event === 'INITIAL_SESSION') {
-  
-        } else if (event === 'USER_UPDATED') {
-  
-        }
-        
         // 세션이 있으면 사용자 정보 설정
         if (session?.user) {
-          
           setUser(session.user);
+        } else if (event === 'INITIAL_SESSION' && !session) {
+          // INITIAL_SESSION에서 세션이 없으면 getUser()로 재시도
+          try {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (user) {
+              setUser(user);
+            }
+          } catch (error) {
+            console.error('❌ getUser() 실패:', error);
+          }
         } else {
-  
           setUser(null);
         }
-        
+
         setLoading(false);
       }
     );
@@ -217,12 +208,8 @@ export const AuthProvider = ({ children }) => {
 
   // 테스트용 함수 (Console에서 호출 가능)
   const testAuth = async () => {
-
-    
     try {
-      const { data } = await supabase.auth.getSession();
-      console.log('현재 세션:', data);
-      
+      await supabase.auth.getSession();
     } catch (err) {
       console.error('세션 테스트 오류:', err);
     }

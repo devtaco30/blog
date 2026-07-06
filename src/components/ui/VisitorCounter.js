@@ -1,14 +1,50 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Typography, CircularProgress } from '@mui/material';
 import { supabase } from '../../supabase';
+import { useAuth } from '../../contexts/AuthContext';
 
 const VisitorCounter = () => {
+  // AuthContext에서 로그인 상태 확인 (로그인은 AuthContext에서 처리)
+  // 로그인 체크 방식: AuthContext의 useAuth() 훅 사용
+  const { user, loading: authLoading } = useAuth();
+
   const [visitors, setVisitors] = useState({
     today: 0,
     total: 0,
     loading: true
   });
   const [visitIncremented, setVisitIncremented] = useState(false);
+  
+  // 개발 모드에서 방문 기록 자동 삭제 (Supabase 세션은 유지)
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'development') {
+      // 방문 기록만 삭제 (Supabase 세션 키는 삭제하지 않음)
+      localStorage.removeItem('lastVisit');
+      sessionStorage.removeItem('sessionVisit');
+    }
+  }, []);
+  
+  // 로그인 상태가 변경되면 처리
+  useEffect(() => {
+    if (!authLoading) {
+      if (user) {
+        const githubUsername = user.user_metadata?.user_name;
+        const allowedUsersEnv = process.env.REACT_APP_ALLOWED_GITHUB_USERS;
+        const allowedUsers = allowedUsersEnv?.split(',').map(u => u.trim()) || [];
+        
+        // 본인 계정으로 로그인한 경우, 카운팅 방지
+        if (allowedUsers.includes(githubUsername)) {
+          setVisitIncremented(true); // true로 설정해서 카운팅 방지
+        } else {
+          // 로그인은 했지만 본인이 아닌 경우, 카운팅 가능하도록
+          setVisitIncremented(false);
+        }
+      } else {
+        // 로그인 안 된 경우, 카운팅 가능하도록
+        setVisitIncremented(false);
+      }
+    }
+  }, [user, authLoading]);
 
   useEffect(() => {
     const fetchVisitorStats = async () => {
@@ -50,34 +86,69 @@ const VisitorCounter = () => {
     fetchVisitorStats();
   }, []);
 
+  // 로그인 체크 (항상 실행, visitIncremented와 무관)
+  useEffect(() => {
+    // 인증 로딩 중이면 대기
+    if (authLoading) {
+      return;
+    }
+
+    // 로그인된 사용자 체크 (항상 실행)
+    if (user) {
+      const githubUsername = user.user_metadata?.user_name;
+      const allowedUsersEnv = process.env.REACT_APP_ALLOWED_GITHUB_USERS;
+      const allowedUsers = allowedUsersEnv?.split(',').map(u => u.trim()) || [];
+
+      // 허용된 사용자 목록에 포함된 경우(본인) 카운팅에서 제외
+      if (allowedUsers.includes(githubUsername)) {
+        setVisitIncremented(true);
+      } else {
+        // 본인이 아니면 visitIncremented 리셋 (카운팅 가능하도록)
+        setVisitIncremented(false);
+      }
+    } else {
+      // 로그인 안 됐으면 visitIncremented 리셋 (카운팅 가능하도록)
+      setVisitIncremented(false);
+    }
+  }, [user, authLoading]);
+  
   // 방문자 수 증가 (중복 방지)
   useEffect(() => {
+    // 인증 로딩 중이면 대기 (세션 확인 완료될 때까지)
+    if (authLoading) {
+      return;
+    }
+
     if (!visitors.loading && !visitIncremented) {
       const incrementVisit = async () => {
         try {
           const today = new Date().toISOString().split('T')[0];
-          
+
+          // 추가 옵션: localStorage 플래그 또는 user-agent 체크
+          const userAgent = navigator.userAgent;
+          const excludeFromCount = localStorage.getItem('excludeFromVisitorCount');
+
+          if (excludeFromCount === 'true' || userAgent.includes('DevTaco-Exclude')) {
+            setVisitIncremented(true);
+            return;
+          }
+
           // localStorage와 sessionStorage로 중복 방지
           const lastVisit = localStorage.getItem('lastVisit');
           const sessionVisit = sessionStorage.getItem('sessionVisit');
-          
+
           if (lastVisit !== today || !sessionVisit) {
-            console.log('🚀 새로운 방문자! 방문자 수 증가 시작');
-            
             // Supabase 함수 호출로 방문자 수 증가
             const { error } = await supabase.rpc('increment_visitor_count');
-            
+
             if (error) {
               console.error('❌ 방문자 수 증가 실패:', error);
               return;
             }
 
-            console.log('✅ 방문자 수 증가 성공!');
-
             // 방문 기록 저장
             localStorage.setItem('lastVisit', today);
             sessionStorage.setItem('sessionVisit', 'true');
-            console.log('💾 방문 기록 저장 완료');
 
             // 방문자 수 증가 후 최신 데이터 가져오기
             const { data: updatedStats, error: fetchError } = await supabase
@@ -87,7 +158,6 @@ const VisitorCounter = () => {
               .single();
 
             if (!fetchError && updatedStats) {
-              console.log('📊 업데이트된 방문자 통계:', updatedStats);
               setVisitors({
                 today: updatedStats.daily_count,
                 total: updatedStats.total_count,
@@ -96,9 +166,7 @@ const VisitorCounter = () => {
             }
 
             setVisitIncremented(true);
-            console.log('🎉 방문자 카운팅 완료!');
           } else {
-            console.log('🔄 이미 방문한 사용자입니다');
             setVisitIncremented(true);
           }
         } catch (error) {
@@ -109,7 +177,7 @@ const VisitorCounter = () => {
 
       incrementVisit();
     }
-  }, [visitors.loading, visitIncremented]);
+  }, [visitors.loading, visitIncremented, user, authLoading]);
 
   // 실시간 구독 (선택사항)
   useEffect(() => {

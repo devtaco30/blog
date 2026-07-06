@@ -117,3 +117,7 @@ dist
 # Temporary folders
 tmp/
 temp/
+
+# unrelated local files
+/test.py
+/source/
