@@ -16,27 +16,30 @@
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
-    <meta
-      name="description"
-      content="DevTaco의 개발 블로그"
-    />
     <meta name="keywords" content="Java, Kotlin, Spring Boot, MSA, 개발, 백엔드, coroutine" />
     <meta name="author" content="DevTaco" />
-    
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://devtaco30.github.io/devtaco-blog/" />
-    <meta property="og:title" content="DevTaco Blog" />
-    <meta property="og:description" content="DevTaco의 개발 블로그 - Java, Kotlin, Spring Boot, MSA 관련 기술 포스트" />
-    <meta property="og:image" content="https://devtaco30.github.io/devtaco-blog/og-image.png" />
 
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content="https://devtaco30.github.io/devtaco-blog/" />
-    <meta property="twitter:title" content="DevTaco Blog" />
-    <meta property="twitter:description" content="DevTaco의 개발 블로그" />
+    <!--
+      SEO 메타 중 페이지별로 값이 달라지는 항목(title, description, og:title,
+      og:description, og:type, og:url, twitter:card, twitter:title, twitter:description)은
+      여기에 정적으로 두지 않는다.
+      react-helmet-async(v3, React 19 경로)는 페이지별 <Helmet>이 렌더한 태그를 React가
+      직접 <head>에 hoist하는 방식으로 동작하는데, 이 파일에 원래 있던(React가 만들지 않은)
+      정적 태그는 관리 대상이 아니라서 대체/제거하지 못한다. 그 결과 예를 들어 og:title이
+      "정적 제네릭 값 → 페이지별 값" 순서로 중복 삽입되고, 크롤러/SNS는 보통 "첫 번째"
+      og:title을 채택하므로 실제로는 제네릭 값이 노출되는 문제가 있었다(같은 이유로 <title>도
+      정적 값을 남겨두면 항상 중복된다).
+      실제 SEO 배포본은 build-time 프리렌더(scripts/prerender.js)가 각 라우트별 최종 DOM을
+      build/<route>/index.html로 구워내므로, 그 결과물 자체가 이미 완성된 "노스크립트 폴백"이다.
+      모든 프리렌더 대상 라우트(Home/BlogList/BlogPost/About)는 마운트 시 <Helmet>으로
+      title/description을 반드시 렌더하므로 여기서 별도 정적 기본값을 유지할 필요가 없다.
+      반면 og:image/twitter:image/twitter:url은 어떤 페이지도 오버라이드하지 않는 사이트
+      공통 값이라 중복 위험 없이 정적으로 유지한다.
+    -->
+    <meta property="og:image" content="https://devtaco30.github.io/devtaco-blog/og-image.png" />
     <meta property="twitter:image" content="https://devtaco30.github.io/devtaco-blog/og-image.png" />
-    
+    <meta property="twitter:url" content="https://devtaco30.github.io/devtaco-blog/" />
+
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/apple-touch-icon.png" />
     <!--
       manifest.json provides metadata used when your web app is installed on a
@@ -55,7 +58,12 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <title>DevTaco Blog</title>
+    <!--
+      정적 <title>을 두지 않는다. react-helmet-async(React 19 경로)는 페이지별 <title>을
+      새로 hoist할 뿐, 여기 있던 정적 <title> 노드를 제거하지 못해 프리렌더 결과물에
+      "정적 title + 페이지 title" 두 개가 남는다(실측 확인). 각 라우트가 마운트 즉시
+      <Helmet><title>...</title>을 렌더하므로(로딩/404 상태 포함) 정적 폴백은 불필요하다.
+    -->
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>

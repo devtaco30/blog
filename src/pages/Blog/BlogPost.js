@@ -607,6 +607,11 @@ const BlogPost = () => {
   if (loading) {
     return (
       <Box sx={{ p: { xs: 2, md: 4 } }}>
+        {/* 데이터 로딩 중에는 아래에서 post 기반 <Helmet>이 렌더되지 않으므로, public/index.html의
+            정적 <title> 폴백을 제거한 이후 실사용자가 겪을 수 있는 "빈 탭 제목" 방지용 기본값 */}
+        <Helmet>
+          <title>게시글 불러오는 중... | DevTaco Blog</title>
+        </Helmet>
         {/* Breadcrumbs Skeleton */}
         <Box sx={{ mb: 3 }}>
           <Skeleton variant="text" width="60%" height={24} />
@@ -649,6 +654,9 @@ const BlogPost = () => {
   if (!post) {
     return (
       <Box sx={{ p: 4, textAlign: 'center' }}>
+        <Helmet>
+          <title>게시글을 찾을 수 없습니다 | DevTaco Blog</title>
+        </Helmet>
         <Typography variant="h4" gutterBottom>
           게시글을 찾을 수 없습니다
         </Typography>

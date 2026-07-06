@@ -20,6 +20,23 @@ const CLIENT_RENDER_GRACE_MS = 1500;
 function createServeRoot() {
   const serveRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'devtaco-blog-prerender-'));
   fs.symlinkSync(BUILD_DIR, path.join(serveRoot, 'devtaco-blog'), 'dir');
+
+  // ⚠️ 중요(메타 중복/누수 버그의 근본 원인이었음): 아래 루프는 "/" 라우트를 처리하면서
+  // build/index.html "자체"를 그 결과물로 덮어쓴다. 그런데 이 파일은 동시에
+  // serve-handler의 SPA 폴백(rewrite) 대상이기도 했다. 즉 "/"가 먼저 처리되고 나면
+  // 그 이후 처리되는 다른 모든 라우트(/posts, /about, /posts/:id ...)가 이미 Home의
+  // <title>/<meta>가 구워진 "오염된 셸" 위에서 하이드레이션하게 되고, react-helmet-async
+  // (React 19 경로)는 자신이 렌더하지 않은 기존 DOM 노드를 정리하지 못하므로 그 잔여
+  // 태그가 그대로 남아 최종 캡처에 누수된다(예: BlogPost 페이지에 Home의 <title>이
+  // 함께 찍히는 현상). React 19 hydration 버그가 아니라 이 스크립트가 자기 출력물을
+  // 자기 입력(SPA 셸)으로 재사용한 것이 원인이다.
+  // 해결: 루프 시작 전 "원본(pristine)" index.html을 심볼릭 링크 바깥의 별도 파일로
+  // 스냅샷해두고, SPA 폴백은 항상 이 스냅샷만 가리키게 하여 루프 도중 build/index.html이
+  // 어떻게 바뀌든 다른 라우트의 하이드레이션 셸에 영향을 주지 않게 한다.
+  fs.copyFileSync(
+    path.join(BUILD_DIR, 'index.html'),
+    path.join(serveRoot, '__prerender-shell.html')
+  );
   return serveRoot;
 }
 
@@ -30,7 +47,22 @@ async function main() {
     fs.readFileSync(path.join(BUILD_DIR, 'data/posts-list.json'), 'utf-8')
   );
   const posts = Array.isArray(postsList) ? postsList : (postsList.posts || []);
-  const routes = ['/', '/posts', '/about', ...posts.map((p) => `/posts/${p.id}`)];
+  const allRoutes = ['/', '/posts', '/about', ...posts.map((p) => `/posts/${p.id}`)];
+
+  // 단일 라우트 인자(예: `node scripts/prerender.js /posts/67`)가 주어지면 해당 라우트만
+  // 프리렌더한다. 61개 라우트 전체(~193초)를 기다리지 않고 특정 라우트만 빠르게 반복
+  // 검증하기 위한 개발용 옵션이며, 인자가 없으면 기존 전체 라우트 동작과 동일하다.
+  const requestedRoute = process.argv[2];
+  let routes = allRoutes;
+  if (requestedRoute) {
+    if (!allRoutes.includes(requestedRoute)) {
+      console.error(
+        `요청한 라우트를 찾을 수 없습니다: ${requestedRoute}\n사용 가능한 라우트 예: ${allRoutes.slice(0, 5).join(', ')}...`
+      );
+      process.exit(1);
+    }
+    routes = [requestedRoute];
+  }
 
   const serveRoot = createServeRoot();
 
@@ -39,7 +71,7 @@ async function main() {
     handler(req, res, {
       public: serveRoot,
       symlinks: true,
-      rewrites: [{ source: '**', destination: `${BASE}/index.html` }]
+      rewrites: [{ source: '**', destination: '/__prerender-shell.html' }]
     })
   );
   await new Promise((resolve, reject) => {
