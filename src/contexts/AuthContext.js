@@ -29,41 +29,33 @@ export const AuthProvider = ({ children }) => {
       }
       
       try {
-        // URL 해시에서 토큰 확인
+        // URL 해시에서 토큰 확인 (BrowserRouter 전환 이후 해시는 OAuth 토큰 전용)
         const hash = window.location.hash;
 
         if (hash.includes('access_token=')) {
-          // URL에서 토큰 파싱 (해시 구조 수정)
-          // #/#access_token=... 형태 처리
-          const tokenPart = hash.split('#access_token=')[1] || hash.split('access_token=')[1];
-          if (tokenPart) {
-            const accessToken = tokenPart.split('&')[0];
-            const refreshTokenPart = tokenPart.split('&refresh_token=')[1];
-            const refreshToken = refreshTokenPart ? refreshTokenPart.split('&')[0] : '';
+          const params = new URLSearchParams(hash.replace(/^#/, ''));
+          const accessToken = params.get('access_token');
+          const refreshToken = params.get('refresh_token') || '';
 
-            if (accessToken) {
-              // Supabase 세션 수동 설정
-              try {
-                const { data, error } = await supabase.auth.setSession({
-                  access_token: accessToken,
-                  refresh_token: refreshToken || ''
-                });
+          if (accessToken) {
+            // Supabase 세션 수동 설정
+            try {
+              const { data, error } = await supabase.auth.setSession({
+                access_token: accessToken,
+                refresh_token: refreshToken,
+              });
 
-                if (error) {
-                  console.error('❌ [AuthContext] 세션 설정 실패:', error);
-                } else if (data?.user) {
-                  setUser(data.user);
-                }
-              } catch (sessionError) {
-                console.error('💥 [AuthContext] 세션 설정 중 오류:', sessionError);
+              if (error) {
+                console.error('❌ [AuthContext] 세션 설정 실패:', error);
+              } else if (data?.user) {
+                setUser(data.user);
+                // 세션 설정 성공 후 URL에서 토큰 해시 제거 (경로는 유지)
+                window.history.replaceState(null, '', window.location.pathname);
               }
+            } catch (sessionError) {
+              console.error('💥 [AuthContext] 세션 설정 중 오류:', sessionError);
             }
           }
-        }
-
-        // 해시 정리 - 자동 리다이렉트 제거
-        if (hash.includes('access_token=')) {
-          window.location.hash = '';
         }
 
         // 브라우저 초기화 시간 대기
@@ -191,7 +183,7 @@ export const AuthProvider = ({ children }) => {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'github',
       options: {
-        redirectTo: `${window.location.origin}/devtaco-blog/#/`,
+        redirectTo: `${window.location.origin}/devtaco-blog/`,
         queryParams: {
           access_type: 'offline',
           prompt: 'consent',
