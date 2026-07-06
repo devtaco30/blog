@@ -1,8 +1,8 @@
 {
-  "name": "devtaco-blog",
+  "name": "blog",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://devtaco30.github.io/devtaco-blog",
+  "homepage": "https://devtaco30.github.io/blog",
   "dependencies": {
     "@craco/craco": "^7.1.0",
     "@emotion/react": "^11.14.0",
@@ -41,7 +41,7 @@
     "start": "npm run generate-posts-list && react-scripts start",
     "start:local": "npm run generate-posts-list && PUBLIC_URL='' react-scripts start",
     "build": "npm run generate-posts-list && react-scripts build",
-    "build:prod": "npm run generate-posts-list && PUBLIC_URL='/devtaco-blog' react-scripts build",
+    "build:prod": "npm run generate-posts-list && PUBLIC_URL='/blog' react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "generate-posts-list": "node scripts/generate-posts-list.js",

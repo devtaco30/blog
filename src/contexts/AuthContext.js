@@ -187,7 +187,7 @@ export const AuthProvider = ({ children }) => {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'github',
       options: {
-        redirectTo: `${window.location.origin}/devtaco-blog/`,
+        redirectTo: `${window.location.origin}/blog/`,
         queryParams: {
           access_type: 'offline',
           prompt: 'consent',

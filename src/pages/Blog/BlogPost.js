@@ -714,7 +714,7 @@ const BlogPost = () => {
           <meta property="og:title" content={post.title} />
           <meta property="og:description" content={excerptText} />
           <meta property="og:type" content="article" />
-          <meta property="og:url" content={`https://devtaco30.github.io/devtaco-blog/posts/${post.id}`} />
+          <meta property="og:url" content={`https://devtaco30.github.io/blog/posts/${post.id}`} />
           <meta name="twitter:card" content="summary" />
         </Helmet>
       )}

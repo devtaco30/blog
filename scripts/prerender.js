@@ -6,20 +6,20 @@ const handler = require('serve-handler');
 const puppeteer = require('puppeteer');
 
 const BUILD_DIR = path.join(__dirname, '../build');
-const BASE = '/devtaco-blog';
+const BASE = '/blog';
 const PORT = 5055;
 // mermaid 등 클라이언트 사이드 비동기 렌더링(네트워크 유휴 이후에도 진행됨)을 위한 추가 대기 시간(ms)
 const CLIENT_RENDER_GRACE_MS = 1500;
 
 /**
- * CRA 빌드 결과물은 `/devtaco-blog/...` 절대경로로 에셋을 참조하지만
+ * CRA 빌드 결과물은 `/blog/...` 절대경로로 에셋을 참조하지만
  * `build/` 디렉터리 자체에는 그 prefix 디렉터리가 없다.
- * serve-handler의 public 루트 아래에 `devtaco-blog` 심볼릭 링크로 build를 매핑해
- * `http://localhost:PORT/devtaco-blog/...` 요청이 실제 빌드 파일로 정확히 resolve되게 한다.
+ * serve-handler의 public 루트 아래에 `blog` 심볼릭 링크로 build를 매핑해
+ * `http://localhost:PORT/blog/...` 요청이 실제 빌드 파일로 정확히 resolve되게 한다.
  */
 function createServeRoot() {
-  const serveRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'devtaco-blog-prerender-'));
-  fs.symlinkSync(BUILD_DIR, path.join(serveRoot, 'devtaco-blog'), 'dir');
+  const serveRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'blog-prerender-'));
+  fs.symlinkSync(BUILD_DIR, path.join(serveRoot, 'blog'), 'dir');
 
   // ⚠️ 중요(메타 중복/누수 버그의 근본 원인이었음): 아래 루프는 "/" 라우트를 처리하면서
   // build/index.html "자체"를 그 결과물로 덮어쓴다. 그런데 이 파일은 동시에
@@ -66,7 +66,7 @@ async function main() {
 
   const serveRoot = createServeRoot();
 
-  // 정적 서버(SPA 폴백: 확장자 없는 미지정 경로 → /devtaco-blog/index.html)
+  // 정적 서버(SPA 폴백: 확장자 없는 미지정 경로 → /blog/index.html)
   const server = http.createServer((req, res) =>
     handler(req, res, {
       public: serveRoot,

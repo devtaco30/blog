@@ -76,7 +76,7 @@ async function generatePostsList() {
 
       // sitemap용 URL 추가
       sitemapUrls.push({
-        loc: `https://devtaco30.github.io/devtaco-blog/posts/${post.id}`,
+        loc: `https://devtaco30.github.io/blog/posts/${post.id}`,
         lastmod: publishedDate,
         changefreq: 'monthly',
         priority: '0.7'
@@ -118,19 +118,19 @@ generatePostsList();
 function generateSitemap(posts) {
   const baseUrls = [
     {
-      loc: 'https://devtaco30.github.io/devtaco-blog/',
+      loc: 'https://devtaco30.github.io/blog/',
       lastmod: currentDate,
       changefreq: 'weekly',
       priority: '1.0'
     },
     {
-      loc: 'https://devtaco30.github.io/devtaco-blog/about',
+      loc: 'https://devtaco30.github.io/blog/about',
       lastmod: currentDate,
       changefreq: 'monthly',
       priority: '0.8'
     },
     {
-      loc: 'https://devtaco30.github.io/devtaco-blog/posts',
+      loc: 'https://devtaco30.github.io/blog/posts',
       lastmod: currentDate,
       changefreq: 'weekly',
       priority: '0.9'

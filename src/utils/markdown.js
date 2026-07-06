@@ -6,7 +6,7 @@ export const getAllPosts = async () => {
   
   try {
     // posts-list.json에서 게시글 목록 가져오기
-    const listResponse = await fetch('/devtaco-blog/data/posts-list.json');
+    const listResponse = await fetch('/blog/data/posts-list.json');
     if (!listResponse.ok) {
       throw new Error('posts-list.json을 가져올 수 없습니다');
     }
@@ -18,7 +18,7 @@ export const getAllPosts = async () => {
     for (const { id, slug, filename } of postFiles) {
       
       
-      const response = await fetch(`/devtaco-blog/posts/${filename}`);
+      const response = await fetch(`/blog/posts/${filename}`);
       if (!response.ok) {
         console.error(`${slug} 파일을 가져올 수 없습니다:`, response.status);
         continue;
@@ -47,7 +47,7 @@ export const getAllPosts = async () => {
 export const getPostById = async (id) => {
   try {
     // posts-list.json에서 해당 id의 파일명 찾기
-    const listResponse = await fetch('/devtaco-blog/data/posts-list.json');
+    const listResponse = await fetch('/blog/data/posts-list.json');
     if (!listResponse.ok) {
       throw new Error('posts-list.json을 가져올 수 없습니다');
     }
@@ -60,7 +60,7 @@ export const getPostById = async (id) => {
       return null;
     }
     
-    const response = await fetch(`/devtaco-blog/posts/${postInfo.filename}`);
+    const response = await fetch(`/blog/posts/${postInfo.filename}`);
     if (!response.ok) {
       console.error(`${id} 파일을 가져올 수 없습니다:`, response.status);
       return null;
@@ -84,7 +84,7 @@ export const getPostById = async (id) => {
 // 기존 slug 기반 함수도 유지 (하위 호환성)
 export const getPostBySlug = async (slug) => {
   try {
-    const listResponse = await fetch('/devtaco-blog/data/posts-list.json');
+    const listResponse = await fetch('/blog/data/posts-list.json');
     if (!listResponse.ok) {
       throw new Error('posts-list.json을 가져올 수 없습니다');
     }
@@ -97,7 +97,7 @@ export const getPostBySlug = async (slug) => {
       return null;
     }
     
-    const response = await fetch(`/devtaco-blog/posts/${postInfo.filename}`);
+    const response = await fetch(`/blog/posts/${postInfo.filename}`);
     if (!response.ok) {
       console.error(`${slug} 파일을 가져올 수 없습니다:`, response.status);
       return null;
