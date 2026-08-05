@@ -16,7 +16,6 @@
     "buffer": "^6.0.3",
     "cra-template": "1.2.0",
     "framer-motion": "^12.23.12",
-    "gray-matter": "^4.0.3",
     "katex": "^0.16.9",
     "mcp-server": "^0.0.9",
     "mermaid": "^10.6.1",
