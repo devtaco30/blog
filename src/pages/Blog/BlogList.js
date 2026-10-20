@@ -18,6 +18,7 @@ import FilterListIcon from '@mui/icons-material/FilterList';
 import { Helmet } from 'react-helmet-async';
 import { getPostsWithPageNumber, searchPostsWithPageNumber } from '../../services/posts';
 import { getAllCategories, getPostCountsByAllCategories } from '../../services/categories';
+import { getVisibleCategories } from './getVisibleCategories';
 
 // UI용 "전체" 카테고리 (DB에는 존재하지 않음)
 const ALL_CATEGORY = { 
@@ -535,7 +536,7 @@ const BlogList = () => {
           alignItems: 'center' 
         }}
       >
-        {categories.map((category) => (
+        {getVisibleCategories(categories, categoryCounts, selectedCategoryKey).map((category) => (
           <Chip
             key={category.key}
             label={`${category.name} (${categoryCounts[category.key] || 0})`}
