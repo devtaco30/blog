@@ -15,21 +15,12 @@ import {
 import { useNavigate, useSearchParams, useNavigationType } from 'react-router-dom';
 import SearchIcon from '@mui/icons-material/Search';
 import { Helmet } from 'react-helmet-async';
-import { getPostsWithPageNumber, searchPostsWithPageNumber, getPublishedPostTagLists } from '../../services/posts';
-import { getAllCategories, getPostCountsByAllCategories } from '../../services/categories';
+import { getPostsWithPageNumber, searchPostsWithPageNumber } from '../../services/posts';
 import BlogListSidebar from './components/BlogListSidebar';
 import PostCard from './components/PostCard';
 import { useSearchShortcut } from './useSearchShortcut';
-import { countTags } from './tagCounts';
+import { useListSidebarData } from './useListSidebarData';
 import { ACCENT } from './listTheme';
-
-// UI용 "전체" 카테고리 (DB에는 존재하지 않음)
-const ALL_CATEGORY = { 
-  key: 'all', 
-  name: '전체', 
-  sort_order: 0, 
-  is_active: true 
-};
 
 /** URL 동기화 시 매 렌더마다 새 []/새 배열이 들어가 selectedTags 의존 effect(디바운스 검색)가 불필요하게 재실행되는 것을 막기 위함 */
 const isSameOrderedTagList = (previousTags, nextTags) =>
@@ -67,10 +58,8 @@ const BlogList = () => {
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [isSearchMode, setIsSearchMode] = useState(false);
-  const [categories, setCategories] = useState([ALL_CATEGORY]);
-  const [categoryCounts, setCategoryCounts] = useState({});
-  /** 사이드바 기술 목록용: 전체 발행 글 기준 태그 개수 (불러오지 못하면 빈 배열 → 기술 묶음 숨김) */
-  const [tagCounts, setTagCounts] = useState([]);
+  // 사이드바 데이터(영역, 영역별·태그별 개수). 글 상세와 같은 훅을 쓴다.
+  const { categories, categoryCounts, tagCounts } = useListSidebarData();
   const searchInputRef = useRef(null);
   useSearchShortcut(searchInputRef);
   const [selectedCategoryKey, setSelectedCategoryKey] = useState('all');
@@ -143,53 +132,6 @@ const BlogList = () => {
       return newParams;
     }, { replace: true });
   }, [setSearchParams]);
-
-  // 카테고리 조회
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const { data: categoriesData, error: categoriesError } = await getAllCategories();
-        
-        if (categoriesError) {
-          console.error('카테고리 조회 에러:', categoriesError);
-          throw categoriesError;
-        }
-        
-        // "전체" 카테고리를 맨 앞에 추가 (UI용 가상 카테고리)
-        // categoriesData가 null이거나 undefined인 경우 빈 배열로 처리
-        const categoriesWithAll = [
-          ALL_CATEGORY,
-          ...(categoriesData || [])
-        ];
-        
-        setCategories(categoriesWithAll);
-        
-        // 카테고리별 포스트 개수 조회
-        const { data: countsData, error: countsError } = await getPostCountsByAllCategories();
-        if (!countsError && countsData) {
-          setCategoryCounts(countsData);
-        }
-      } catch (error) {
-        console.error('카테고리를 불러오는데 실패했습니다:', error);
-        // 에러가 발생해도 최소한 "전체" 카테고리는 표시
-        setCategories([ALL_CATEGORY]);
-      }
-    };
-
-    fetchCategories();
-  }, []);
-
-  // 사이드바용 전체 태그 개수 조회
-  useEffect(() => {
-    let isCancelled = false;
-    getPublishedPostTagLists().then(({ data, error }) => {
-      if (isCancelled || error || !data) return;
-      setTagCounts(countTags(data));
-    });
-    return () => {
-      isCancelled = true;
-    };
-  }, []);
 
   // 게시글 로드 (일반 모드)
   useEffect(() => {
