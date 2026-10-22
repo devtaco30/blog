@@ -15,7 +15,7 @@ import ProjectsSection from './components/ProjectsSection';
 import CurrentFocusSection from './components/CurrentFocusSection';
 
 // 사진을 누르면 내려받는 파일 (public/docs 에 같은 이름으로 둔다)
-const RESUME_FILE_NAME = '백엔드_개발자_박종혁_경력기술서.pdf';
+const RESUME_FILE_NAME = '백엔드_개발자_박종혁_이력서.pdf';
 
 const About = () => {
   return (
