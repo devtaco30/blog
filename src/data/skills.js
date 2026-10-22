@@ -7,6 +7,10 @@ export const skills = {
   ],
   infrastructure: ['MySQL', 'PostgreSQL', 'MongoDB', 'Redis', 'ElasticSearch', 'Kafka'],
   tools: ['Git', 'Docker', 'AWS', 'Jenkins'],
+  ai: [
+    { name: 'Claude Code', icon: 'claude.svg' },
+    { name: 'Cursor', icon: 'cursor.svg' }
+  ],
   frontend: ['HTML/CSS', 'JavaScript', 'React', 'TypeScript']
 };
 
@@ -27,6 +31,10 @@ export const getProgressBarConfig = (skillName, category) => {
       'Redis': 'Advanced',
       'ElasticSearch': 'Proficient',
       'Kafka': 'Proficient'
+    },
+    'AI Tools': {
+      'Claude Code': 'Proficient',
+      'Cursor': 'Proficient'
     },
     'Tools': {
       'Git': 'Advanced',

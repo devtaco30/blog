@@ -2,6 +2,7 @@ import React from 'react';
 import { Box, Typography, Card } from '@mui/material';
 import CodeIcon from '@mui/icons-material/Code';
 import StorageIcon from '@mui/icons-material/Storage';
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import { motion } from 'framer-motion';
 import { skills, getProgressBarConfig } from '../../../data/skills';
 
@@ -253,6 +254,30 @@ const TechnicalSkillsSection = () => {
                 transition={{ duration: 0.5, delay: index * 0.1 }}
               >
                 {renderSkillCard(tool, 'Tools', `${process.env.PUBLIC_URL}/images/icons/${tool.toLowerCase()}.png`, null, '-80px')}
+              </motion.div>
+            ))}
+          </Box>
+        </Box>
+
+        {/* AI Tools */}
+        <Box>
+          <Typography variant="h6" sx={sectionTitleStyle}>
+            <AutoAwesomeIcon sx={{ color: '#000000' }} /> AI Tools
+          </Typography>
+          <Box sx={{ 
+            display: 'flex', 
+            flexWrap: 'wrap', 
+            gap: 2 
+          }}>
+            {skills.ai.map((tool, index) => (
+              <motion.div
+                key={tool.name}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: false, amount: 0.3 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+              >
+                {renderSkillCard(tool.name, 'AI Tools', `${process.env.PUBLIC_URL}/images/icons/${tool.icon}`, null, '-80px')}
               </motion.div>
             ))}
           </Box>
