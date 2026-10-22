@@ -421,7 +421,7 @@ const BlogList = () => {
 
   if (loading) {
     return (
-      <Box sx={{ flex: 1, minWidth: 0, p: { xs: 2, md: 4 } }}>
+      <Box>
         <Helmet>
           <title>게시글 목록 | DevTaco Blog</title>
           <meta name="description" content="Java · Kotlin 백엔드 개발 경험과 학습 기록을 공유하는 기술 블로그의 게시글 목록" />
@@ -462,8 +462,8 @@ const BlogList = () => {
         <meta name="description" content="Java · Kotlin 백엔드 개발 경험과 학습 기록을 공유하는 기술 블로그의 게시글 목록" />
       </Helmet>
 
-      <Box component="main" sx={{ flex: 1, minWidth: 0, p: { xs: 2, md: '32px 40px' } }}>
-      <Box sx={{ maxWidth: 1360 }}>
+      <Box>
+      <Box>
       <Typography component="h1" sx={{ fontSize: 26, fontWeight: 800, mb: 2 }}>
         우아하고 싶은 포스트
       </Typography>

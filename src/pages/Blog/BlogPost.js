@@ -630,7 +630,7 @@ const BlogPost = () => {
 
   if (loading) {
     return (
-      <Box sx={{ flex: 1, minWidth: 0, p: { xs: 2, md: 4 } }}>
+      <Box>
         {/* 데이터 로딩 중에는 아래에서 post 기반 <Helmet>이 렌더되지 않으므로, public/index.html의
             정적 <title> 폴백을 제거한 이후 실사용자가 겪을 수 있는 "빈 탭 제목" 방지용 기본값 */}
         <Helmet>
@@ -677,7 +677,7 @@ const BlogPost = () => {
 
   if (!post) {
     return (
-      <Box sx={{ flex: 1, minWidth: 0, p: 4, textAlign: 'center' }}>
+      <Box sx={{ p: 4, textAlign: 'center' }}>
         <Helmet>
           <title>게시글을 찾을 수 없습니다 | DevTaco Blog</title>
         </Helmet>
@@ -759,18 +759,7 @@ const BlogPost = () => {
         </Helmet>
       )}
 
-      <Box
-        component="main"
-        sx={{
-          flex: 1,
-          minWidth: 0,
-          p: { xs: 2, md: '32px 40px' },
-          display: 'flex',
-          alignItems: 'flex-start',
-          justifyContent: 'center',
-          gap: '64px',
-        }}
-      >
+      <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: '48px' }}>
         <Box component="article" sx={{ flex: 1, minWidth: 0, maxWidth: 860 }}>
           {/* 경로 */}
           <Box component="nav" aria-label="경로" sx={{ display: 'flex', flexWrap: 'wrap', gap: '6px', fontSize: 13, color: '#6b7280', mb: 2 }}>
@@ -926,7 +915,7 @@ const BlogPost = () => {
         <Box
           sx={{
             display: 'none',
-            '@media (min-width:1440px)': { display: 'block' },
+            '@media (min-width:1366px)': { display: 'block' },
             width: 260,
             flex: 'none',
             position: 'sticky',

@@ -6,6 +6,9 @@ import { useListSidebarData } from './useListSidebarData';
 
 const SidebarContext = createContext(null);
 
+// 사이드바 + 본문 + 목차를 합친 전체 폭의 상한
+const SHELL_MAX_WIDTH = 1440;
+
 const EMPTY_TAGS = [];
 const NO_HANDLERS = {};
 
@@ -32,10 +35,14 @@ const PostsShell = () => {
 
   return (
     <SidebarContext.Provider value={contextValue}>
+      {/* 사이드바와 본문(과 글 상세의 목차)이 한 덩어리로 화면 가운데에 놓인다. 목록과 상세에서 위치가 같다. */}
       <Box
         sx={{
           display: 'flex',
           alignItems: 'flex-start',
+          width: '100%',
+          maxWidth: SHELL_MAX_WIDTH,
+          mx: 'auto',
           minHeight: '100vh',
           '@media (max-width:760px)': { flexDirection: 'column', alignItems: 'stretch' },
         }}
@@ -50,7 +57,10 @@ const PostsShell = () => {
           onTagToggle={(tag) => handlersRef.current.onTagToggle && handlersRef.current.onTagToggle(tag)}
           onOpenTagModal={() => handlersRef.current.onOpenTagModal && handlersRef.current.onOpenTagModal()}
         />
-        <Outlet />
+        {/* 목록과 상세가 같은 왼쪽·오른쪽 끝을 쓰도록 본문 여백은 여기서 한 번만 정한다 */}
+        <Box component="main" sx={{ flex: 1, minWidth: 0, p: { xs: 2, md: '32px 24px 32px 32px' } }}>
+          <Outlet />
+        </Box>
       </Box>
     </SidebarContext.Provider>
   );

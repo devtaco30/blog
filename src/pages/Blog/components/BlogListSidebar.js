@@ -75,7 +75,7 @@ const BlogListSidebar = ({
         backgroundColor: '#ffffff',
         borderRight: '1px solid #e5e7eb',
         // 위쪽은 화면 왼쪽 위에 떠 있는 메뉴 아이콘(⌘+M)이 차지하는 높이만큼 비운다.
-        p: '76px 12px 24px',
+        p: '76px 16px 24px 24px',
         '@media (max-width:760px)': {
           position: 'static',
           height: 'auto',
