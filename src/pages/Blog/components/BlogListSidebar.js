@@ -64,13 +64,25 @@ const BlogListSidebar = ({
       aria-label="글 필터"
       sx={{
         boxSizing: 'border-box',
-        width: 230,
+        width: 250,
         flex: 'none',
-        backgroundColor: '#f8f9fb',
+        // 화면 왼쪽 끝에 붙고 본문이 스크롤돼도 따라오며, 항목이 많으면 안에서 따로 스크롤된다.
+        position: 'sticky',
+        top: 0,
+        alignSelf: 'flex-start',
+        height: '100vh',
+        overflowY: 'auto',
+        backgroundColor: '#ffffff',
         borderRight: '1px solid #e5e7eb',
-        p: '16px 12px',
-        // 가로 배치는 760px 넘는 폭에서만. MUI 기본 md(900px)와 어긋나지 않게 미디어쿼리 하나로 통일한다.
-        '@media (max-width:760px)': { width: '100%', borderRight: 0, borderBottom: '1px solid #e5e7eb' },
+        // 위쪽은 화면 왼쪽 위에 떠 있는 메뉴 아이콘(⌘+M)이 차지하는 높이만큼 비운다.
+        p: '76px 12px 24px',
+        '@media (max-width:760px)': {
+          position: 'static',
+          height: 'auto',
+          width: '100%',
+          borderRight: 0,
+          borderBottom: '1px solid #e5e7eb',
+        },
       }}
     >
       <Typography sx={groupTitleSx}>영역</Typography>

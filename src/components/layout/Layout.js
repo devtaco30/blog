@@ -8,10 +8,14 @@ import { useTerminalNavigation } from '../../hooks/useTerminalNavigation';
 import VisitorCounter from '../ui/VisitorCounter';
 import { ROUTES, HASH_ROUTES } from '../../constants/routes';
 
+// 본문 폭 제한(컨테이너)을 씌우지 않는 페이지. 글 목록은 사이드바를 화면 왼쪽 끝에 붙이기 위해 직접 폭을 정한다.
+const FULL_WIDTH_PATHS = ['/posts'];
+
 const Layout = ({ children }) => {
   const { terminalOpen, toggleTerminal, closeTerminal, handleNavigationClick } = useTerminalNavigation();
   const [showShortcut, setShowShortcut] = useState(true);
   const location = useLocation();
+  const isFullWidthPage = FULL_WIDTH_PATHS.includes(location.pathname);
   
   // 로그인 페이지에서는 네비게이션 숨김
   const isLoginPage = location.pathname === ROUTES.LOGIN || location.hash === HASH_ROUTES.LOGIN;
@@ -96,35 +100,40 @@ const Layout = ({ children }) => {
         </Box>
       )}
 
-      <Container 
-        maxWidth={false}
-        sx={{
-          maxWidth: {
-            xs: '95%',    // 모바일: 95%
-            sm: '90%',    // 작은 화면: 90%
-            md: '85%',    // 중간 화면: 85%
-            lg: '80%',    // 큰 화면: 80%
-            xl: '75%'     // 매우 큰 화면: 75%
-          },
-          mx: 'auto',     // 중앙 정렬
-          px: 0           // 좌우 패딩 제거하여 여백 균등화
-        }}
-      >
-        <Grid 
-          container 
-          spacing={{ xs: 2, md: 3 }}
+      {isFullWidthPage ? (
+        children
+      ) : (
+        <Container 
+          data-testid="page-container"
+          maxWidth={false}
           sx={{
-            maxWidth: '100%',  // Grid는 Container 내에서 전체 너비 사용
-            margin: '0 auto',
-            justifyContent: 'center'
+            maxWidth: {
+              xs: '95%',    // 모바일: 95%
+              sm: '90%',    // 작은 화면: 90%
+              md: '85%',    // 중간 화면: 85%
+              lg: '80%',    // 큰 화면: 80%
+              xl: '75%'     // 매우 큰 화면: 75%
+            },
+            mx: 'auto',     // 중앙 정렬
+            px: 0           // 좌우 패딩 제거하여 여백 균등화
           }}
         >
-          {/* 메인 컨텐츠 영역 */}
-          <Grid item xs={12} md={12}>
-            {children}
+          <Grid 
+            container 
+            spacing={{ xs: 2, md: 3 }}
+            sx={{
+              maxWidth: '100%',  // Grid는 Container 내에서 전체 너비 사용
+              margin: '0 auto',
+              justifyContent: 'center'
+            }}
+          >
+            {/* 메인 컨텐츠 영역 */}
+            <Grid item xs={12} md={12}>
+              {children}
+            </Grid>
           </Grid>
-        </Grid>
-      </Container>
+        </Container>
+      )}
 
       <footer style={{
         textAlign: 'center',

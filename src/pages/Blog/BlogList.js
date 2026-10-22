@@ -506,12 +506,34 @@ const BlogList = () => {
   }
 
   return (
-    <Box sx={{ p: { xs: 2, md: 4 } }}>
+    <Box
+      sx={{
+        display: 'flex',
+        alignItems: 'flex-start',
+        minHeight: '100vh',
+        '@media (max-width:760px)': { flexDirection: 'column', alignItems: 'stretch' },
+      }}
+    >
       <Helmet>
         <title>게시글 목록 | DevTaco Blog</title>
         <meta name="description" content="Java · Kotlin 백엔드 개발 경험과 학습 기록을 공유하는 기술 블로그의 게시글 목록" />
       </Helmet>
-      <Typography variant="h4" sx={{ mb: 2 }}>
+
+      {/* 사이드바: 본문 컨테이너 밖, 화면 왼쪽 끝에 붙는다 */}
+      <BlogListSidebar
+        categories={categories}
+        categoryCounts={categoryCounts}
+        selectedCategoryKey={selectedCategoryKey}
+        onCategoryClick={handleCategoryClick}
+        tagCounts={tagCounts}
+        selectedTags={selectedTags}
+        onTagToggle={handleTagClick}
+        onOpenTagModal={handleSearchModalOpen}
+      />
+
+      <Box component="main" sx={{ flex: 1, minWidth: 0, p: { xs: 2, md: '32px 40px' } }}>
+      <Box sx={{ maxWidth: 1080 }}>
+      <Typography component="h1" sx={{ fontSize: 26, fontWeight: 800, mb: 2 }}>
         우아하고 싶은 포스트
       </Typography>
 
@@ -592,42 +614,22 @@ const BlogList = () => {
         )}
       </Box>
 
-      {/* 사이드바 + 게시글 목록 */}
-      <Box
-        sx={{
-          display: 'flex',
-          border: '1px solid #e5e7eb',
-          borderRadius: '10px',
-          overflow: 'hidden',
-          '@media (max-width:760px)': { flexDirection: 'column' },
-        }}
-      >
-        <BlogListSidebar
-          categories={categories}
-          categoryCounts={categoryCounts}
-          selectedCategoryKey={selectedCategoryKey}
-          onCategoryClick={handleCategoryClick}
-          tagCounts={tagCounts}
-          selectedTags={selectedTags}
-          onTagToggle={handleTagClick}
-          onOpenTagModal={handleSearchModalOpen}
-        />
-        <Box sx={{ flex: 1, minWidth: 0, p: { xs: 2, md: 3 }, display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: '10px', alignContent: 'start' }}>
-          {posts.length === 0 && (
-            <Typography sx={{ py: 6, textAlign: 'center', color: 'text.secondary' }}>
-              조건에 맞는 글이 없습니다.
-            </Typography>
-          )}
-          {posts.map((post) => (
-            <PostCard
-              key={post.id}
-              post={post}
-              categoryName={(categories.find((category) => category.key === post.category_key) || {}).name || ''}
-              onClick={handlePostClick}
-              onTagClick={handleTagClick}
-            />
-          ))}
-        </Box>
+      {/* 게시글 목록 */}
+      <Box sx={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: '10px' }}>
+        {posts.length === 0 && (
+          <Typography sx={{ py: 6, textAlign: 'center', color: 'text.secondary' }}>
+            조건에 맞는 글이 없습니다.
+          </Typography>
+        )}
+        {posts.map((post) => (
+          <PostCard
+            key={post.id}
+            post={post}
+            categoryName={(categories.find((category) => category.key === post.category_key) || {}).name || ''}
+            onClick={handlePostClick}
+            onTagClick={handleTagClick}
+          />
+        ))}
       </Box>
 
       {/* 페이지네이션 */}
@@ -650,6 +652,9 @@ const BlogList = () => {
           />
         </Box>
       )}
+
+      </Box>
+      </Box>
 
       {/* 검색 모달 */}
       <Modal
