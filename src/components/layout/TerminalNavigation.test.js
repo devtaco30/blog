@@ -22,3 +22,13 @@ describe('TerminalNavigation 색', () => {
     expect(getComputedStyle(container).borderTopColor).toBe('#818cf8');
   });
 });
+
+describe('TerminalNavigation 이동 항목', () => {
+  it('home 항목 없이 1 → posts, 2 → about 만 보여 준다', () => {
+    renderOpen();
+    expect(screen.queryByText(/home/)).not.toBeInTheDocument();
+    expect(screen.getByText('1 → posts')).toBeInTheDocument();
+    expect(screen.getByText('2 → about')).toBeInTheDocument();
+    expect(screen.getByText(/number keys \(1,2\)/)).toBeInTheDocument();
+  });
+});

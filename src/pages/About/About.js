@@ -51,7 +51,7 @@ const About = () => {
             }}
           >
             <Avatar
-              src={`${process.env.PUBLIC_URL}/images/profile/IMG_6985.jpg`}
+              src={`${process.env.PUBLIC_URL}/images/profile/avatar.jpg`}
               onClick={() => {
                 const link = document.createElement('a');
                 link.href = `${process.env.PUBLIC_URL}/docs/Java_Kotlin_개발자_박종혁.pdf`;

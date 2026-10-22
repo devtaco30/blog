@@ -53,9 +53,9 @@ const TerminalNavigation = ({ terminalOpen, closeTerminal, handleNavigationClick
                 cursor: 'pointer',
                 '&:hover': { color: TERMINAL_ACCENT_COLOR }
               }}
-              onClick={() => handleNavigationClick('home')}
+              onClick={() => handleNavigationClick('posts')}
             >
-              1 → home
+              1 → posts
             </Typography>
             <Typography 
               variant="body2" 
@@ -68,18 +68,6 @@ const TerminalNavigation = ({ terminalOpen, closeTerminal, handleNavigationClick
               onClick={() => handleNavigationClick('about')}
             >
               2 → about
-            </Typography>
-            <Typography 
-              variant="body2" 
-              sx={{ 
-                color: '#cccccc', 
-                fontFamily: 'monospace',
-                cursor: 'pointer',
-                '&:hover': { color: TERMINAL_ACCENT_COLOR }
-              }}
-              onClick={() => handleNavigationClick('posts')}
-            >
-              3 → posts
             </Typography>
 
           </Box>
@@ -131,7 +119,7 @@ const TerminalNavigation = ({ terminalOpen, closeTerminal, handleNavigationClick
       </Box>
       
       <Typography variant="body2" sx={{ color: TERMINAL_ACCENT_COLOR, fontFamily: 'monospace', mt: 2, fontSize: '0.9rem', fontWeight: 'bold' }}>
-        Press number keys (1,2,3) or letter keys (g,e,l) to navigate. Use {navigator.platform.includes('Mac') ? '⌘+M' : 'Ctrl+M'} to close.
+        Press number keys (1,2) or letter keys (g,e,l) to navigate. Use {navigator.platform.includes('Mac') ? '⌘+M' : 'Ctrl+M'} to close.
       </Typography>
     </Box>
   );

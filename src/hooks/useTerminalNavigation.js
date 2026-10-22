@@ -20,15 +20,11 @@ export const useTerminalNavigation = () => {
       
       switch(event.key) {
         case '1':
-          navigate('/');
+          navigate('/posts');
           setTerminalOpen(false);
           break;
         case '2':
           navigate('/about');
-          setTerminalOpen(false);
-          break;
-        case '3':
-          navigate('/posts');
           setTerminalOpen(false);
           break;
 
@@ -64,10 +60,6 @@ export const useTerminalNavigation = () => {
 
   const handleNavigationClick = (command) => {
     switch(command) {
-      case 'home':
-        navigate('/');
-        setTerminalOpen(false);
-        break;
       case 'about':
         navigate('/about');
         setTerminalOpen(false);
