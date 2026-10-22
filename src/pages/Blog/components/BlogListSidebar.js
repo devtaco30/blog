@@ -7,7 +7,7 @@ import { getSidebarTags } from '../tagCounts';
 const TECH_DOT_COLOR = '#9ca3af';
 
 const groupTitleSx = {
-  fontSize: 11,
+  fontSize: 12,
   fontWeight: 700,
   letterSpacing: '0.06em',
   color: '#6b7280',
@@ -21,11 +21,11 @@ const itemSx = (selected) => ({
   alignItems: 'center',
   gap: 1,
   width: '100%',
-  p: '6px 8px',
+  p: '8px 10px',
   border: 0,
   borderRadius: '6px',
   font: 'inherit',
-  fontSize: 13,
+  fontSize: 14,
   textAlign: 'left',
   cursor: 'pointer',
   color: selected ? ACCENT.main : '#1a1d29',
@@ -39,7 +39,7 @@ const FilterItem = ({ label, count, dotColor, selected, onClick }) => (
   <Box component="button" type="button" aria-pressed={selected} onClick={onClick} sx={itemSx(selected)}>
     <Box component="span" sx={{ width: 8, height: 8, borderRadius: '50%', flex: 'none', backgroundColor: dotColor }} />
     <span>{label}</span>
-    <Box component="span" sx={{ ml: 'auto', fontSize: 11, color: '#6b7280', fontWeight: 400 }}>
+    <Box component="span" sx={{ ml: 'auto', fontSize: 12, color: '#6b7280', fontWeight: 400 }}>
       {count}
     </Box>
   </Box>
@@ -64,7 +64,7 @@ const BlogListSidebar = ({
       aria-label="글 필터"
       sx={{
         boxSizing: 'border-box',
-        width: 250,
+        width: 290,
         flex: 'none',
         // 화면 왼쪽 끝에 붙고 본문이 스크롤돼도 따라오며, 항목이 많으면 안에서 따로 스크롤된다.
         position: 'sticky',

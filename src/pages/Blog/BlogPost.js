@@ -809,7 +809,7 @@ const BlogPost = () => {
 
           <Typography
             component="h1"
-            sx={{ fontSize: { xs: 28, md: 40 }, fontWeight: 800, lineHeight: 1.25, textWrap: 'balance', wordBreak: 'keep-all' }}
+            sx={{ fontSize: { xs: 24, md: 32 }, fontWeight: 800, lineHeight: 1.3, textWrap: 'balance', wordBreak: 'keep-all' }}
           >
             {post.title}
           </Typography>
