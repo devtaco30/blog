@@ -7,7 +7,9 @@ import {
   incrementViewCount,
   getAdjacentPosts,
   getRelatedPostsByCategory,
+  getPublishedPostTagLists,
 } from '../../services/posts';
+import { getAllCategories, getPostCountsByAllCategories } from '../../services/categories';
 
 // react-markdown 및 remark/rehype 플러그인 체인은 ESM-only(exports map 전용) 패키지라
 // 이 프로젝트의 Jest(react-scripts 5 번들 jest-resolve)가 해석하지 못함.
@@ -30,6 +32,11 @@ jest.mock('../../services/posts', () => ({
   incrementViewCount: jest.fn(),
   getAdjacentPosts: jest.fn(),
   getRelatedPostsByCategory: jest.fn(),
+  getPublishedPostTagLists: jest.fn(),
+}));
+jest.mock('../../services/categories', () => ({
+  getAllCategories: jest.fn(),
+  getPostCountsByAllCategories: jest.fn(),
 }));
 
 test('글 제목이 document.title에 반영된다', async () => {
@@ -50,6 +57,9 @@ test('글 제목이 document.title에 반영된다', async () => {
   incrementViewCount.mockResolvedValue({ data: null, error: null });
   getAdjacentPosts.mockResolvedValue({ prev: null, next: null, error: null });
   getRelatedPostsByCategory.mockResolvedValue({ data: [], error: null });
+  getAllCategories.mockResolvedValue({ data: [], error: null });
+  getPostCountsByAllCategories.mockResolvedValue({ data: {}, error: null });
+  getPublishedPostTagLists.mockResolvedValue({ data: [], error: null });
 
   render(
     <HelmetProvider>

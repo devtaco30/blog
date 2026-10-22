@@ -14,7 +14,6 @@ import {
   Chip, 
   Link,
   Skeleton,
-  Breadcrumbs,
   Paper,
   Button,
   Grid,
@@ -27,6 +26,13 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { getPostById, incrementViewCount, getAdjacentPosts, getRelatedPostsByCategory } from '../../services/posts';
 import ImageModal from '../../components/ui/ImageModal';
+import BlogListSidebar from './components/BlogListSidebar';
+import PostToc from './components/PostToc';
+import CodeBlock from './components/CodeBlock';
+import { useListSidebarData } from './useListSidebarData';
+import { usePostHeadings, useActiveHeadingId } from './postToc';
+import { ACCENT, TAG_PILL } from './listTheme';
+import { formatPostDate } from './formatPostDate';
 
 const BlogPost = () => {
   const { id } = useParams();
@@ -38,6 +44,12 @@ const BlogPost = () => {
   const [adjacentPosts, setAdjacentPosts] = useState({ prev: null, next: null });
   const [relatedPosts, setRelatedPosts] = useState([]);
   const [showScrollTop, setShowScrollTop] = useState(false);
+
+  // 왼쪽 사이드바(글 목록과 같은 데이터), 오른쪽 목차(렌더된 본문의 h2·h3에서 만든다)
+  const { categories, categoryCounts, tagCounts } = useListSidebarData();
+  const contentRef = useRef(null);
+  const headings = usePostHeadings(contentRef, post && post.content);
+  const activeHeadingId = useActiveHeadingId(headings);
   
   // URL에서 필터 조건 읽기 (useMemo로 메모이제이션하여 불필요한 재생성 방지)
   const categoryFromUrl = searchParams.get('category') || 'all';
@@ -679,32 +691,56 @@ const BlogPost = () => {
   }
 
   // 날짜 포맷팅
-  const formatDate = (timestamp) => {
-    if (!timestamp) return '';
-    
-    // bigint 타입의 epoch milliseconds를 처리
-    let date;
-    if (typeof timestamp === 'bigint' || typeof timestamp === 'number') {
-      date = new Date(Number(timestamp));
-    } else {
-      date = new Date(timestamp);
-    }
-    
-    return date.toLocaleDateString('ko-KR', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  };
-
   const excerptText = Array.isArray(post.excerpt)
     ? post.excerpt.filter(Boolean).join(' ')
     : (post.excerpt || '');
 
+  const categoryName = (categories.find((category) => category.key === post.category_key) || {}).name || '';
+  const goToList = (query) => navigate(query ? `/posts?${query}` : '/posts');
+
+  const contentSx = {
+    '& h1, & h2, & h3, & h4, & h5, & h6': { fontWeight: 'bold', mt: 4, mb: 2, scrollMarginTop: '24px' },
+    '& h1': { fontSize: '2rem' },
+    '& h2': { fontSize: '1.65rem', mt: 6, pb: 1, borderBottom: '1px solid #e5e7eb' },
+    '& h3': { fontSize: '1.35rem' },
+    '& p': { mb: 2, lineHeight: 1.9, fontSize: '1.05rem' },
+    '& ul, & ol': { mb: 2, pl: 3 },
+    '& li': { mb: 1, lineHeight: 1.7 },
+    '& :not(pre) > code': {
+      backgroundColor: ACCENT.selectedBg,
+      color: ACCENT.main,
+      padding: '2px 6px',
+      borderRadius: '4px',
+      fontFamily: 'monospace',
+      fontSize: '0.92em',
+    },
+    '& blockquote': {
+      borderLeft: '4px solid',
+      borderColor: ACCENT.main,
+      pl: 2,
+      ml: 0,
+      color: 'rgba(0, 0, 0, 0.65)',
+    },
+    '& table': {
+      borderCollapse: 'collapse',
+      width: '100%',
+      mb: 4,
+      fontSize: '0.95rem',
+      border: '1px solid #e5e7eb',
+    },
+    '& th, & td': { padding: '12px 16px', textAlign: 'left', verticalAlign: 'middle', borderBottom: '1px solid #e5e7eb' },
+    '& th': { backgroundColor: '#f8f9fb', color: '#1a1d29', fontWeight: 700 },
+  };
+
   return (
-    <Box sx={{ p: { xs: 2, md: 4 } }}>
+    <Box
+      sx={{
+        display: 'flex',
+        alignItems: 'flex-start',
+        minHeight: '100vh',
+        '@media (max-width:760px)': { flexDirection: 'column', alignItems: 'stretch' },
+      }}
+    >
       {post && (
         <Helmet>
           {/* react-helmet-async v3(React 19 경로)는 <title>의 자식이 여러 개(표현식+문자열)면
@@ -718,167 +754,111 @@ const BlogPost = () => {
           <meta name="twitter:card" content="summary" />
         </Helmet>
       )}
-      {/* Breadcrumbs */}
-      <Breadcrumbs sx={{ mb: 3 }}>
-        <Link 
-          component={RouterLink} 
-          to={`/posts?${searchParams.toString()}`}
-          sx={{ 
-            textDecoration: 'none',
-            color: 'text.secondary',
-            '&:hover': { textDecoration: 'underline' }
-          }}
-        >
-          게시글 목록
-        </Link>
-        <Typography color="text.primary">{post.title}</Typography>
-      </Breadcrumbs>
 
-      {/* 상단 포스트 네비게이션 */}
-      <PostNavigation prev={adjacentPosts.prev} next={adjacentPosts.next} />
+      {/* 사이드바: 글 목록과 같은 것. 항목을 누르면 그 조건의 목록으로 간다 */}
+      <BlogListSidebar
+        categories={categories}
+        categoryCounts={categoryCounts}
+        selectedCategoryKey={post.category_key || 'all'}
+        onCategoryClick={(key) => goToList(key === 'all' ? '' : `category=${encodeURIComponent(key)}`)}
+        tagCounts={tagCounts}
+        selectedTags={[]}
+        onTagToggle={(tag) => goToList(`tags=${encodeURIComponent(tag)}`)}
+        onOpenTagModal={() => goToList('')}
+      />
 
-      {/* 게시글 헤더 */}
-      <Paper elevation={1} sx={{ p: 3, mb: 4 }}>
-        <Typography variant="h4" sx={{ mb: 2, fontWeight: 'bold' }}>
-          {post.title}
-        </Typography>
-        
-        <Typography variant="body1" color="text.secondary" sx={{ mb: 3, lineHeight: 1.6 }}>
-          {Array.isArray(post.excerpt) && post.excerpt.length > 0 
-            ? post.excerpt.filter(item => item.trim()).join(' | ')
-            : ''
-          }
-        </Typography>
-        
-        <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mb: 2 }}>
-          {post.tags && Array.isArray(post.tags) && post.tags.map((tag, index) => (
-            <Chip key={index} label={tag} size="small" variant="outlined" />
-          ))}
-        </Box>
-        
-        <Typography variant="body2" color="text.secondary">
-                          {formatDate(post.published_at)}
-        </Typography>
-      </Paper>
+      <Box
+        component="main"
+        sx={{
+          flex: 1,
+          minWidth: 0,
+          p: { xs: 2, md: '32px 40px' },
+          display: 'flex',
+          alignItems: 'flex-start',
+          justifyContent: 'center',
+          gap: '32px',
+        }}
+      >
+        <Box component="article" sx={{ flex: 1, minWidth: 0, maxWidth: 860 }}>
+          {/* 경로 */}
+          <Box component="nav" aria-label="경로" sx={{ display: 'flex', flexWrap: 'wrap', gap: '6px', fontSize: 13, color: '#6b7280', mb: 2 }}>
+            <Link component={RouterLink} to="/" underline="hover" color="inherit">Home</Link>
+            {categoryName && (
+              <>
+                <span aria-hidden="true">/</span>
+                <Link
+                  component={RouterLink}
+                  to={`/posts?category=${encodeURIComponent(post.category_key)}`}
+                  underline="hover"
+                  color="inherit"
+                >
+                  {categoryName}
+                </Link>
+              </>
+            )}
+            <span aria-hidden="true">/</span>
+            <Box component="span" sx={{ color: '#1a1d29' }}>{post.title}</Box>
+          </Box>
 
-      {/* 게시글 내용 */}
-      <Paper elevation={1} sx={{ p: 4 }}>
-        <Box 
-          sx={{ 
-            '& h1, & h2, & h3, & h4, & h5, & h6': {
-              fontWeight: 'bold',
-              mt: 4,
-              mb: 2
-            },
-            '& h1': { fontSize: '2rem' },
-            '& h2': { fontSize: '1.75rem' },
-            '& h3': { fontSize: '1.5rem' },
-            '& p': { 
-              mb: 2, 
-              lineHeight: 1.8,
-              fontSize: '1.1rem'
-            },
-            '& ul, & ol': { 
-              mb: 2, 
-              pl: 3 
-            },
-            '& li': { 
-              mb: 1,
-              lineHeight: 1.6
-            },
-            '& code': {
-              backgroundColor: 'grey.100',
-              padding: '2px 6px',
-              borderRadius: 1,
-              fontFamily: 'monospace'
-            },
-            '& pre': {
-              backgroundColor: 'grey.100',
-              padding: 2,
-              borderRadius: 1,
-              overflow: 'auto',
-              mb: 3
-            },
-            '& pre code': {
-              backgroundColor: 'transparent',
-              padding: 0
-            },
-            '& blockquote': {
-              borderLeft: '4px solid',
-              borderColor: '#000000',
-              pl: 2,
-              ml: 0,
-              fontStyle: 'italic',
-              color: 'rgba(0, 0, 0, 0.6)'
-            },
-            '& table': {
-              borderCollapse: 'collapse',
-              width: '100%',
-              mb: 4,
-              borderRadius: '8px',
-              overflow: 'hidden',
-              boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-              fontSize: '0.95rem',
-              fontFamily: 'inherit'
-            },
-            '& th, & td': {
-              border: 'none',
-              padding: '16px 20px',
-              textAlign: 'left',
-              verticalAlign: 'middle'
-            },
-            '& th': {
-              backgroundColor: '#2c3e50',
-              color: '#e74c3c'
-            }
-          }}
-        >
-          <ReactMarkdown 
-            remarkPlugins={[remarkGfm, remarkMath]} 
-            rehypePlugins={[rehypeRaw, rehypeKatex]}
-            components={{
-              code: ({ node, inline, className, children, ...props }) => {
-                const match = /language-(\w+)/.exec(className || '');
-                const language = match && match[1];
-                
-                // Mermaid 다이어그램 처리
-                if (language === 'mermaid') {
-                  return <MermaidDiagram>{children}</MermaidDiagram>;
-                }
-                
-                // 일반 코드 블록 (기존 처리)
-                if (!inline && language) {
-                  return (
-                    <pre style={{ 
-                      backgroundColor: '#f5f5f5',
-                      padding: '16px',
-                      borderRadius: '4px',
-                      overflow: 'auto',
-                      marginBottom: '24px'
-                    }}>
-                      <code className={className} {...props}>
-                        {children}
-                      </code>
-                    </pre>
-                  );
-                }
-                
-                // 인라인 코드
-                return (
-                  <code 
-                    className={className} 
-                    style={{
-                      backgroundColor: '#f5f5f5',
-                      padding: '2px 6px',
-                      borderRadius: '4px',
-                      fontFamily: 'monospace'
-                    }}
-                    {...props}
-                  >
+          {/* 태그: 제목 위, 인디고로 채움 */}
+          {Array.isArray(post.tags) && post.tags.length > 0 && (
+            <Box sx={{ display: 'flex', gap: '6px', flexWrap: 'wrap', mb: 2 }}>
+              {post.tags.map((tag) => (
+                <Box
+                  component={RouterLink}
+                  key={tag}
+                  to={`/posts?tags=${encodeURIComponent(tag)}`}
+                  sx={{
+                    fontSize: 12,
+                    fontWeight: 600,
+                    lineHeight: 1.6,
+                    padding: '2px 10px',
+                    borderRadius: 999,
+                    textDecoration: 'none',
+                    color: TAG_PILL.color,
+                    backgroundColor: TAG_PILL.bg,
+                    '&:focus-visible': { outline: `2px solid ${ACCENT.main}`, outlineOffset: 2 },
+                  }}
+                >
+                  {tag}
+                </Box>
+              ))}
+            </Box>
+          )}
+
+          <Typography
+            component="h1"
+            sx={{ fontSize: { xs: 28, md: 40 }, fontWeight: 800, lineHeight: 1.25, textWrap: 'balance', wordBreak: 'keep-all' }}
+          >
+            {post.title}
+          </Typography>
+          <Typography sx={{ mt: 2, fontSize: 14, color: '#6b7280' }}>{formatPostDate(post.published_at)}</Typography>
+          <Box sx={{ borderBottom: '1px solid #e5e7eb', mt: 3, mb: 4 }} />
+
+          {/* 본문 */}
+          <Box ref={contentRef} sx={contentSx}>
+            <ReactMarkdown
+              remarkPlugins={[remarkGfm, remarkMath]}
+              rehypePlugins={[rehypeRaw, rehypeKatex]}
+              components={{
+                // 코드 블록(```): 언어 이름과 줄 번호를 붙인 CodeBlock으로 그린다. mermaid는 다이어그램으로 그린다.
+                pre: ({ children }) => {
+                  const child = React.Children.toArray(children)[0];
+                  const className = (child && child.props && child.props.className) || '';
+                  const match = /language-(\w+)/.exec(className);
+                  const language = match ? match[1] : null;
+                  const text = React.Children.toArray(child && child.props ? child.props.children : children).join('');
+                  if (language === 'mermaid') {
+                    return <MermaidDiagram>{text}</MermaidDiagram>;
+                  }
+                  return <CodeBlock language={language} code={text} />;
+                },
+                // 인라인 코드는 contentSx가 색을 입힌다
+                code: ({ node, className, children, ...props }) => (
+                  <code className={className} {...props}>
                     {children}
                   </code>
-                );
-              },
+                ),
               img: ({node, ...props}) => {
                 // custom-size 클래스가 있는 이미지는 원래 크기 유지
                 if (props.className && props.className.includes('custom-size')) {
@@ -917,45 +897,56 @@ const BlogPost = () => {
                   />
                 );
               }
-            }}
-          >
-            {post.content}
-          </ReactMarkdown>
+              }}
+            >
+              {post.content}
+            </ReactMarkdown>
+          </Box>
+
+          {/* 이전글·다음글, 같은 영역의 다른 글 */}
+          <Box sx={{ mt: 6 }}>
+            <PostNavigation prev={adjacentPosts.prev} next={adjacentPosts.next} />
+          </Box>
+          <RelatedPosts posts={relatedPosts} />
+
+          {/* 뒤로가기 버튼 */}
+          <Box sx={{ mt: 6, mb: 4 }}>
+            <Link
+              component={RouterLink}
+              to={`/posts?${searchParams.toString()}`}
+              sx={{
+                textDecoration: 'none',
+                color: '#000000',
+                fontWeight: 'bold',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 1,
+                '&:hover': { textDecoration: 'underline' },
+              }}
+            >
+              <ArrowBackIcon />
+              게시글 목록으로 돌아가기
+            </Link>
+          </Box>
         </Box>
-      </Paper>
 
-      {/* 같은 카테고리의 다른 글 */}
-      <RelatedPosts posts={relatedPosts} />
-
-      {/* 뒤로가기 버튼 */}
-      <Box sx={{ mt: 8, mb: 4, textAlign: 'center' }}>
-        <Link 
-          component={RouterLink} 
-          to={`/posts?${searchParams.toString()}`}
-          sx={{ 
-            textDecoration: 'none',
-            color: '#000000',
-            fontWeight: 'bold',
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: 1,
-            '&:hover': {
-              textDecoration: 'underline'
-            }
+        {/* 오른쪽 목차: 넓은 화면에서만 */}
+        <Box
+          sx={{
+            display: 'none',
+            '@media (min-width:1200px)': { display: 'block' },
+            width: 260,
+            flex: 'none',
+            position: 'sticky',
+            top: 24,
           }}
         >
-          <ArrowBackIcon />
-          게시글 목록으로 돌아가기
-        </Link>
+          <PostToc headings={headings} activeId={activeHeadingId} />
+        </Box>
       </Box>
 
       {/* 이미지 모달 */}
-      <ImageModal
-        open={imageModal.open}
-        onClose={handleImageModalClose}
-        src={imageModal.src}
-        alt={imageModal.alt}
-      />
+      <ImageModal open={imageModal.open} onClose={handleImageModalClose} src={imageModal.src} alt={imageModal.alt} />
 
       {/* 맨 위로 버튼 */}
       <Fade in={showScrollTop}>
@@ -970,10 +961,8 @@ const BlogPost = () => {
             right: 32,
             backgroundColor: '#000000',
             color: '#ffffff',
-            '&:hover': {
-              backgroundColor: '#333333'
-            },
-            zIndex: 1000
+            '&:hover': { backgroundColor: '#333333' },
+            zIndex: 1000,
           }}
         >
           <KeyboardArrowUpIcon />
