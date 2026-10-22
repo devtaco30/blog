@@ -63,13 +63,22 @@ const PostCard = ({ post, categoryName, onClick, onTagClick }) => {
         <Box sx={{ display: 'flex', flexWrap: 'nowrap', gap: '6px', minWidth: 0, overflow: 'hidden' }}>
           {tags.slice(0, MAX_CARD_TAGS).map((tag) => (
             <Box
-              component="span"
+              component="button"
+              type="button"
               key={tag}
               onClick={(event) => {
                 event.stopPropagation();
                 onTagClick(tag);
               }}
-              sx={{ ...pillSx(TAG_PILL), cursor: 'pointer' }}
+              // 카드의 Enter(글 열기)로 번지지 않게 한다.
+              onKeyDown={(event) => event.stopPropagation()}
+              sx={{
+                border: 0,
+                font: 'inherit',
+                ...pillSx(TAG_PILL),
+                cursor: 'pointer',
+                '&:focus-visible': { outline: '2px solid #4f46e5', outlineOffset: 1 },
+              }}
             >
               {tag}
             </Box>

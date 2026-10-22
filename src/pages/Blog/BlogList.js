@@ -533,7 +533,7 @@ const BlogList = () => {
             flex: 1,
             minWidth: 200,
             maxWidth: 420,
-            '& .Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: ACCENT.main },
+            '& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: ACCENT.main },
           }}
           InputProps={{
             startAdornment: (

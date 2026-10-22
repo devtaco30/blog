@@ -95,4 +95,16 @@ describe('PostCard', () => {
     renderCard();
     expect(screen.getByTestId('area-pill')).toHaveTextContent('머신러닝·딥러닝');
   });
+
+  it('태그 알약은 키보드로 닿을 수 있는 버튼이고 Enter가 카드 열기로 번지지 않는다', () => {
+    const onClick = jest.fn();
+    const onTagClick = jest.fn();
+    renderCard(basePost, { onClick, onTagClick });
+    const tagButton = screen.getByRole('button', { name: 'YOLO' });
+    expect(tagButton).toHaveAttribute('type', 'button');
+    fireEvent.keyDown(tagButton, { key: 'Enter' });
+    expect(onClick).not.toHaveBeenCalled();
+    fireEvent.click(tagButton);
+    expect(onTagClick).toHaveBeenCalledWith('YOLO');
+  });
 });

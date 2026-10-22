@@ -64,12 +64,12 @@ const BlogListSidebar = ({
       aria-label="글 필터"
       sx={{
         boxSizing: 'border-box',
-        width: { xs: '100%', md: 230 },
+        width: 230,
         flex: 'none',
         backgroundColor: '#f8f9fb',
-        borderRight: { md: '1px solid #e5e7eb' },
-        borderBottom: { xs: '1px solid #e5e7eb', md: 0 },
+        borderRight: '1px solid #e5e7eb',
         p: '16px 12px',
+        // 가로 배치는 760px 넘는 폭에서만. MUI 기본 md(900px)와 어긋나지 않게 미디어쿼리 하나로 통일한다.
         '@media (max-width:760px)': { width: '100%', borderRight: 0, borderBottom: '1px solid #e5e7eb' },
       }}
     >
