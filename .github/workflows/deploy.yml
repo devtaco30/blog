@@ -23,6 +23,8 @@ jobs:
       uses: actions/setup-node@v2
       with:
         node-version: '20'
+        # npm ci가 매번 7분씩 걸려서 의존성 다운로드를 캐시한다 (package-lock.json 기준)
+        cache: npm
 
     - name: Clean Install
       run: npm ci
