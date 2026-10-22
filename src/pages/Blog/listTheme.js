@@ -2,7 +2,9 @@
 
 export const ACCENT = { main: '#4f46e5', selectedBg: '#e8e7fd' };
 
-export const TAG_PILL = { color: '#4b5563', bg: '#f1f2f5' };
+// 기술 태그는 눈에 띄도록 강조색을 꽉 채우고, 숨은 태그 개수(+N)는 한 단계 연하게 둔다.
+export const TAG_PILL = { color: '#ffffff', bg: ACCENT.main };
+export const TAG_MORE_PILL = { color: ACCENT.main, bg: ACCENT.selectedBg };
 
 const FALLBACK_AREA_COLOR = { color: '#6b7280', bg: '#eef0f3' };
 

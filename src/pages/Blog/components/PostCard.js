@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Typography } from '@mui/material';
-import { getAreaColor, TAG_PILL } from '../listTheme';
+import { getAreaColor, TAG_PILL, TAG_MORE_PILL } from '../listTheme';
 import { formatPostDate } from '../formatPostDate';
 
 export const MAX_CARD_TAGS = 3;
@@ -76,6 +76,7 @@ const PostCard = ({ post, categoryName, onClick, onTagClick }) => {
                 border: 0,
                 font: 'inherit',
                 ...pillSx(TAG_PILL),
+                fontWeight: 600,
                 cursor: 'pointer',
                 '&:focus-visible': { outline: '2px solid #4f46e5', outlineOffset: 1 },
               }}
@@ -84,7 +85,7 @@ const PostCard = ({ post, categoryName, onClick, onTagClick }) => {
             </Box>
           ))}
           {hiddenTagCount > 0 && (
-            <Box component="span" sx={pillSx(TAG_PILL)}>{`+${hiddenTagCount}`}</Box>
+            <Box component="span" sx={{ ...pillSx(TAG_MORE_PILL), fontWeight: 600 }}>{`+${hiddenTagCount}`}</Box>
           )}
         </Box>
         <Typography component="span" sx={{ ml: 'auto', flex: 'none', fontSize: 12, color: '#6b7280' }}>

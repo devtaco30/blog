@@ -1,4 +1,4 @@
-import { getAreaColor, ACCENT, TAG_PILL } from './listTheme';
+import { getAreaColor, ACCENT, TAG_PILL, TAG_MORE_PILL } from './listTheme';
 
 describe('getAreaColor', () => {
   it('머신러닝·딥러닝 영역은 보라색 글자와 연보라 배경이다', () => {
@@ -27,7 +27,11 @@ describe('색 상수', () => {
     expect(ACCENT).toEqual({ main: '#4f46e5', selectedBg: '#e8e7fd' });
   });
 
-  it('기술 태그 알약은 회색이다', () => {
-    expect(TAG_PILL).toEqual({ color: '#4b5563', bg: '#f1f2f5' });
+  it('기술 태그 알약은 인디고 배경에 흰 글자이다', () => {
+    expect(TAG_PILL).toEqual({ color: '#ffffff', bg: '#4f46e5' });
+  });
+
+  it('+N 알약은 연한 인디고 배경에 인디고 글자이다', () => {
+    expect(TAG_MORE_PILL).toEqual({ color: '#4f46e5', bg: '#e8e7fd' });
   });
 });

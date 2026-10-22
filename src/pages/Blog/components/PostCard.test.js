@@ -107,4 +107,13 @@ describe('PostCard', () => {
     fireEvent.click(tagButton);
     expect(onTagClick).toHaveBeenCalledWith('YOLO');
   });
+
+  it('기술 태그 알약은 인디고 배경에 흰 글자이고 +N은 연한 인디고이다', () => {
+    renderCard();
+    expect(screen.getByRole('button', { name: 'YOLO' })).toHaveStyle({
+      color: 'rgb(255, 255, 255)',
+      backgroundColor: 'rgb(79, 70, 229)',
+    });
+    expect(screen.getByText('+2')).toHaveStyle({ color: 'rgb(79, 70, 229)', backgroundColor: 'rgb(232, 231, 253)' });
+  });
 });
