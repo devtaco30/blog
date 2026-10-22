@@ -54,9 +54,11 @@ const PostCard = ({ post, categoryName, onClick, onTagClick }) => {
       }}
     >
       <Box sx={{ display: 'flex', alignItems: 'center', gap: '6px', mb: '6px', overflow: 'hidden' }}>
-        <Box component="span" sx={{ ...pillSx(area), fontWeight: 700 }}>
-          {categoryName}
-        </Box>
+        {categoryName && (
+          <Box component="span" data-testid="area-pill" sx={{ ...pillSx(area), fontWeight: 700 }}>
+            {categoryName}
+          </Box>
+        )}
         <Box sx={{ display: 'flex', flexWrap: 'nowrap', gap: '6px', minWidth: 0, overflow: 'hidden' }}>
           {tags.slice(0, MAX_CARD_TAGS).map((tag) => (
             <Box

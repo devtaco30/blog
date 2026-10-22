@@ -84,4 +84,15 @@ describe('PostCard', () => {
     expect(onClick).toHaveBeenCalledTimes(2);
     expect(onClick).toHaveBeenCalledWith(basePost);
   });
+
+  it('영역 이름이 비어 있으면 영역 알약을 그리지 않는다 (영역 목록을 아직 못 불러온 경우)', () => {
+    render(<PostCard post={basePost} categoryName="" onClick={() => {}} onTagClick={() => {}} />);
+    expect(screen.getByText('YOLO')).toBeInTheDocument();
+    expect(screen.queryByTestId('area-pill')).not.toBeInTheDocument();
+  });
+
+  it('영역 이름이 있으면 영역 알약이 있다', () => {
+    renderCard();
+    expect(screen.getByTestId('area-pill')).toHaveTextContent('머신러닝·딥러닝');
+  });
 });
