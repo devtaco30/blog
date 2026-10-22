@@ -14,6 +14,9 @@ import TechnicalSkillsSection from './components/TechnicalSkillsSection';
 import ProjectsSection from './components/ProjectsSection';
 import CurrentFocusSection from './components/CurrentFocusSection';
 
+// 사진을 누르면 내려받는 파일 (public/docs 에 같은 이름으로 둔다)
+const RESUME_FILE_NAME = '백엔드_개발자_박종혁_경력기술서.pdf';
+
 const About = () => {
   return (
     <Box sx={{ 
@@ -54,8 +57,8 @@ const About = () => {
               src={`${process.env.PUBLIC_URL}/images/profile/avatar.jpg`}
               onClick={() => {
                 const link = document.createElement('a');
-                link.href = `${process.env.PUBLIC_URL}/docs/Java_Kotlin_개발자_박종혁.pdf`;
-                link.download = 'Java_Kotlin_개발자_박종혁_이력서.pdf';
+                link.href = `${process.env.PUBLIC_URL}/docs/${RESUME_FILE_NAME}`;
+                link.download = RESUME_FILE_NAME;
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);

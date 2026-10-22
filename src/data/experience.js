@@ -1,5 +1,12 @@
 export const experience = [
   {
+    company: '해빗웍스 (Habitworks)',
+    position: '1인 개발사 · 기획/개발/운영',
+    period: '2026.04 - 현재',
+    description: 'AI 면접 멘토 서비스 Apex 등을 기획부터 출시·운영까지 진행, AI 코치 응답 평가 기준 수립',
+    technologies: ['Python', 'FastAPI', 'PostgreSQL', 'Redis', 'Claude API', 'Docker', 'Fly.io']
+  },
+  {
     company: '블루밍비트',
     position: '백엔드 개발자',
     period: '2023.08 - 2025.08 (2년)',

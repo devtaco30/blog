@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, fireEvent } from '@testing-library/react';
 import { HelmetProvider } from 'react-helmet-async';
 import About from './About';
 
@@ -24,5 +24,24 @@ describe('About 프로필 사진', () => {
     );
     const img = container.querySelector('img');
     expect(img).toHaveAttribute('src', expect.stringContaining('/images/profile/avatar.jpg'));
+  });
+});
+
+describe('About 이력서 다운로드', () => {
+  it('사진을 누르면 최신 경력기술서 PDF 를 내려받는다', () => {
+    const clicked = [];
+    const spy = jest.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(function () {
+      clicked.push({ href: this.getAttribute('href'), download: this.download });
+    });
+    const { container } = render(
+      <HelmetProvider>
+        <About />
+      </HelmetProvider>
+    );
+    fireEvent.click(container.querySelector('img'));
+    spy.mockRestore();
+    expect(clicked).toHaveLength(1);
+    expect(clicked[0].href).toContain('/docs/백엔드_개발자_박종혁_경력기술서.pdf');
+    expect(clicked[0].download).toBe('백엔드_개발자_박종혁_경력기술서.pdf');
   });
 });
