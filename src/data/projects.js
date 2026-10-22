@@ -30,7 +30,7 @@ export const projects = [
       '**온디바이스 ML 추론**으로 바벨 경로 분석, Galaxy A36 기준 처리 시간 **108초 → 20초** (81% 단축)'
     ],
     technologies: ['Kotlin', 'Spring Boot', 'PostgreSQL', 'React Native', 'Python', 'YOLO', 'OpenCV'],
-    period: '개인 프로젝트'
+    period: '2025.05 - 2026.06'
   },
   {
     title: '[블루밍비트] FCM Push 기능 고도화',

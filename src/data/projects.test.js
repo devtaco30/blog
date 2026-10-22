@@ -18,6 +18,11 @@ describe('projects Side Builds', () => {
     expect(engine.description.join(' ')).toContain('14.6ms → 1.6ms');
   });
 
+  it('Grit은 2025.05에 시작해 2026.04부터 다시 만든 뒤 2026.06쯤 끝난 기간으로 적는다', () => {
+    const grit = projects.find((project) => project.title.includes('Grit'));
+    expect(grit.period).toBe('2025.05 - 2026.06');
+  });
+
   it('모든 항목에 기간과 기술 스택이 있다', () => {
     projects.forEach((project) => {
       expect(project.period).toBeTruthy();
