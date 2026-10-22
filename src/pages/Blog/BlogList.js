@@ -532,7 +532,7 @@ const BlogList = () => {
       />
 
       <Box component="main" sx={{ flex: 1, minWidth: 0, p: { xs: 2, md: '32px 40px' } }}>
-      <Box sx={{ maxWidth: 1080 }}>
+      <Box sx={{ maxWidth: 1360 }}>
       <Typography component="h1" sx={{ fontSize: 26, fontWeight: 800, mb: 2 }}>
         우아하고 싶은 포스트
       </Typography>
