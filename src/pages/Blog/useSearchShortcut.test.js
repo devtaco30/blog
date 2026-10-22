@@ -13,7 +13,7 @@ describe('useSearchShortcut', () => {
     render(<Harness />);
     const input = screen.getByLabelText('검색');
     fireEvent.keyDown(window, { key: 'k', ctrlKey: true });
-    expect(document.activeElement).toBe(input);
+    expect(input).toHaveFocus();
     expect(input.selectionStart).toBe(0);
     expect(input.selectionEnd).toBe('spring boot'.length);
   });
@@ -21,7 +21,7 @@ describe('useSearchShortcut', () => {
   it('Cmd+K도 같다', () => {
     render(<Harness />);
     fireEvent.keyDown(window, { key: 'K', metaKey: true });
-    expect(document.activeElement).toBe(screen.getByLabelText('검색'));
+    expect(screen.getByLabelText('검색')).toHaveFocus();
   });
 
   it('Ctrl+K의 기본 동작은 막는다', () => {
@@ -35,7 +35,7 @@ describe('useSearchShortcut', () => {
     render(<Harness />);
     fireEvent.keyDown(window, { key: 'k' });
     fireEvent.keyDown(window, { key: 'm', ctrlKey: true });
-    expect(document.activeElement).not.toBe(screen.getByLabelText('검색'));
+    expect(screen.getByLabelText('검색')).not.toHaveFocus();
   });
 
   it('언마운트한 뒤에는 동작하지 않는다', () => {

@@ -17,7 +17,7 @@ describe('TerminalNavigation 색', () => {
 
   it('터미널 위쪽 테두리도 같은 인디고이다', () => {
     renderOpen();
-    const container = screen.getByText(/devtaco@portfolio/).parentElement.parentElement;
+    const container = screen.getByTestId('terminal-navigation');
     // jsdom은 단축 속성의 색을 rgb로 바꾸지 않고 적은 그대로 돌려준다.
     expect(getComputedStyle(container).borderTopColor).toBe('#818cf8');
   });

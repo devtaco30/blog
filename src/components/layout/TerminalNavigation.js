@@ -7,7 +7,7 @@ const TERMINAL_ACCENT_COLOR = '#818cf8';
 
 const TerminalNavigation = ({ terminalOpen, closeTerminal, handleNavigationClick }) => {
   return (
-    <Box sx={{
+    <Box data-testid="terminal-navigation" sx={{
       position: 'fixed',
       bottom: 0,
       left: 0,

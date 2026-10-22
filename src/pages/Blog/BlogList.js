@@ -14,11 +14,14 @@ import {
 } from '@mui/material';
 import { useNavigate, useSearchParams, useNavigationType } from 'react-router-dom';
 import SearchIcon from '@mui/icons-material/Search';
-import FilterListIcon from '@mui/icons-material/FilterList';
 import { Helmet } from 'react-helmet-async';
-import { getPostsWithPageNumber, searchPostsWithPageNumber } from '../../services/posts';
+import { getPostsWithPageNumber, searchPostsWithPageNumber, getPublishedPostTagLists } from '../../services/posts';
 import { getAllCategories, getPostCountsByAllCategories } from '../../services/categories';
-import { getVisibleCategories } from './getVisibleCategories';
+import BlogListSidebar from './components/BlogListSidebar';
+import PostCard from './components/PostCard';
+import { useSearchShortcut } from './useSearchShortcut';
+import { countTags } from './tagCounts';
+import { ACCENT } from './listTheme';
 
 // UI용 "전체" 카테고리 (DB에는 존재하지 않음)
 const ALL_CATEGORY = { 
@@ -66,6 +69,10 @@ const BlogList = () => {
   const [isSearchMode, setIsSearchMode] = useState(false);
   const [categories, setCategories] = useState([ALL_CATEGORY]);
   const [categoryCounts, setCategoryCounts] = useState({});
+  /** 사이드바 기술 목록용: 전체 발행 글 기준 태그 개수 (불러오지 못하면 빈 배열 → 기술 묶음 숨김) */
+  const [tagCounts, setTagCounts] = useState([]);
+  const searchInputRef = useRef(null);
+  useSearchShortcut(searchInputRef);
   const [selectedCategoryKey, setSelectedCategoryKey] = useState('all');
   /** updateUrlParams 콜백이 stale한 previousParams로 병합할 때 category 쿼리가 빠지는 것을 막기 위함 */
   const selectedCategoryKeyRef = useRef(selectedCategoryKey);
@@ -170,6 +177,18 @@ const BlogList = () => {
     };
 
     fetchCategories();
+  }, []);
+
+  // 사이드바용 전체 태그 개수 조회
+  useEffect(() => {
+    let isCancelled = false;
+    getPublishedPostTagLists().then(({ data, error }) => {
+      if (isCancelled || error || !data) return;
+      setTagCounts(countTags(data));
+    });
+    return () => {
+      isCancelled = true;
+    };
   }, []);
 
   // 게시글 로드 (일반 모드)
@@ -450,32 +469,6 @@ const BlogList = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // 날짜 포맷팅
-  const formatDate = (timestamp) => {
-    if (!timestamp) return '';
-    
-    // epoch milliseconds를 처리 (1724112000000 형태)
-    let date;
-    if (typeof timestamp === 'bigint' || typeof timestamp === 'number') {
-      // epoch milliseconds를 Date 객체로 변환
-      date = new Date(Number(timestamp));
-    } else if (typeof timestamp === 'string') {
-      // ISO 문자열 형태인 경우
-      date = new Date(timestamp);
-    } else {
-      date = new Date(timestamp);
-    }
-    
-    // 한국 시간대로 변환하여 표시
-    const result = date.toLocaleDateString('ko-KR', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    });
-    
-    return result;
-  };
-
   if (loading) {
     return (
       <Box sx={{ p: { xs: 2, md: 4 } }}>
@@ -522,44 +515,10 @@ const BlogList = () => {
         우아하고 싶은 포스트
       </Typography>
 
-      {/* 카테고리 필터 */}
-      <Box 
-        sx={{ 
-          mb: 3, 
-          pt: 2,
-          pb: 2,
-          borderTop: '1px solid #999999',
-          borderBottom: '1px solid #999999',
-          display: 'flex', 
-          gap: 1, 
-          flexWrap: 'wrap', 
-          alignItems: 'center' 
-        }}
-      >
-        {getVisibleCategories(categories, categoryCounts, selectedCategoryKey).map((category) => (
-          <Chip
-            key={category.key}
-            label={`${category.name} (${categoryCounts[category.key] || 0})`}
-            onClick={() => handleCategoryClick(category.key)}
-            sx={{
-              backgroundColor: selectedCategoryKey === category.key ? '#f0f7e0' : '#ffffff',
-              color: selectedCategoryKey === category.key ? '#000000' : '#000000',
-              border: '1px solid',
-              borderColor: selectedCategoryKey === category.key ? '#000000' : '#000000',
-              cursor: 'pointer',
-              fontWeight: selectedCategoryKey === category.key ? 'bold' : 'normal',
-              '&:hover': {
-                backgroundColor: selectedCategoryKey === category.key ? '#f0f7e0' : '#f5f5f5',
-                borderColor: '#000000'
-              }
-            }}
-          />
-        ))}
-      </Box>
-
-      {/* 검색 및 필터 */}
-      <Box sx={{ mb: 4, display: 'flex', gap: 2, flexWrap: 'wrap', alignItems: 'center' }}>
+      {/* 검색 */}
+      <Box sx={{ mb: 3, display: 'flex', gap: 2, flexWrap: 'wrap', alignItems: 'center' }}>
         <TextField
+          inputRef={searchInputRef}
           placeholder="게시글 검색..."
           value={searchKeyword}
           onChange={(e) => setSearchKeyword(e.target.value)}
@@ -570,20 +529,42 @@ const BlogList = () => {
             }
           }}
           size="small"
-          sx={{ minWidth: 200 }}
+          sx={{
+            flex: 1,
+            minWidth: 200,
+            maxWidth: 420,
+            '& .Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: ACCENT.main },
+          }}
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
                 <SearchIcon />
               </InputAdornment>
             ),
+            endAdornment: (
+              <InputAdornment position="end">
+                <Box
+                  component="kbd"
+                  sx={{
+                    border: '1px solid #e5e7eb',
+                    borderRadius: '4px',
+                    px: '5px',
+                    fontSize: 11,
+                    color: '#6b7280',
+                    '@media (max-width:760px)': { display: 'none' },
+                  }}
+                >
+                  Ctrl K
+                </Box>
+              </InputAdornment>
+            ),
           }}
         />
-        
+
         {/* 검색 실행 버튼 */}
-        <IconButton 
+        <IconButton
           onClick={() => executeSearch()}
-          sx={{ 
+          sx={{
             border: '1px solid #ddd',
             '&:hover': { backgroundColor: '#f5f5f5' }
           }}
@@ -591,27 +572,15 @@ const BlogList = () => {
         >
           <SearchIcon />
         </IconButton>
-        
-        {/* 태그 필터 모달 열기 버튼 */}
-        <IconButton 
-          onClick={handleSearchModalOpen}
-          sx={{ 
-            border: '1px solid #ddd',
-            '&:hover': { backgroundColor: '#f5f5f5' }
-          }}
-          title="태그 필터"
-        >
-          <FilterListIcon />
-        </IconButton>
 
         {selectedTags.length > 0 && (
-          <Chip 
+          <Chip
             label={`선택된 태그: ${selectedTags.length}개`}
             onDelete={() => {
               setSelectedTags([]);
               setCurrentPage(1);
               updateUrlParams({ tags: null, page: 1 });
-              
+
               // 검색어도 없으면 일반 모드로 전환
               if (!searchKeyword.trim()) {
                 setIsSearchMode(false);
@@ -623,55 +592,38 @@ const BlogList = () => {
         )}
       </Box>
 
-      {/* 게시글 목록 */}
-      <Box sx={{ display: 'grid', gap: 3 }}>
-        {posts.map((post) => (
-          <Paper 
-            key={post.id} 
-            elevation={1} 
-            sx={{ 
-              p: 3, 
-              cursor: 'pointer',
-              transition: 'all 0.2s',
-              '&:hover': {
-                elevation: 3,
-                transform: 'translateY(-2px)',
-                boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
-              }
-            }}
-            onClick={() => handlePostClick(post)}
-          >
-            <Typography variant="h5" sx={{ mb: 2, fontWeight: 'bold' }}>
-              {post.title}
-            </Typography>
-            
-            <Typography variant="body1" color="text.secondary" sx={{ mb: 2, lineHeight: 1.6 }}>
-              {Array.isArray(post.excerpt) && post.excerpt.length > 0 
-                ? post.excerpt.filter(item => item.trim()).join(' | ')
-                : post.content.substring(0, 150) + '...'
-              }
-            </Typography>
-            
-            <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mb: 2 }}>
-              {post.tags && Array.isArray(post.tags) && post.tags.map((tag, index) => (
-                <Chip 
-                  key={index} 
-                  label={tag} 
-                  size="small" 
-                  variant="outlined"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleTagClick(tag);
-                  }}
-                />
-              ))}
-            </Box>
-            
-            <Typography variant="caption" color="text.secondary">
-                              {formatDate(post.published_at)}
-            </Typography>
-          </Paper>
-        ))}
+      {/* 사이드바 + 게시글 목록 */}
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'flex-start',
+          border: '1px solid #e5e7eb',
+          borderRadius: '10px',
+          overflow: 'hidden',
+          '@media (max-width:760px)': { flexDirection: 'column' },
+        }}
+      >
+        <BlogListSidebar
+          categories={categories}
+          categoryCounts={categoryCounts}
+          selectedCategoryKey={selectedCategoryKey}
+          onCategoryClick={handleCategoryClick}
+          tagCounts={tagCounts}
+          selectedTags={selectedTags}
+          onTagToggle={handleTagClick}
+          onOpenTagModal={handleSearchModalOpen}
+        />
+        <Box sx={{ flex: 1, minWidth: 0, p: { xs: 2, md: 3 }, display: 'grid', gap: '10px' }}>
+          {posts.map((post) => (
+            <PostCard
+              key={post.id}
+              post={post}
+              categoryName={(categories.find((category) => category.key === post.category_key) || {}).name || ''}
+              onClick={handlePostClick}
+              onTagClick={handleTagClick}
+            />
+          ))}
+        </Box>
       </Box>
 
       {/* 페이지네이션 */}
@@ -681,8 +633,14 @@ const BlogList = () => {
             count={Math.ceil((isSearchMode ? searchTotalCount : totalCount) / POSTS_PER_PAGE)}
             page={currentPage}
             onChange={handlePageChange}
-            color="primary"
             size="large"
+            sx={{
+              '& .MuiPaginationItem-root.Mui-selected': {
+                backgroundColor: ACCENT.main,
+                color: '#ffffff',
+                '&:hover': { backgroundColor: ACCENT.main },
+              },
+            }}
             showFirstButton
             showLastButton
           />
