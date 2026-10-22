@@ -1,0 +1,256 @@
+<!DOCTYPE html><html lang="en"><head><script type="text/javascript">!function(n){if("/"===n.search[1]){var a=n.search.slice(1).split("&").map((function(n){return n.replace(/~and~/g,"&")})).join("?");window.history.replaceState(null,null,n.pathname.slice(0,-1)+a+n.hash)}}(window.location)</script><meta charset="utf-8"><link rel="icon" href="/blog/favicon.ico"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#000000"><meta name="keywords" content="Java, Kotlin, Spring Boot, MSA, 개발, 백엔드, coroutine"><meta name="author" content="DevTaco"><meta property="og:image" content="https://devtaco30.github.io/blog/og-image.png"><meta property="twitter:image" content="https://devtaco30.github.io/blog/og-image.png"><meta property="twitter:url" content="https://devtaco30.github.io/blog/"><link rel="apple-touch-icon" href="/blog/apple-touch-icon.png"><link rel="manifest" href="/blog/manifest.json"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&amp;family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet"><script defer="defer" src="/blog/static/js/main.404b9165.js"></script><link href="/blog/static/css/main.5b86466f.css" rel="stylesheet"><style data-emotion="css" data-s=""></style><title>EST AI - YOLO : 객체 탐지 기초 &amp; 이미지 분류 실습 | DevTaco Blog</title><meta name="description" content="분류, 위치 파악, 객체 탐지가 어떻게 다른지, 2-Stage와 1-Stage Detector의 차이, YOLO의 작동 원리와 버전 역사를 정리합니다. Ultralytics로 음식 이미지 분류 모델을 직접 훈련하고 평가합니다."><meta property="og:title" content="EST AI - YOLO : 객체 탐지 기초 &amp; 이미지 분류 실습"><meta property="og:description" content="분류, 위치 파악, 객체 탐지가 어떻게 다른지, 2-Stage와 1-Stage Detector의 차이, YOLO의 작동 원리와 버전 역사를 정리합니다. Ultralytics로 음식 이미지 분류 모델을 직접 훈련하고 평가합니다."><meta property="og:type" content="article"><meta property="og:url" content="https://devtaco30.github.io/blog/posts/61"><meta name="twitter:card" content="summary"></head><body><noscript>You need to enable JavaScript to run this app.</noscript><div id="root"><div class="App"><div class="MuiBox-root css-kurlqb"><div class="MuiBox-root css-171onha"><button class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-1f6w95t" tabindex="0" type="button" id=":r0:"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="MenuIcon"><path d="M3 18h18v-2H3zm0-5h18v-2H3zm0-7v2h18V6z"></path></svg></button><div class="MuiBox-root css-1szb58x"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-218waq" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowBackIcon"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z"></path></svg><div class="MuiBox-root css-wq4jw1"><span>⌘+M</span></div></div></div></div><div class="MuiContainer-root css-15jb5o1" data-testid="page-container"><div class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-2 MuiGrid-spacing-md-3 css-1ht06td"><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-md-12 css-15j76c0"><div class="MuiBox-root css-15rigdj"><nav class="MuiTypography-root MuiTypography-body1 MuiBreadcrumbs-root css-1v2kxik"><ol class="MuiBreadcrumbs-ol css-51eq8m"><li class="MuiBreadcrumbs-li"><a class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways css-gj78h6" href="/blog/posts" data-discover="true">게시글 목록</a></li><li aria-hidden="true" class="MuiBreadcrumbs-separator css-1nd5pgh">/</li><li class="MuiBreadcrumbs-li"><p class="MuiTypography-root MuiTypography-body1 css-1cr0rz6">EST AI - YOLO : 객체 탐지 기초 &amp; 이미지 분류 실습</p></li></ol></nav><div class="MuiBox-root css-15djlns"><button class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-1y18wdw" tabindex="0" type="button" id=":r7:"><span class="MuiButton-icon MuiButton-startIcon MuiButton-iconSizeMedium css-1ygddt1"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowBackIcon"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z"></path></svg></span><div class="MuiBox-root css-0"><span class="MuiTypography-root MuiTypography-caption css-115rlu8">이전글</span><p class="MuiTypography-root MuiTypography-body2 css-10qk5g4">EST AI - YOLO : 객체 탐지 실습 · 세그멘테이션 · 트래킹</p></div></button><button class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-1k0z50p" tabindex="0" type="button" id=":r8:"><div class="MuiBox-root css-0"><span class="MuiTypography-root MuiTypography-caption css-115rlu8">다음글</span><p class="MuiTypography-root MuiTypography-body2 css-10qk5g4">EST AI - OpenCV : 마우스 이벤트 &amp; 반자동 문서 스캔</p></div><span class="MuiButton-icon MuiButton-endIcon MuiButton-iconSizeMedium css-6bt4d2"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowForwardIcon"><path d="m12 4-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"></path></svg></span></button></div><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-10t0qv5" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h4 class="MuiTypography-root MuiTypography-h4 css-k5jvd2">EST AI - YOLO : 객체 탐지 기초 &amp; 이미지 분류 실습</h4><p class="MuiTypography-root MuiTypography-body1 css-104xg3">분류, 위치 파악, 객체 탐지가 어떻게 다른지, 2-Stage와 1-Stage Detector의 차이, YOLO의 작동 원리와 버전 역사를 정리합니다. | Ultralytics로 음식 이미지 분류 모델을 직접 훈련하고 평가합니다.</p><div class="MuiBox-root css-1prrn6n"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">YOLO</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Ultralytics</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Object Detection</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Image Classification</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">YOLOv8</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">mAP</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">IoU</span></div></div><p class="MuiTypography-root MuiTypography-body2 css-l6pb42">2026년 3월 9일 오후 12:35</p></div><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-1i779yj" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><div class="MuiBox-root css-13lazol"><h2>📚 오늘의 학습 내용</h2>
+<p>오늘은 <strong>YOLO(You Only Look Once)</strong> 의 핵심 개념과 역사를 정리하고, Ultralytics 라이브러리로 <strong>음식 이미지 분류 모델</strong>을 직접 훈련·평가하는 실습을 진행했습니다.</p>
+<hr>
+<h2>1️⃣ 객체 탐지란?</h2>
+<h3>분류 / 위치 파악 / 객체 탐지</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>용어</th><th>설명</th></tr></thead><tbody><tr><td><strong>Classification</strong> (분류)</td><td>이미지 속 물체가 어떤 클래스인지만 판별</td></tr><tr><td><strong>Localization</strong> (위치 파악)</td><td>물체가 어디 있는지 바운딩 박스로 표시</td></tr><tr><td><strong>Object Detection</strong> (객체 탐지)</td><td>분류 + 위치 파악을 동시에 수행</td></tr></tbody></table>
+<h3>2-Stage vs 1-Stage Detector</h3>
+<p><strong>R-CNN (2-Stage)</strong></p>
+<ul>
+<li>후보 영역 제안(Region Proposal) → CNN 특징 추출 → 분류 및 위치 보정 순서로 처리</li>
+<li>정확도는 높지만 속도가 치명적으로 느리고, 구조가 복잡함</li>
+</ul>
+<p><strong>YOLO (1-Stage)</strong></p>
+<ul>
+<li>이미지 전체를 <strong>단 한 번</strong>만 보고 위치·클래스를 동시에 예측</li>
+<li>압도적으로 빠르고, 이미지 전체를 보기 때문에 배경 오류도 적음</li>
+<li>R-CNN 대비 상대적으로 정확도가 낮다는 단점</li>
+</ul>
+<blockquote>
+<p>💡 극도의 정확도가 필요하면 R-CNN, 실시간 처리가 필요하면 YOLO</p>
+</blockquote>
+<hr>
+<h2>2️⃣ YOLO 작동 원리</h2>
+<h3>처리 흐름</h3>
+<p><strong>1단계 — 그리드 분할</strong>
+입력 이미지를 S×S 격자(Grid)로 나눔</p>
+<p><strong>2단계 — 동시 예측</strong> (각 격자 셀에서)</p>
+<ul>
+<li><strong>Bounding Box</strong>: 위치(x, y), 크기(w, h), 신뢰도(confidence) 예측</li>
+<li><strong>클래스 확률</strong>: 해당 셀의 객체 종류 확률 예측</li>
+</ul>
+<p><strong>3단계 — 후처리 (NMS, Non-Maximum Suppression)</strong></p>
+<ul>
+<li>신뢰도 낮은 박스 제거</li>
+<li>중복된 박스 중 점수가 가장 높은 것만 남김</li>
+</ul>
+<h3>YOLO 버전 히스토리</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>버전</th><th>연도</th><th>핵심 변경</th></tr></thead><tbody><tr><td>v1</td><td>2016</td><td>1-Stage 탐지 최초 도입, S×S 그리드 예측</td></tr><tr><td>v2</td><td>2017</td><td>앵커 박스(Anchor Box) 도입</td></tr><tr><td>v3</td><td>2018</td><td>Darknet-53 백본, 3-scale 예측으로 소형 객체 인식 개선</td></tr><tr><td>v4</td><td>2020.4</td><td>CSPDarknet53, Mosaic 데이터 증강</td></tr><tr><td>v5</td><td>2020.6</td><td>Ultralytics, PyTorch 기반으로 전환</td></tr><tr><td>v8</td><td>2023.1</td><td>앵커 프리(Anchor-free), Decoupled Head, 통합 프레임워크</td></tr><tr><td>v11</td><td>2024.9</td><td>탐지·분할·포즈·추적·분류 멀티태스킹 SOTA</td></tr></tbody></table>
+<h3>모델 크기별 트레이드오프</h3>
+<p>모델명 뒤에 붙는 알파벳(n &lt; s &lt; m &lt; l &lt; x)이 크기를 나타냄</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>구분</th><th>작은 모델 (n, s)</th><th>큰 모델 (l, x)</th></tr></thead><tbody><tr><td>속도</td><td>✅ 빠름, 경량</td><td>❌ 느림, 고사양 필요</td></tr><tr><td>정확도</td><td>❌ 낮음</td><td>✅ 높음</td></tr><tr><td>용도</td><td>실시간 영상, 모바일</td><td>의료·연구 고정밀 분석</td></tr></tbody></table>
+<hr>
+<h2>3️⃣ YOLO 평가 지표</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>지표</th><th>설명</th></tr></thead><tbody><tr><td><strong>IoU</strong></td><td>예측 박스와 실제 박스의 겹침 비율 (0~1, 1=완벽 일치)</td></tr><tr><td><strong>Precision</strong></td><td>예측한 객체 중 실제 객체 비율</td></tr><tr><td><strong>Recall</strong></td><td>실제 객체 중 예측 성공 비율</td></tr><tr><td><strong>F1</strong></td><td>Precision과 Recall의 조화 평균</td></tr><tr><td><strong>mAP</strong></td><td>여러 클래스의 AP 평균 — 모델 전반 정확도 종합 평가의 대표 지표</td></tr><tr><td><strong>AP50 / AP75</strong></td><td>IoU 0.5 / 0.75 기준 AP (AP75가 더 엄격)</td></tr><tr><td><strong>FPS</strong></td><td>초당 처리 프레임 수 — 실시간 응용 속도 지표</td></tr><tr><td><strong>Inference Time</strong></td><td>단일 이미지 처리 시간 (ms)</td></tr></tbody></table>
+<p><strong>상황별 활용</strong></p>
+<ul>
+<li>전체 정확도 비교 → <strong>mAP</strong></li>
+<li>위치 예측 정밀도 → <strong>AP50 / AP75</strong></li>
+<li>클래스별 오탐·미탐 분석 → <strong>Precision / Recall / F1</strong></li>
+<li>실시간 처리 가능 여부 → <strong>FPS / Inference Time</strong></li>
+</ul>
+<hr>
+<h2>4️⃣ YOLO 이미지 분류 실습</h2>
+<h3>데이터셋 구성</h3>
+<ul>
+<li>출처: Kaggle food41 (5개 음식 클래스 × 1,000장)</li>
+<li>클래스: <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">apple_pie</code>, <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">donuts</code>, <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">hamburger</code>, <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">onion_rings</code>, <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">pizza</code></li>
+<li>분할: 훈련 640장 / 검증 160장 / 평가 200장 (클래스당)</li>
+</ul>
+<p>Ultralytics는 아래 폴더 구조를 요구함:</p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">food_for_yolo/
+├── train/
+│   ├── apple_pie/
+│   └── ...
+├── valid/
+└── test/
+</code></pre>
+<h3>모델 훈련</h3>
+<p>모델: <strong>YOLOv8n-cls</strong> (nano 크기, 분류 전용, 약 1.4M 파라미터)</p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python">from ultralytics import YOLO
+
+model = YOLO('yolov8n-cls.pt')  # 사전학습 가중치 로드
+
+results = model.train(
+    data='./data/food_for_yolo/',
+    epochs=100,
+    imgsz=224,
+    device='mps'  # Apple Silicon
+)
+</code></pre></pre>
+<p>훈련 중 끊기면 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">last.pt</code>로 이어서 학습 가능:</p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python">model = YOLO('runs/classify/train/weights/last.pt')
+model.train(..., resume=True)
+</code></pre></pre>
+<p>최종 평가는 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">best.pt</code>(검증 성능 최고 시점의 가중치)로 진행.</p>
+<h3>평가 결과</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>지표</th><th>값</th></tr></thead><tbody><tr><td><strong>Top-1 Accuracy</strong></td><td><strong>94.2%</strong></td></tr><tr><td><strong>Top-5 Accuracy</strong></td><td><strong>100%</strong></td></tr><tr><td>Inference Time</td><td>15.0ms / 이미지 (CPU)</td></tr></tbody></table>
+<p>5개 클래스 음식 분류에서 Top-1 94.2%, Top-5 100%를 달성.</p>
+<hr>
+<h2>💡 핵심 정리</h2>
+<h3>배운 것</h3>
+<ul>
+<li>YOLO = 1-Stage Detector: 그리드 분할 → 위치·클래스 동시 예측 → NMS 후처리</li>
+<li>R-CNN(정확도 우선) vs YOLO(속도 우선) — 용도에 맞게 선택</li>
+<li>모델 크기 n &lt; s &lt; m &lt; l &lt; x: 작을수록 빠르고 가볍고, 클수록 정확</li>
+<li>Ultralytics 기본 흐름: <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">model.train()</code> → <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">model.val()</code> → <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">model.predict()</code></li>
+</ul>
+<h3>주의사항</h3>
+<ul>
+<li>⚠️ Ultralytics 분류 데이터는 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">train/valid/test</code> 아래에 <strong>클래스명 폴더</strong>가 있어야 함</li>
+<li>⚠️ <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">resume=True</code>는 반드시 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">last.pt</code> 경로를 정확히 지정해야 함</li>
+<li>✅ 최종 평가·추론에는 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">last.pt</code>가 아닌 <strong><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">best.pt</code></strong> 사용</li>
+</ul></div></div><div class="MuiBox-root css-1cpq4zq"><hr class="MuiDivider-root MuiDivider-fullWidth css-7jtdmc"><h5 class="MuiTypography-root MuiTypography-h5 css-85yo2n">같은 카테고리의 다른 글</h5><div class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-2 css-1eikg3m"><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] Serializable 깊이 파기 — Part 2: 바이트에서 다시 객체로, 그리고 함정들</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">직렬화된 바이트를 ObjectInputStream이 어떤 순서로 읽어 객체로 복원하는지, 그때 생성자가 호출되지 않는다는 점을 확인합니다. | serialVersionUID, transient, 커스텀 readObject·writeObject, 역직렬화 취약점, Java 직렬화의 현재로 마무리합니다.</p><div class="MuiBox-root css-107ld1r"></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 4월 5일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] Serializable 깊이 파기 — Part 1: 객체가 바이트가 되는 과정</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">Python이나 JavaScript와 달리 Java는 왜 Serializable을 선언해야 하는지, 메서드가 하나도 없는 이 인터페이스가 무슨 일을 하는지 묻는 글입니다. | ObjectOutputStream이 만든 실제 바이트를 열어 보고, 참조 객체가 들어 있을 때는 어떻게 되는지 확인합니다.</p><div class="MuiBox-root css-107ld1r"></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 4월 5일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] 주식 거래 엔진 직접 만들기 - Part 3: 오더북을 어떻게 구현할 것인가</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">주식 거래 엔진의 오더북을 TreeMap과 ArrayDeque 조합으로 만든 이유를, PriorityQueue, LinkedList, Skip List와 비교하며 설명합니다. | 주문 취소를 Lazy Removal로 처리한 방법과 Kafka를 연결하며 만난 멱등성 문제를 마지막에 둡니다.</p><div class="MuiBox-root css-107ld1r"></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 27일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] 주식 거래 엔진 직접 만들기 - Part 2: Phase 1 — 모놀리식으로 시작하기</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">단일 JAR 모놀리식 구조인 Phase 1에서 만난 문제를 차례로 다룹니다. | SELECT FOR UPDATE로 동시성을 해결했고, 락 보유 시간을 줄이고, 락 획득 순서를 통일해 데드락 위험을 없앴습니다. @Transactional 원칙과 Lazy Loading 함정도 짚습니다.</p><div class="MuiBox-root css-107ld1r"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Java</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Spring Boot</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">JPA</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">+2</span></div></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 27일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] 주식 거래 엔진 직접 만들기 - Part 1: 왜 주식 거래 엔진인가</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">F-lab 멘토링 프로젝트로 주식 거래 엔진을 직접 설계하고 구현한 과정을 기록하는 시리즈의 첫 글입니다. | 프로젝트를 고른 기준과 멀티모듈 구조, Phase 로드맵, 시리즈 전체에서 답할 질문들을 먼저 밝힙니다.</p><div class="MuiBox-root css-107ld1r"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Java</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Spring Boot</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Kafka</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">+5</span></div></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 27일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[개발자가 직접 써봤어요] Claude Code 완전 가이드: 설치부터 멀티에이전트까지</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">Claude Code를 Spring Boot와 Kafka 기반 주식 매매 엔진 프로젝트에 적용해 본 경험을 바탕으로, 설치부터 멀티에이전트까지 소개합니다. | CLAUDE.md, Skills, Subagents, Hooks, MCP, Agent Teams의 여섯 레이어와 Cursor AI와의 비교, 주의사항이 나옵니다.</p><div class="MuiBox-root css-107ld1r"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Claude Code</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">AI</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Developer Tools</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">+4</span></div></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 9일</span></div></div></div></div><div class="MuiBox-root css-1b94f21"><a class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways css-104ms0" href="/blog/posts" data-discover="true"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowBackIcon"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z"></path></svg>게시글 목록으로 돌아가기</a></div><button class="MuiButtonBase-root MuiFab-root MuiFab-circular MuiFab-sizeMedium MuiFab-primary MuiFab-root MuiFab-circular MuiFab-sizeMedium MuiFab-primary css-1nl6bps" tabindex="0" type="button" aria-label="scroll to top" style="opacity: 0; visibility: hidden;"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="KeyboardArrowUpIcon"><path d="M7.41 15.41 12 10.83l4.59 4.58L18 14l-6-6-6 6z"></path></svg></button></div></div></div></div><footer style="text-align: center; padding: 2rem 0px; color: rgb(0, 0, 0); font-size: 0.9rem; border-top: 1px solid rgb(0, 0, 0); margin-top: auto; background-color: rgb(255, 255, 255);"><p>© 2025 DevTaco Blog. All rights reserved.</p></footer><div class="MuiBox-root css-1hyfx7x"><div class="visitor-counter MuiBox-root css-19midj6"><h6 class="MuiTypography-root MuiTypography-h6 MuiTypography-gutterBottom css-izz7ci">방문자 수</h6><div class="MuiBox-root css-zwd3xv"><h4 class="MuiTypography-root MuiTypography-h4 css-1dg27va">56</h4><p class="MuiTypography-root MuiTypography-body2 css-l6pb42">오늘</p><h6 class="MuiTypography-root MuiTypography-h6 css-kh42wg">총 56명</h6></div></div></div><div class="MuiBox-root css-1y95mt5" data-testid="terminal-navigation"><div class="MuiBox-root css-1kw3y0a"><p class="MuiTypography-root MuiTypography-body2 css-1fktdtb">devtaco@portfolio:~$ navigation</p><div class="MuiBox-root css-j0ozid"><p class="MuiTypography-root MuiTypography-body2 css-1cn40rb">⌘M to close</p><button class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-470314" tabindex="0" type="button" id=":r1:"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeSmall css-vh810p" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="CloseIcon"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg></button></div></div><div class="MuiBox-root css-13t3iqc"><div class="MuiBox-root css-0"><p class="MuiTypography-root MuiTypography-body2 css-cbhj4f">Navigation:</p><div class="MuiBox-root css-1kkt86i"><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">1 → home</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">2 → about</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">3 → posts</p></div></div><div class="MuiBox-root css-0"><p class="MuiTypography-root MuiTypography-body2 css-cbhj4f">External:</p><div class="MuiBox-root css-1kkt86i"><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">g → github</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">e → email</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">l → linkedin</p></div></div></div><p class="MuiTypography-root MuiTypography-body2 css-1e7vt2">Press number keys (1,2,3) or letter keys (g,e,l) to navigate. Use ⌘+M to close.</p></div></div></div></body></html>

@@ -1,0 +1,1240 @@
+<!DOCTYPE html><html lang="en"><head><script type="text/javascript">!function(n){if("/"===n.search[1]){var a=n.search.slice(1).split("&").map((function(n){return n.replace(/~and~/g,"&")})).join("?");window.history.replaceState(null,null,n.pathname.slice(0,-1)+a+n.hash)}}(window.location)</script><meta charset="utf-8"><link rel="icon" href="/blog/favicon.ico"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#000000"><meta name="keywords" content="Java, Kotlin, Spring Boot, MSA, 개발, 백엔드, coroutine"><meta name="author" content="DevTaco"><meta property="og:image" content="https://devtaco30.github.io/blog/og-image.png"><meta property="twitter:image" content="https://devtaco30.github.io/blog/og-image.png"><meta property="twitter:url" content="https://devtaco30.github.io/blog/"><link rel="apple-touch-icon" href="/blog/apple-touch-icon.png"><link rel="manifest" href="/blog/manifest.json"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&amp;family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet"><script defer="defer" src="/blog/static/js/main.404b9165.js"></script><link href="/blog/static/css/main.5b86466f.css" rel="stylesheet"><style data-emotion="css" data-s=""></style><title>[6년차 쯤 되면 좀 알자] thread 알고 쓰는거니? - 2부 - | DevTaco Blog</title><meta name="description" content="Java Thread 객체가 OS 스레드와 어떻게 연결되는지, Thread.start()를 호출하면 내부에서 무슨 일이 일어나는지 추적합니다. JVM의 스레드 관리 방식과 스레드 생성 비용, 스레드 풀이 필요한 이유가 있습니다."><meta property="og:title" content="[6년차 쯤 되면 좀 알자] thread 알고 쓰는거니? - 2부 -"><meta property="og:description" content="Java Thread 객체가 OS 스레드와 어떻게 연결되는지, Thread.start()를 호출하면 내부에서 무슨 일이 일어나는지 추적합니다. JVM의 스레드 관리 방식과 스레드 생성 비용, 스레드 풀이 필요한 이유가 있습니다."><meta property="og:type" content="article"><meta property="og:url" content="https://devtaco30.github.io/blog/posts/44"><meta name="twitter:card" content="summary"></head><body><noscript>You need to enable JavaScript to run this app.</noscript><div id="root"><div class="App"><div class="MuiBox-root css-kurlqb"><div class="MuiBox-root css-171onha"><button class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-1f6w95t" tabindex="0" type="button" id=":r0:"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="MenuIcon"><path d="M3 18h18v-2H3zm0-5h18v-2H3zm0-7v2h18V6z"></path></svg></button><div class="MuiBox-root css-1szb58x"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-218waq" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowBackIcon"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z"></path></svg><div class="MuiBox-root css-wq4jw1"><span>⌘+M</span></div></div></div></div><div class="MuiContainer-root css-15jb5o1" data-testid="page-container"><div class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-2 MuiGrid-spacing-md-3 css-1ht06td"><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-md-12 css-15j76c0"><div class="MuiBox-root css-15rigdj"><nav class="MuiTypography-root MuiTypography-body1 MuiBreadcrumbs-root css-1v2kxik"><ol class="MuiBreadcrumbs-ol css-51eq8m"><li class="MuiBreadcrumbs-li"><a class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways css-gj78h6" href="/blog/posts" data-discover="true">게시글 목록</a></li><li aria-hidden="true" class="MuiBreadcrumbs-separator css-1nd5pgh">/</li><li class="MuiBreadcrumbs-li"><p class="MuiTypography-root MuiTypography-body1 css-1cr0rz6">[6년차 쯤 되면 좀 알자] thread 알고 쓰는거니? - 2부 -</p></li></ol></nav><div class="MuiBox-root css-15djlns"><button class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-1y18wdw" tabindex="0" type="button" id=":r7:"><span class="MuiButton-icon MuiButton-startIcon MuiButton-iconSizeMedium css-1ygddt1"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowBackIcon"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z"></path></svg></span><div class="MuiBox-root css-0"><span class="MuiTypography-root MuiTypography-caption css-115rlu8">이전글</span><p class="MuiTypography-root MuiTypography-body2 css-10qk5g4">EST AI - 딥러닝 기초 (TensorFlow, Keras)</p></div></button><button class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-1k0z50p" tabindex="0" type="button" id=":r8:"><div class="MuiBox-root css-0"><span class="MuiTypography-root MuiTypography-caption css-115rlu8">다음글</span><p class="MuiTypography-root MuiTypography-body2 css-10qk5g4">[6년차 쯤 되면 좀 알자] thread 알고 쓰는거니? - 1부 -</p></div><span class="MuiButton-icon MuiButton-endIcon MuiButton-iconSizeMedium css-6bt4d2"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowForwardIcon"><path d="m12 4-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"></path></svg></span></button></div><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-10t0qv5" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h4 class="MuiTypography-root MuiTypography-h4 css-k5jvd2">[6년차 쯤 되면 좀 알자] thread 알고 쓰는거니? - 2부 -</h4><p class="MuiTypography-root MuiTypography-body1 css-104xg3">Java Thread 객체가 OS 스레드와 어떻게 연결되는지, Thread.start()를 호출하면 내부에서 무슨 일이 일어나는지 추적합니다. | JVM의 스레드 관리 방식과 스레드 생성 비용, 스레드 풀이 필요한 이유가 있습니다.</p><div class="MuiBox-root css-1prrn6n"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">OS</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Thread</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Java</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">JVM</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Operating System</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Kotlin</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Backend</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Concurrency</span></div></div><p class="MuiTypography-root MuiTypography-body2 css-l6pb42">2026년 1월 7일 오후 11:06</p></div><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-1i779yj" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><div class="MuiBox-root css-13lazol"><p>안녕하세요. Java/Kotlin 백엔드 개발자로서 Java Thread 객체와 운영체제 스레드의 관계를 이해하는 것은 멀티스레딩 프로그래밍과 성능 최적화에 필수적입니다.</p>
+<p>본 포스팅(2부)에서는 Java Thread 객체가 어떻게 OS 스레드와 연결되는지, <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">Thread.start()</code> 호출 시 내부적으로 어떤 일이 일어나는지, JVM이 OS 스레드를 어떻게 관리하는지 단계별로 상세하게 분석합니다.</p>
+<p><strong>1부에서는 운영체제 관점에서 프로세스와 스레드의 차이, 스레드의 메모리 구조, 스케줄링, 컨텍스트 스위칭을 다뤘습니다.</strong></p>
+<hr>
+<h2>🎯 <strong>1. Java Thread 객체와 OS Thread의 관계</strong></h2>
+<h3>⚠️ 전체 구조 이해하기</h3>
+<p><strong>정확한 관계:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">JVM 프로세스 (하나의 프로그램)
+  ├─ Java Thread 객체들 (Java 레벨)
+  │   ├─ Thread-1 객체
+  │   ├─ Thread-2 객체
+  │   └─ Thread-3 객체
+  │
+  └─ OS 스레드들 (OS 레벨, 실제 CPU 자원 활용)
+      ├─ OS Thread (TID: 123) ← Thread-1 객체와 1:1 매핑
+      ├─ OS Thread (TID: 124) ← Thread-2 객체와 1:1 매핑
+      └─ OS Thread (TID: 125) ← Thread-3 객체와 1:1 매핑
+</code></pre>
+<p><strong>핵심 정리:</strong></p>
+<ol>
+<li><strong>JVM 프로세스</strong>: 하나의 프로그램이 실행되는 독립적인 메모리 공간</li>
+<li><strong>Java Thread 객체들</strong>: JVM 프로세스 안에 존재하는 Java 레벨의 스레드 객체</li>
+<li><strong>OS 스레드들</strong>: 실제 CPU 자원을 활용하는 OS 레벨의 스레드</li>
+<li><strong>1:1 매핑</strong>: 각 Java Thread 객체는 하나의 OS 스레드와 연결됨</li>
+</ol>
+<p><strong>비유:</strong></p>
+<ul>
+<li><strong>JVM 프로세스</strong>: 공장 건물 (하나의 프로그램)</li>
+<li><strong>Java Thread 객체</strong>: 공장의 작업자 명단 (Java 레벨)</li>
+<li><strong>OS 스레드</strong>: 실제 일하는 작업자들 (OS 레벨, 실제 CPU 사용)</li>
+<li><strong>1:1 매핑</strong>: 명단의 각 이름 = 실제 작업자 한 명</li>
+</ul>
+<h3>핵심 질문: 1:1 매핑인가요?</h3>
+<p><strong>⚠️ 답: 네, Java Thread 객체와 OS Thread는 1:1 매핑입니다!</strong></p>
+<p><strong>Java의 Native Thread 모델:</strong></p>
+<ul>
+<li>Java 1.1 이전: Green Thread (가상 스레드, OS 스레드와 1:1 아님)</li>
+<li>Java 1.1 이후: Native Thread (OS 스레드와 1:1 매핑)</li>
+</ul>
+<p><strong>현재 Java는 Native Thread를 사용합니다:</strong></p>
+<ul>
+<li>각 Java Thread 객체는 하나의 OS 스레드와 연결됨</li>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">Thread.start()</code> 호출 시 실제 OS 스레드가 생성됨</li>
+<li>OS 스레드가 종료되면 Java Thread 객체도 종료됨</li>
+<li><strong>OS 스레드가 실제 CPU 자원을 활용함</strong></li>
+</ul>
+<p><strong>비유:</strong></p>
+<ul>
+<li>Java Thread 객체 = 자동차 키</li>
+<li>OS 스레드 = 실제 자동차</li>
+<li>키를 돌리면(Thread.start()) 실제 자동차가 시동 걸림</li>
+<li>실제 자동차(OS 스레드)가 도로(CPU)에서 달림</li>
+</ul>
+<hr>
+<h2>🏗️ <strong>2. Thread 객체 생성 과정</strong></h2>
+<h3><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">new Thread()</code>는 OS 스레드를 만드는가?</h3>
+<p><strong>⚠️ 답: 아니요! <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">new Thread()</code>는 Java 객체만 생성합니다.</strong></p>
+<p><strong>단계별 과정:</strong></p>
+<h4>Step 1: Java Thread 객체 생성</h4>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-java">Thread thread = new Thread(() -&gt; {
+    System.out.println("Hello from thread!");
+});
+</code></pre></pre>
+<p><strong>이 시점에서 일어나는 일:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">1. Heap에 Thread 객체 할당
+2. Thread 객체의 필드 초기화
+   - name: "Thread-0"
+   - target: Runnable 객체
+   - state: NEW
+3. OS 스레드는 아직 생성되지 않음!
+</code></pre>
+<p><strong>메모리 상태:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">Heap:
+┌─────────────────────┐
+│  Thread 객체         │
+│  - name: "Thread-0" │
+│  - state: NEW       │
+│  - target: Runnable │
+│  - OS 스레드: 없음   │ ← 아직 OS 스레드 없음!
+└─────────────────────┘
+</code></pre>
+<h4>Step 2: Thread.start() 호출</h4>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-java">thread.start();  // 이때 OS 스레드가 생성됨!
+</code></pre></pre>
+<p><strong>이 시점에서 일어나는 일:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">1. JVM이 OS에 스레드 생성 요청
+2. OS가 새로운 스레드 생성
+3. Thread 객체와 OS 스레드 연결
+4. OS 스레드가 Runnable 실행
+</code></pre>
+<p><strong>메모리 상태:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">Heap:
+┌─────────────────────┐
+│  Thread 객체         │
+│  - name: "Thread-0" │
+│  - state: RUNNABLE  │
+│  - target: Runnable │
+│  - OS 스레드: 연결됨 │ ← OS 스레드와 연결!
+└─────────────────────┘
+         ↓
+OS 레벨:
+┌─────────────────────┐
+│  OS 스레드           │
+│  - TID: 12345       │
+│  - Stack: 할당됨    │
+│  - 상태: 실행 중     │
+└─────────────────────┘
+</code></pre>
+<hr>
+<h2>⚙️ <strong>3. Thread.start() 내부 동작 과정</strong></h2>
+<h3>단계별 상세 분석</h3>
+<p><strong><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">Thread.start()</code> 호출 시 내부적으로 일어나는 일:</strong></p>
+<h4>Step 1: 상태 검증</h4>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-java">public synchronized void start() {
+    if (threadStatus != 0)  // NEW 상태인지 확인
+        throw new IllegalThreadStateException();
+    // ...
+}
+</code></pre></pre>
+<p><strong>검증 내용:</strong></p>
+<ul>
+<li>Thread 객체가 NEW 상태인지 확인</li>
+<li>이미 시작된 스레드는 다시 시작할 수 없음</li>
+</ul>
+<h4>Step 2: 스레드 그룹에 추가</h4>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-java">group.add(this);  // 스레드 그룹에 추가
+</code></pre></pre>
+<p><strong>⚠️ 중요: 이 시점에는 아직 OS 스레드가 생성되지 않았습니다!</strong></p>
+<p><strong>스레드 그룹에 추가하는 것:</strong></p>
+<ul>
+<li><strong>Java Thread 객체</strong>를 스레드 그룹에 추가하는 것</li>
+<li>OS 스레드와는 별개</li>
+<li>스레드 그룹은 Java 레벨의 관리 메커니즘</li>
+</ul>
+<p><strong>스레드 그룹의 목적:</strong></p>
+<ul>
+<li>관련된 스레드들을 그룹으로 관리</li>
+<li>보안과 모니터링 목적</li>
+<li>Java Thread 객체들을 논리적으로 그룹화</li>
+</ul>
+<p><strong>메모리 상태:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">Heap:
+┌─────────────────────┐
+│  Thread 객체         │
+│  - name: "Thread-0" │
+│  - state: NEW       │
+│  - group: 추가됨    │ ← 스레드 그룹에 추가됨
+│  - OS 스레드: 없음   │ ← 아직 OS 스레드 없음!
+└─────────────────────┘
+</code></pre>
+<h4>Step 3: Native 메서드 호출</h4>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-java">start0();  // Native 메서드 호출
+</code></pre></pre>
+<p><strong>⚠️ 이 시점에서 비로소 OS 스레드 생성 요청이 시작됩니다!</strong></p>
+<p><strong><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">start0()</code>는 JVM 내부 네이티브 코드:</strong></p>
+<ul>
+<li>JVM이 OS에 스레드 생성 요청 (시스템 콜)</li>
+<li>OS가 실제 스레드 생성</li>
+<li>Thread 객체와 OS 스레드 연결</li>
+</ul>
+<p><strong>순서 정리:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">Step 1: 상태 검증
+  → Java Thread 객체만 확인 (OS 스레드 없음)
+
+Step 2: 스레드 그룹에 추가
+  → Java Thread 객체를 그룹에 추가 (OS 스레드 없음)
+  → 이건 Java 레벨의 관리 작업!
+
+Step 3: start0() 호출
+  → 이제서야 OS 스레드 생성 요청 시작!
+  → OS가 실제 스레드 생성
+</code></pre>
+<h4>Step 4: OS 스레드 생성 (OS 레벨)</h4>
+<p><strong>OS가 수행하는 작업:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">1. 스레드 구조체(TCB) 생성
+   - Thread Control Block
+   - 스레드 ID (TID) 할당
+   
+2. 스택 메모리 할당
+   - 스레드별 독립적인 스택 공간 할당
+   - 기본 크기: 1MB (JVM 기본값)
+   
+3. 레지스터 초기화
+   - PC (Program Counter) 설정
+   - SP (Stack Pointer) 설정
+   
+4. 스레드 스케줄러에 등록
+   - 실행 가능한 스레드 목록에 추가
+   - CPU 할당 대기
+</code></pre>
+<h4>Step 5: Runnable 실행</h4>
+<p><strong>OS 스레드가 실행되면:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">1. JVM의 스레드 진입점 호출
+2. Thread 객체의 run() 메서드 실행
+3. target.run() 호출 (Runnable 실행)
+4. 스레드 종료
+</code></pre>
+<p><strong>전체 흐름:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">Java 코드:
+  thread.start()
+    ↓
+JVM Native 코드:
+  start0() 호출
+    ↓
+OS 시스템 콜:
+  pthread_create() (Linux)
+  CreateThread() (Windows)
+    ↓
+OS 스레드 생성:
+  - TCB 생성
+  - 스택 할당
+  - 레지스터 초기화
+    ↓
+OS 스레드 실행:
+  - JVM 진입점 호출
+  - run() 메서드 실행
+</code></pre>
+<hr>
+<h2>🔗 <strong>4. JVM의 스레드 관리</strong></h2>
+<h3>⚠️ 핵심: JVM은 OS 스레드 스케줄러에 의존합니다</h3>
+<p><strong>JVM은 유저 모드 애플리케이션입니다!</strong></p>
+<p><strong>⚠️ 핵심: JVM은 스레드 스케줄링을 직접 제어할 수 없고, OS 스케줄러에 의존합니다!</strong></p>
+<p><strong>유저 모드 vs 커널 모드:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">┌─────────────────────────────────────┐
+│  유저 모드 (User Mode)               │
+│  - JVM (Java 애플리케이션)           │
+│  - 일반 프로그램들                  │
+│  - CPU 자원 직접 접근 불가           │
+│  - 스레드 스케줄링 직접 제어 불가    │
+│  - 시스템 콜을 통해서만 접근 가능    │
+├─────────────────────────────────────┤
+│  커널 모드 (Kernel Mode)             │
+│  - OS 커널                          │
+│  - CPU 자원 직접 접근 가능           │
+│  - 스레드 스케줄링 담당              │ ← 커널이 담당!
+│  - OS 스케줄러가 최종 결정권         │
+└─────────────────────────────────────┘
+</code></pre>
+<p><strong>⚠️ 핵심: 스레드 스케줄링은 OS 커널(커널 모드)에서 담당합니다!</strong></p>
+<p><strong>스케줄링 과정:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">1. JVM (유저 모드):
+   - Thread.start() 호출
+   - OS에 스레드 생성 요청 (시스템 콜)
+   
+2. OS 커널 (커널 모드):
+   - 스레드 생성 (TCB, 스택 할당)
+   - 스레드 스케줄러에 등록
+   - 스케줄링 알고리즘 실행
+   - CPU 할당 결정
+   - 컨텍스트 스위칭 수행
+   
+3. OS 스레드 (커널 모드):
+   - 실제 CPU에서 실행
+   - 스케줄러가 CPU 할당 관리
+</code></pre>
+<p><strong>비유:</strong></p>
+<ul>
+<li><strong>JVM (유저 모드)</strong>: 공장 관리자 (일을 시키고 싶음)</li>
+<li><strong>OS 커널 (커널 모드)</strong>: 인사팀 + 작업 배정 시스템 (실제로 누가 언제 일할지 결정하고 관리)</li>
+<li><strong>OS 스레드</strong>: 실제 작업자 (CPU에서 실제 작업 수행)</li>
+</ul>
+<p><strong>⚠️ 중요한 점:</strong></p>
+<ul>
+<li>JVM은 커널 모드에서만 가능한 CPU 자원 접근 권한을 가지지 않음</li>
+<li>JVM은 OS의 시스템 콜을 통해 간접적으로 접근</li>
+<li><strong>JVM은 스레드 스케줄링을 직접 제어할 수 없음</strong></li>
+<li><strong>OS 스레드 스케줄러가 어떤 스레드를 언제 실행할지 결정</strong></li>
+<li><strong>JVM이 OS 스케줄러를 활용하여 스레드의 실행을 관리</strong></li>
+<li><strong>JVM 스레드의 동작은 OS 스레드의 제약을 받음</strong></li>
+</ul>
+<p><strong>실제 동작:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">JVM: "Thread-1을 실행하고 싶어요"
+  ↓ (시스템 콜)
+OS 스케줄러: "알겠습니다. 하지만 제가 최종 결정합니다"
+  ↓
+OS 스케줄러가 CPU 할당 결정:
+  - Thread-1 실행 가능 상태 확인
+  - 우선순위 확인
+  - 다른 스레드들과 비교
+  - 최종적으로 CPU 할당
+  ↓
+OS 스레드가 실제 CPU에서 실행
+</code></pre>
+<p><strong>비유:</strong></p>
+<ul>
+<li><strong>JVM</strong>: 공장 관리자 (작업자에게 일을 시키고 싶음)</li>
+<li><strong>OS 스케줄러</strong>: 인사팀 (실제로 누가 언제 일할지 최종 결정)</li>
+<li><strong>OS 스레드</strong>: 실제 작업자 (CPU에서 실제 작업 수행)</li>
+</ul>
+<h3>JVM 스레드 구조</h3>
+<p><strong>JVM은 내부적으로 스레드를 관리합니다:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">JVM 내부 (유저 모드):
+┌─────────────────────────────────────┐
+│  Java Thread 객체들                 │
+│  - Thread-1 → OS Thread (TID: 123) │
+│  - Thread-2 → OS Thread (TID: 124) │
+│  - Thread-3 → OS Thread (TID: 125) │
+└─────────────────────────────────────┘
+         ↓ (시스템 콜)
+OS 커널 (커널 모드):
+┌─────────────────────────────────────┐
+│  OS 스레드들 (커널 스레드)           │
+│  - TID: 123 (스레드1)               │
+│  - TID: 124 (스레드2)               │
+│  - TID: 125 (스레드3)               │
+│                                     │
+│  OS 스케줄러:                       │
+│  - 스레드 실행 순서 제어             │
+│  - JVM은 이를 직접 제어 불가        │
+└─────────────────────────────────────┘
+</code></pre>
+<h3>⚠️ 커널 스레드와 JVM 스레드의 상호작용</h3>
+<p><strong>핵심 개념:</strong></p>
+<ul>
+<li><strong>커널 스레드</strong>: OS가 직접 관리하며, CPU 자원 할당과 같은 중요한 작업을 수행</li>
+<li><strong>JVM 스레드</strong>: 커널 스레드 위에서 동작하며, JVM 내부에서 생성된 스레드 객체를 통해 관리</li>
+<li><strong>1:1 매핑</strong>: JVM 스레드는 커널 스레드와 1:1 매핑되므로, JVM 스레드의 모든 실행은 커널 스레드에 의해 처리됨</li>
+</ul>
+<p><strong>상호작용 구조:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">┌─────────────────────────────────────┐
+│  JVM (유저 모드)                    │
+│  ┌───────────────────────────────┐ │
+│  │ Java Thread 객체들            │ │
+│  │ - Thread-1 (애플리케이션)     │ │
+│  │ - Thread-2 (GC)               │ │
+│  │ - Thread-3 (애플리케이션)     │ │
+│  └───────────────────────────────┘ │
+│           ↓ (1:1 매핑)              │
+│  ┌───────────────────────────────┐ │
+│  │ JVM 내부 스레드 관리           │ │
+│  │ - OS 스레드 생성 요청          │ │
+│  │ - 스레드 상태 추적             │ │
+│  └───────────────────────────────┘ │
+└─────────────────────────────────────┘
+           ↓ (시스템 콜)
+┌─────────────────────────────────────┐
+│  OS 커널 (커널 모드)                 │
+│  ┌───────────────────────────────┐ │
+│  │ 커널 스레드들 (OS 스레드)      │ │
+│  │ - TID 123 (Thread-1과 연결)   │ │
+│  │ - TID 124 (Thread-2와 연결)   │ │
+│  │ - TID 125 (Thread-3과 연결)   │ │
+│  └───────────────────────────────┘ │
+│  ┌───────────────────────────────┐ │
+│  │ OS 스케줄러                    │ │
+│  │ - CPU 자원 할당 결정           │ │
+│  │ - 스레드 실행 순서 제어         │ │
+│  │ - 컨텍스트 스위칭 수행          │ │
+│  └───────────────────────────────┘ │
+└─────────────────────────────────────┘
+           ↓
+┌─────────────────────────────────────┐
+│  CPU (실제 실행)                      │
+│  - 커널 스레드가 실제 CPU에서 실행    │
+└─────────────────────────────────────┘
+</code></pre>
+<p><strong>⚠️ 핵심: JVM은 OS 스케줄러를 통해 스레드의 실행 순서를 제어할 수 없습니다!</strong></p>
+<p><strong>왜 제어할 수 없나요?</strong></p>
+<ol>
+<li>
+<p><strong>JVM은 유저 모드 애플리케이션</strong></p>
+<ul>
+<li>커널 모드에서만 가능한 CPU 자원 직접 접근 불가</li>
+<li>시스템 콜을 통해서만 OS에 요청 가능</li>
+<li>OS가 최종 결정권을 가짐</li>
+</ul>
+</li>
+<li>
+<p><strong>OS는 스레드의 성격이나 역할을 모릅니다!</strong></p>
+<p><strong>OS 스케줄러의 관점:</strong></p>
+<ul>
+<li>OS는 스레드가 Java 스레드인지, C++ 스레드인지 모름</li>
+<li>OS는 스레드가 애플리케이션 스레드인지, GC 스레드인지 모름</li>
+<li>OS는 스레드가 어떤 작업을 하는지 모름</li>
+<li><strong>OS는 단순히 스레드의 실행 상태와 우선순위만을 기반으로 스케줄링</strong></li>
+</ul>
+<p><strong>구체적인 예시:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">JVM 관점 (애플리케이션 개발자 관점):
+  - Thread-1: 사용자 요청 처리 스레드 (중요! 빠르게 처리해야 함)
+  - Thread-2: GC 스레드 (백그라운드, 메모리 정리)
+  - Thread-3: 로그 기록 스레드 (덜 중요)
+  
+  JVM의 의도: "Thread-1을 최우선으로 실행하고 싶어요"
+
+OS 관점 (커널 스케줄러 관점):
+  - TID 123: 실행 가능 상태, 우선순위 5
+  - TID 124: 실행 가능 상태, 우선순위 3
+  - TID 125: 실행 가능 상태, 우선순위 4
+  
+  OS의 판단: "우선순위 5가 가장 높으니 TID 123을 먼저 실행하겠습니다"
+  → OS는 단순히 우선순위만 보고 스케줄링
+  → JVM의 의도와 다를 수 있음!
+  → OS는 Thread-1이 "사용자 요청 처리"인지 모름
+</code></pre>
+</li>
+<li>
+<p><strong>실제 동작 과정:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">Step 1: JVM이 OS에 요청
+JVM: "Thread-1을 실행하고 싶어요"
+  ↓ (시스템 콜)
+
+Step 2: OS 스케줄러가 판단
+OS 스케줄러: "알겠습니다. 하지만 제가 최종 결정합니다"
+  ↓
+OS 스케줄러가 CPU 할당 결정:
+  - 모든 실행 가능한 스레드 확인
+  - Thread-1 실행 가능 상태 확인
+  - Thread-1 우선순위 확인
+  - 다른 스레드들과 비교
+  - 시스템 전체 상황 고려
+  - 최종적으로 CPU 할당 결정
+  ↓
+
+Step 3: OS 스레드가 실제 실행
+OS 스레드가 실제 CPU에서 실행
+  - JVM은 이 시점을 정확히 예측할 수 없음
+  - OS가 언제 CPU를 할당할지 모름
+</code></pre>
+</li>
+</ol>
+<p><strong>⚠️ 결과: JVM은 스레드의 상태를 변경하거나 제어하는 데 제한이 있습니다!</strong></p>
+<p><strong>JVM의 제약사항:</strong></p>
+<ul>
+<li>OS 스케줄러가 최종 결정권을 가짐</li>
+<li>JVM은 OS의 스케줄링 메커니즘에 의존해야 함</li>
+<li>JVM이 요청해도 OS가 거부하거나 지연시킬 수 있음</li>
+<li>스레드 실행 순서를 보장할 수 없음</li>
+</ul>
+<p><strong>이것이 멀티스레드 동기화 문제 해결에 중요한 요소인 이유:</strong></p>
+<p><strong>문제 상황:</strong></p>
+<ol>
+<li>
+<p><strong>JVM이 스레드 실행 순서를 제어할 수 없음</strong></p>
+<ul>
+<li>OS가 언제 어떤 스레드를 실행할지 모름</li>
+<li>예측 불가능한 실행 순서</li>
+</ul>
+</li>
+<li>
+<p><strong>여러 스레드가 동시에 공유 자원에 접근 가능</strong></p>
+<ul>
+<li>Race Condition 발생 가능!</li>
+<li>데이터 불일치 문제 발생</li>
+</ul>
+</li>
+</ol>
+<p><strong>예시 코드 (문제 상황):</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-java">// 공유 변수
+int count = 0;
+
+// Thread-1
+void increment() {
+    count++;  // OS가 언제 실행할지 모름!
+}
+
+// Thread-2
+void increment() {
+    count++;  // OS가 언제 실행할지 모름!
+}
+
+// 문제: 두 스레드가 동시에 실행되면?
+// count++는 원자적 연산이 아님!
+// → Race Condition 발생!
+</code></pre></pre>
+<p><strong>해결책: 동기화 메커니즘 필요</strong></p>
+<p><strong>JVM이 OS의 동기화 메커니즘을 활용:</strong></p>
+<ol>
+<li>
+<p><strong>synchronized 사용</strong></p>
+<ul>
+<li>JVM이 OS의 Mutex 활용</li>
+<li>OS 레벨에서 상호 배제 보장</li>
+</ul>
+</li>
+<li>
+<p><strong>Lock 사용</strong></p>
+<ul>
+<li>JVM이 OS의 Mutex/Semaphore 활용</li>
+<li>OS 레벨에서 동기화 보장</li>
+</ul>
+</li>
+<li>
+<p><strong>Semaphore 사용</strong></p>
+<ul>
+<li>OS의 Semaphore 활용</li>
+<li>OS 레벨에서 리소스 접근 제어</li>
+</ul>
+</li>
+</ol>
+<p><strong>구체적인 예시 (해결책):</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-java">// 공유 변수
+int count = 0;
+Object lock = new Object();
+
+// Thread-1
+void increment() {
+    synchronized (lock) {  // OS의 Mutex 활용!
+        count++;  // 이제 안전하게 실행됨
+    }
+}
+
+// Thread-2
+void increment() {
+    synchronized (lock) {  // OS의 Mutex 활용!
+        count++;  // 이제 안전하게 실행됨
+    }
+}
+
+// 해결: OS가 Mutex를 통해 한 번에 하나의 스레드만 실행 보장
+// → Race Condition 해결!
+</code></pre></pre>
+<p><strong>왜 이것이 중요한가요?</strong></p>
+<ol>
+<li>
+<p><strong>예측 불가능한 실행 순서 이해</strong></p>
+<ul>
+<li>JVM이 스레드 실행 순서를 보장할 수 없음을 인지</li>
+<li>멀티스레드 코드는 실행 순서에 의존하면 안 됨</li>
+</ul>
+</li>
+<li>
+<p><strong>동기화 메커니즘의 필요성 인지</strong></p>
+<ul>
+<li>OS 레벨의 동기화 메커니즘(Mutex, Semaphore) 활용 필요</li>
+<li>JVM의 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">synchronized</code>, <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">Lock</code> 등이 OS 메커니즘을 활용</li>
+</ul>
+</li>
+<li>
+<p><strong>멀티스레드 프로그래밍의 근본 원리 이해</strong></p>
+<ul>
+<li>OS가 스레드를 관리하는 방식 이해</li>
+<li>동기화 문제의 근본 원인 이해</li>
+<li>올바른 동기화 방법 선택 가능</li>
+</ul>
+</li>
+</ol>
+<p><strong>비유:</strong></p>
+<ul>
+<li><strong>JVM</strong>: 공장 관리자 (작업자에게 일을 시키고 싶음)</li>
+<li><strong>OS 스케줄러</strong>: 인사팀 (실제로 누가 언제 일할지 최종 결정)</li>
+<li><strong>OS 동기화 메커니즘</strong>: 작업장의 자물쇠 (동시에 한 명만 들어갈 수 있음)</li>
+<li><strong>멀티스레드 동기화</strong>: 작업장에 자물쇠를 걸어서 안전하게 작업하기</li>
+</ul>
+<h3>스레드별 메모리 구조</h3>
+<p><strong>각 Java Thread는 독립적인 스택을 가집니다:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">프로세스 메모리 (JVM):
+┌─────────────────────────────────────┐
+│  Method Area (공유)                 │ ← 모든 스레드 공유
+│  Heap (공유)                       │ ← 모든 스레드 공유
+├─────────────────────────────────────┤
+│  Stack (Thread-1)                  │ ← Thread-1만 사용
+│  - 메서드 호출 정보                 │
+│  - 지역 변수                        │
+│  - 매개변수                         │
+├─────────────────────────────────────┤
+│  Stack (Thread-2)                  │ ← Thread-2만 사용
+│  - 메서드 호출 정보                 │
+│  - 지역 변수                        │
+│  - 매개변수                         │
+└─────────────────────────────────────┘
+</code></pre>
+<h3>스레드 상태 관리</h3>
+<p><strong>Java Thread의 상태:</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-java">public enum State {
+    NEW,           // 생성됨 (start() 호출 전)
+    RUNNABLE,      // 실행 가능 (OS 스레드 생성됨)
+    BLOCKED,       // 블로킹됨 (모니터 락 대기)
+    WAITING,       // 대기 중 (wait(), join() 등)
+    TIMED_WAITING, // 시간 제한 대기 (sleep(), wait(timeout) 등)
+    TERMINATED     // 종료됨 (run() 완료)
+}
+</code></pre></pre>
+<p><strong>상태 전이:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">NEW → RUNNABLE → BLOCKED/WAITING → RUNNABLE → TERMINATED
+</code></pre>
+<hr>
+<h2>🔍 <strong>5. 실제 동작 과정 예시</strong></h2>
+<h3>예제 코드</h3>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-java">public class ThreadExample {
+    public static void main(String[] args) {
+        System.out.println("Main thread: " + Thread.currentThread().getName());
+        
+        Thread thread = new Thread(() -&gt; {
+            System.out.println("Child thread: " + Thread.currentThread().getName());
+        });
+        
+        System.out.println("Before start: " + thread.getState());  // NEW
+        
+        thread.start();  // OS 스레드 생성!
+        
+        System.out.println("After start: " + thread.getState());  // RUNNABLE
+        
+        try {
+            thread.join();  // 스레드 종료 대기
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        
+        System.out.println("After join: " + thread.getState());  // TERMINATED
+    }
+}
+</code></pre></pre>
+<h3>단계별 동작 과정</h3>
+<h4>Step 1: Main 스레드 실행</h4>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">OS 레벨:
+┌─────────────────────┐
+│  OS 스레드 (Main)    │
+│  - TID: 12345       │
+│  - Stack: 할당됨    │
+│  - 상태: 실행 중     │
+└─────────────────────┘
+         ↓
+Java 레벨:
+┌─────────────────────┐
+│  Thread (main)      │
+│  - name: "main"     │
+│  - state: RUNNABLE  │
+└─────────────────────┘
+</code></pre>
+<h4>Step 2: Thread 객체 생성</h4>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-java">Thread thread = new Thread(...);
+</code></pre></pre>
+<p><strong>메모리 상태:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">Heap:
+┌─────────────────────┐
+│  Thread 객체         │
+│  - name: "Thread-0" │
+│  - state: NEW       │
+│  - OS 스레드: 없음   │ ← 아직 OS 스레드 없음!
+└─────────────────────┘
+</code></pre>
+<h4>Step 3: Thread.start() 호출</h4>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-java">thread.start();
+</code></pre></pre>
+<p><strong>OS 스레드 생성:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">OS 레벨:
+┌─────────────────────┐
+│  OS 스레드 (Thread-0)│
+│  - TID: 12346       │ ← 새로 생성됨!
+│  - Stack: 할당됨    │
+│  - 상태: 실행 중     │
+└─────────────────────┘
+         ↓
+Java 레벨:
+┌─────────────────────┐
+│  Thread 객체         │
+│  - name: "Thread-0" │
+│  - state: RUNNABLE  │
+│  - OS 스레드: 연결됨 │ ← OS 스레드와 연결!
+└─────────────────────┘
+</code></pre>
+<h4>Step 4: Runnable 실행</h4>
+<p><strong>OS 스레드가 실행되면:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">1. JVM 진입점 호출
+2. Thread 객체의 run() 메서드 실행
+3. Lambda 표현식 실행
+4. "Child thread: Thread-0" 출력
+5. 스레드 종료
+</code></pre>
+<h4>Step 5: 스레드 종료</h4>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">OS 스레드 종료:
+  - 스택 메모리 해제
+  - TCB 제거
+  - 스케줄러에서 제거
+
+Java Thread 객체:
+  - state: TERMINATED
+  - OS 스레드: 연결 해제
+</code></pre>
+<h3>⚠️ GC와 스레드의 관계</h3>
+<p><strong>⚠️ 핵심: GC도 스레드입니다!</strong></p>
+<p><strong>GC 스레드의 구조:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">JVM 프로세스:
+  ├─ 애플리케이션 스레드들
+  │   ├─ Thread-1 (사용자 요청 처리)
+  │   ├─ Thread-2 (사용자 요청 처리)
+  │   └─ Thread-3 (사용자 요청 처리)
+  │
+  └─ GC 스레드들 ← 이것도 스레드!
+      ├─ GC Thread-1 (Young GC)
+      ├─ GC Thread-2 (Young GC)
+      └─ GC Thread-3 (Full GC)
+</code></pre>
+<p><strong>GC 스레드도 동일한 구조를 가집니다:</strong></p>
+<ul>
+<li>GC 스레드도 <strong>Java Thread 객체</strong> (JVM 내부에서 관리)</li>
+<li>GC 스레드도 <strong>OS 스레드와 1:1 매핑</strong></li>
+<li>GC 스레드도 <strong>커널 스레드</strong>로 동작</li>
+<li>GC 스레드도 <strong>OS 스케줄러에 의해 관리</strong></li>
+</ul>
+<p><strong>GC 스레드의 생성:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">1. JVM 시작 시 GC 스레드들이 미리 생성됨
+2. GC 스레드도 OS 스레드와 1:1 매핑
+3. GC 스레드도 OS 스케줄러에 의해 실행됨
+4. GC 스레드도 독립적인 스택을 가짐
+</code></pre>
+<p><strong>GC 스레드와 애플리케이션 스레드의 차이:</strong></p>
+<ul>
+<li><strong>역할</strong>: GC 스레드는 메모리 정리, 애플리케이션 스레드는 비즈니스 로직 실행</li>
+<li><strong>생성 시점</strong>: GC 스레드는 JVM 시작 시, 애플리케이션 스레드는 필요 시</li>
+<li><strong>관리</strong>: 둘 다 OS 스케줄러에 의해 관리됨</li>
+<li><strong>구조</strong>: 둘 다 동일한 구조 (Java Thread 객체 ↔ OS 스레드 1:1 매핑)</li>
+</ul>
+<p><strong>Stop-the-World (STW) 이벤트:</strong></p>
+<p><strong>⚠️ 핵심 질문: OS는 스레드의 성격을 모르는데, 어떻게 애플리케이션 스레드만 멈출 수 있나요?</strong></p>
+<p><strong>답: JVM이 특정 스레드 ID(TID) 목록을 OS에 전달합니다!</strong></p>
+<p><strong>JVM의 스레드 관리:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">JVM 내부:
+┌─────────────────────────────────────┐
+│  스레드 관리 테이블                  │
+│  - Thread-1 → OS Thread (TID: 123) │ ← 애플리케이션 스레드
+│  - Thread-2 → OS Thread (TID: 124) │ ← 애플리케이션 스레드
+│  - Thread-3 → OS Thread (TID: 125) │ ← 애플리케이션 스레드
+│  - GC Thread-1 → OS Thread (TID: 200) │ ← GC 스레드
+│  - GC Thread-2 → OS Thread (TID: 201) │ ← GC 스레드
+└─────────────────────────────────────┘
+</code></pre>
+<p><strong>JVM은 자신이 생성한 모든 스레드의 TID를 알고 있습니다:</strong></p>
+<ul>
+<li>JVM은 각 Java Thread 객체와 OS 스레드의 TID를 매핑하여 관리</li>
+<li>애플리케이션 스레드의 TID 목록을 별도로 관리</li>
+<li>GC 스레드의 TID 목록도 별도로 관리</li>
+</ul>
+<p><strong>GC가 동작할 때 (상세 과정):</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">Step 1: GC 스레드가 STW 요청
+  GC Thread: "애플리케이션 스레드들을 멈춰야 해요"
+    ↓
+
+Step 2: JVM이 애플리케이션 스레드 TID 목록 준비
+  JVM 내부:
+    - 애플리케이션 스레드 TID 목록: [123, 124, 125]
+    - GC 스레드 TID 목록: [200, 201] ← 이건 제외!
+    ↓
+
+Step 3: JVM이 Safepoint 메커니즘을 사용하여 스레드 대기 요청
+  ⚠️ 중요: JVM은 OS에 직접 "멈춰라"고 요청할 수 없습니다!
+  
+  실제 동작:
+  ├─ JVM이 전역 플래그 설정: "STW 요청됨"
+  │   └─ 모든 애플리케이션 스레드가 확인할 수 있는 플래그
+  │
+  ├─ 각 스레드가 다음 safepoint에 도달할 때까지 실행 계속
+  │   └─ Safepoint: 스레드가 안전하게 대기할 수 있는 지점
+  │       ├─ 메서드 호출 시점
+  │       ├─ 루프 백엣지 (loop backedge)
+  │       └─ 예외 처리 시점
+  │
+  └─ 모든 스레드가 safepoint에 도달하여 대기 상태로 전환
+      └─ GC 스레드가 모든 스레드가 대기할 때까지 대기
+    ↓
+
+Step 4: 각 스레드가 Safepoint에 도달하여 대기 상태로 전환
+  ⚠️ 핵심: 스레드는 "강제로 멈춘" 것이 아니라 "safepoint에 도달하여 플래그를 확인하고 대기 상태로 전환"한 것입니다!
+  
+  실제 과정:
+  ├─ Thread-1 (TID: 123):
+  │   ├─ 실행 중: while(true) { ... } 루프
+  │   ├─ 루프의 백엣지에서 safepoint 체크
+  │   ├─ 전역 플래그 확인: "STW 요청이 있네?"
+  │   └─ safepoint에서 대기 상태로 전환 (자발적으로 대기)
+  │
+  ├─ Thread-2 (TID: 124):
+  │   ├─ 실행 중: methodA() 호출
+  │   ├─ 메서드 호출 시 safepoint 체크
+  │   ├─ 전역 플래그 확인: "STW 요청이 있네?"
+  │   └─ safepoint에서 대기 상태로 전환 (자발적으로 대기)
+  │
+  └─ Thread-3 (TID: 125):
+      ├─ 실행 중: 네이티브 코드 실행 중
+      ├─ 네이티브 코드는 safepoint가 없음
+      └─ 네이티브 코드 종료 후 safepoint에서 플래그 확인 → 대기 상태로 전환
+    ↓
+
+Step 4-1: Safepoint에 도달하여 대기 상태로 전환된 스레드들의 상태 (중요!)
+  ⚠️ 핵심: 스레드는 "강제로 멈춘" 것이 아니라 "safepoint에 도달하여 플래그를 확인하고 자발적으로 대기 상태로 전환"한 것입니다!
+  
+  Safepoint에 도달하여 대기 상태로 전환된 스레드 (TID: 123, 124, 125):
+    ├─ OS 레벨:
+    │   ├─ 실행 중단 (Waiting/Suspended 상태)
+    │   ├─ CPU에서 제거됨 (스케줄링 큐에서 제외)
+    │   ├─ 레지스터 상태 저장됨 (TCB에 저장)
+    │   └─ 스택 메모리는 그대로 유지 (메모리 해제 안됨!)
+    │
+    ├─ JVM 레벨:
+    │   ├─ Java Thread 객체는 그대로 존재
+    │   ├─ 스택 프레임들이 그대로 유지됨
+    │   ├─ 지역 변수들이 그대로 유지됨
+    │   ├─ Safepoint에서 대기 상태 (안전한 지점에서 대기)
+    │   ├─ 전역 플래그 확인 후 대기 상태로 전환
+    │   └─ Root Set으로 사용 가능 (GC가 스택 스캔 가능!)
+    │
+    └─ 메모리 상태:
+        ├─ 스택 메모리: 그대로 유지 (GC가 스캔할 수 있음)
+        ├─ 힙 메모리: 그대로 유지 (GC가 정리할 대상)
+        └─ 레지스터: TCB에 저장 (재개 시 복원)
+    ↓
+
+Step 5: GC 스레드가 메모리 정리 수행
+  GC Thread (TID: 200, 201)가 실행됨
+    ├─ 모든 애플리케이션 스레드가 대기 상태인지 확인
+    │   └─ 모든 스레드가 safepoint에 도달하여 대기할 때까지 대기
+    │
+    ├─ Root Set 스캔:
+    │   ├─ Safepoint에 도달하여 대기 상태인 스레드들의 스택을 스캔
+    │   ├─ 스택의 지역 변수들이 가리키는 객체들을 찾음
+    │   └─ Method Area의 static 변수들도 스캔
+    │
+    ├─ Mark 단계:
+    │   ├─ Root Set에서 도달 가능한 객체들을 마킹
+    │   └─ Safepoint에 도달하여 대기 상태인 스레드의 스택에서 참조하는 객체들도 마킹됨
+    │
+    └─ Sweep/Compact 단계:
+        ├─ 마킹되지 않은 객체들 제거
+        └─ 살아있는 객체들 재배치
+    ↓
+
+Step 6: GC 완료 후 애플리케이션 스레드 재개
+  GC 완료 후:
+  ├─ JVM이 전역 플래그 해제: "STW 요청 해제"
+  ├─ 대기 상태인 스레드들이 플래그 해제를 감지
+  └─ 스레드들이 safepoint에서부터 실행 재개
+    ↓
+  
+  실제 동작:
+  ├─ Thread-1 (TID: 123):
+  │   ├─ safepoint에서 대기 중
+  │   ├─ 플래그 해제 감지
+  │   └─ safepoint에서부터 실행 재개
+  │
+  ├─ Thread-2 (TID: 124):
+  │   ├─ safepoint에서 대기 중
+  │   ├─ 플래그 해제 감지
+  │   └─ safepoint에서부터 실행 재개
+  │
+  └─ Thread-3 (TID: 125):
+      ├─ safepoint에서 대기 중
+      ├─ 플래그 해제 감지
+      └─ safepoint에서부터 실행 재개
+</code></pre>
+<p><strong>⚠️ 중요한 점:</strong></p>
+<ol>
+<li>
+<p><strong>JVM은 OS에 직접 "멈춰라"고 요청할 수 없습니다!</strong></p>
+<ul>
+<li>OS는 실행 중인 스레드를 강제로 멈출 수 없음</li>
+<li>스레드는 CPU를 점유하고 있어서, 강제로 멈추면 시스템이 불안정해질 수 있음</li>
+<li>대신 JVM은 "Safepoint" 메커니즘을 사용</li>
+</ul>
+</li>
+<li>
+<p><strong>Safepoint란 무엇인가요?</strong></p>
+<ul>
+<li><strong>정의</strong>: 스레드가 안전하게 멈출 수 있는 코드 지점</li>
+<li><strong>위치</strong>: 메서드 호출, 루프 백엣지, 예외 처리 등</li>
+<li><strong>특징</strong>: 이 지점에서는 스레드의 상태가 일관성 있게 유지됨</li>
+<li><strong>목적</strong>: GC가 스택을 안전하게 스캔할 수 있도록 함</li>
+</ul>
+</li>
+<li>
+<p><strong>Safepoint 메커니즘의 동작:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">일반적인 코드 실행:
+while(true) {
+    // 작업 수행
+    // ... 백엣지 (루프의 끝) ...
+    // ← 여기가 safepoint!
+    // JVM이 여기서 "STW 요청이 있나?" 체크
+}
+
+STW 요청 시:
+1. JVM이 전역 플래그 설정: "STW 요청됨"
+2. 각 스레드가 safepoint에 도달하면 플래그 확인
+3. 플래그가 설정되어 있으면 스레드가 자발적으로 대기 상태로 전환
+4. 모든 스레드가 대기 상태로 전환될 때까지 GC 스레드가 대기
+</code></pre>
+</li>
+<li>
+<p><strong>왜 Safepoint가 필요한가요?</strong></p>
+<ul>
+<li><strong>안전성</strong>: 스레드가 메모리를 수정하는 중간에 대기 상태로 전환되면 GC가 잘못된 정보를 읽을 수 있음</li>
+<li><strong>일관성</strong>: Safepoint에서는 스레드의 상태가 일관성 있게 유지됨</li>
+<li><strong>협조적 대기</strong>: 스레드가 자발적으로 대기 상태로 전환 (강제 멈춤 아님)</li>
+</ul>
+</li>
+<li>
+<p><strong>Safepoint에 도달하지 못하는 경우:</strong></p>
+<ul>
+<li><strong>네이티브 코드 실행 중</strong>: JNI 호출 등
+<ul>
+<li>해결: 네이티브 코드 종료 후 safepoint에서 대기 상태로 전환</li>
+</ul>
+</li>
+<li><strong>무한 루프 (safepoint 없는 경우)</strong>: 매우 드묾
+<ul>
+<li>해결: JVM이 주기적으로 인터럽트를 시도 (하지만 보장되지 않음)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>OS는 스레드의 "성격"을 모르지만, Safepoint 메커니즘을 통해 안전하게 대기 상태로 전환할 수 있습니다</strong></p>
+<ul>
+<li>OS는 스레드의 실행을 직접 제어할 수 없음</li>
+<li>하지만 JVM이 Safepoint 메커니즘을 통해 스레드가 자발적으로 대기 상태로 전환하도록 유도</li>
+<li>스레드가 safepoint에 도달하면 플래그를 확인하고 대기 상태로 전환</li>
+</ul>
+</li>
+<li>
+<p><strong>JVM은 자신이 생성한 스레드의 TID를 모두 알고 있습니다</strong></p>
+<ul>
+<li>JVM은 각 Java Thread 객체와 OS 스레드 TID를 매핑하여 관리</li>
+<li>애플리케이션 스레드 TID 목록을 별도로 관리</li>
+<li>GC 스레드 TID 목록도 별도로 관리</li>
+</ul>
+</li>
+<li>
+<p><strong>OS는 시스템 전체의 모든 스레드를 멈추지 않습니다</strong></p>
+<ul>
+<li>JVM 프로세스 내의 특정 스레드들만 멈춤</li>
+<li>다른 프로세스의 스레드는 영향 없음</li>
+<li>GC 스레드도 계속 실행됨</li>
+</ul>
+</li>
+<li>
+<p><strong>STW는 JVM 프로세스 내부의 일입니다</strong></p>
+<ul>
+<li>JVM 프로세스 내의 애플리케이션 스레드만 멈춤</li>
+<li>다른 프로세스는 영향 없음</li>
+<li>OS 전체가 멈추는 것이 아님</li>
+</ul>
+</li>
+</ol>
+<p><strong>비유:</strong></p>
+<ul>
+<li>도서관 정리 시간에 모든 사람이 나가야 함</li>
+<li>하지만 정리하는 사람(GC 스레드)은 계속 일함</li>
+<li>정리 끝나면 다시 이용 가능</li>
+<li>다른 건물(다른 프로세스)은 영향 없음</li>
+</ul>
+<p><strong>⚠️ STW 중 Safepoint에 도달하여 대기 상태로 전환된 스레드들은 어떻게 되나요?</strong></p>
+<p><strong>핵심: Safepoint에 도달하여 대기 상태로 전환된 스레드의 메모리는 그대로 유지되며, GC가 이를 스캔할 수 있습니다!</strong></p>
+<p><strong>1. OS 레벨에서의 상태:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">대기 상태로 전환된 스레드 (TID: 123):
+├─ 실행 상태: Waiting/Suspended (대기 중)
+├─ CPU: 할당되지 않음 (스케줄링 큐에서 제외)
+├─ 레지스터: TCB (Thread Control Block)에 저장됨
+│   ├─ PC (Program Counter): 현재 실행 중이던 명령어 주소 (safepoint 위치)
+│   ├─ SP (Stack Pointer): 스택 포인터
+│   └─ 기타 레지스터들: 모두 TCB에 저장
+└─ 메모리: 그대로 유지 (해제되지 않음!)
+</code></pre>
+<p><strong>2. JVM 레벨에서의 상태:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">대기 상태로 전환된 스레드의 Java Thread 객체:
+├─ Thread 객체: 그대로 존재 (메모리 해제 안됨)
+├─ 스택 메모리: 그대로 유지
+│   ├─ 스택 프레임들: 모두 그대로 유지
+│   ├─ 지역 변수들: 모두 그대로 유지
+│   └─ 참조 변수들: 힙 객체를 가리키는 주소값도 그대로 유지
+├─ Safepoint 위치: 플래그 확인 후 대기 상태로 전환된 지점
+└─ 상태: RUNNABLE → (STW 중, 대기 상태) → RUNNABLE (재개 후)
+</code></pre>
+<p><strong>3. GC가 Safepoint에 도달하여 대기 상태로 전환된 스레드의 스택을 스캔하는 방법:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">GC 스레드의 Root Set 스캔 과정:
+├─ Step 1: 모든 Safepoint에 도달하여 대기 상태로 전환된 스레드의 스택에 접근
+│   └─ JVM이 각 스레드의 스택 메모리 주소를 알고 있음
+│
+├─ Step 2: 각 스택 프레임의 지역 변수들을 스캔
+│   ├─ 지역 변수가 참조 타입이면 힙 객체를 가리킴
+│   └─ 이 참조들을 Root Set으로 사용
+│
+├─ Step 3: Root Set에서 도달 가능한 객체들을 마킹
+│   └─ Safepoint에 도달하여 대기 상태로 전환된 스레드의 스택에서 참조하는 객체들도 살아있다고 판단
+│
+└─ Step 4: 마킹되지 않은 객체들만 수집
+    └─ Safepoint에 도달하여 대기 상태로 전환된 스레드가 참조하는 객체들은 수집되지 않음
+</code></pre>
+<p><strong>4. 왜 스택 메모리를 해제하지 않나요?</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">이유:
+├─ 스레드는 일시 중지일 뿐, 종료된 것이 아님
+├─ 재개 시 이전 상태로 복원해야 함
+│   ├─ 스택 프레임 복원
+│   ├─ 지역 변수 복원
+│   └─ 실행 위치 복원 (PC 레지스터)
+└─ GC는 스택을 스캔해야 하므로 메모리가 필요함
+</code></pre>
+<p><strong>5. 재개 시 복원 과정:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">GC 완료 후 스레드 재개:
+├─ Step 1: JVM이 OS에 스레드 재개 요청
+│   └─ "TID 123, 124, 125를 다시 실행해주세요"
+│
+├─ Step 2: OS가 TCB에서 레지스터 상태 복원
+│   ├─ PC 레지스터 복원 (이전에 실행 중이던 위치)
+│   ├─ SP 레지스터 복원 (스택 포인터)
+│   └─ 기타 레지스터들 복원
+│
+├─ Step 3: 스레드가 스케줄링 큐에 다시 추가
+│   └─ OS 스케줄러가 다시 실행할 수 있도록 등록
+│
+└─ Step 4: 스레드가 이전 상태로 복원되어 실행 계속
+    └─ 마치 멈춘 적이 없는 것처럼 동작
+</code></pre>
+<p><strong>6. 실제 예시:</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-java">// 스레드가 실행 중이던 코드
+public void processData() {
+    List&lt;String&gt; data = new ArrayList&lt;&gt;();  // 지역 변수
+    data.add("item1");                      // 힙 객체 참조
+    // ... 여기서 STW 요청 발생! ...
+    // JVM이 전역 플래그 설정: "STW 요청됨"
+    // 스레드가 다음 safepoint에 도달할 때까지 실행 계속
+    // (메서드 호출, 루프 백엣지 등에서 safepoint 체크)
+    // ... safepoint에 도달하여 플래그 확인 ...
+    // 플래그가 설정되어 있으면 대기 상태로 전환
+    // 하지만:
+    // - data 변수는 스택에 그대로 유지
+    // - ArrayList 객체는 힙에 그대로 유지
+    // - GC는 data 변수를 Root Set으로 사용 가능
+    // - GC는 ArrayList 객체를 살아있다고 판단
+    // ... GC 완료 후 ...
+    // 전역 플래그 해제, 스레드가 재개되면 safepoint에서부터 계속 실행
+    data.add("item2");  // 정상적으로 실행됨!
+}
+</code></pre></pre>
+<p><strong>⚠️ 핵심 정리:</strong></p>
+<ul>
+<li><strong>Safepoint에 도달하여 대기 상태로 전환된 스레드의 메모리는 해제되지 않음</strong>: 스택, 힙 참조 모두 유지</li>
+<li><strong>GC가 Safepoint에 도달하여 대기 상태로 전환된 스레드의 스택을 스캔할 수 있음</strong>: Root Set으로 사용</li>
+<li><strong>레지스터 상태는 TCB에 저장됨</strong>: 재개 시 복원을 위해</li>
+<li><strong>스레드는 대기 상태일 뿐, 종료된 것이 아님</strong>: 재개 시 이전 상태로 복원</li>
+<li><strong>STW는 실행을 대기 상태로 전환하는 것이지, 메모리를 지우는 것이 아님</strong></li>
+<li><strong>협조적 대기</strong>: 스레드는 강제로 멈춘 것이 아니라, safepoint에 도달하여 플래그를 확인하고 자발적으로 대기 상태로 전환</li>
+</ul>
+<p><strong>왜 STW가 필요한가요?</strong></p>
+<ul>
+<li>GC가 동작 중일 때 애플리케이션 스레드가 메모리를 수정하면 GC의 동작에 영향</li>
+<li>메모리 일관성 보장 필요</li>
+<li>안전한 가비지 컬렉션을 위해 필수</li>
+</ul>
+<p><strong>⚠️ 핵심 정리:</strong></p>
+<ul>
+<li><strong>GC도 스레드</strong>: GC는 별도의 스레드로 동작하며, 애플리케이션 스레드와 동일한 구조</li>
+<li><strong>GC 스레드도 OS 스레드</strong>: GC 스레드도 OS 스레드와 1:1 매핑되어 OS 스케줄러에 의해 관리</li>
+<li><strong>JVM은 OS에 직접 "멈춰라"고 요청할 수 없음</strong>: OS는 실행 중인 스레드를 강제로 멈출 수 없음</li>
+<li><strong>Safepoint 메커니즘 사용</strong>: JVM은 Safepoint를 통해 스레드가 자발적으로 대기 상태로 전환하도록 유도
+<ul>
+<li>Safepoint: 스레드가 안전하게 대기 상태로 전환할 수 있는 코드 지점 (메서드 호출, 루프 백엣지 등)</li>
+<li>JVM이 전역 플래그 설정: "STW 요청됨"</li>
+<li>각 스레드가 safepoint에 도달하면 플래그 확인</li>
+<li>플래그가 설정되어 있으면 스레드가 자발적으로 대기 상태로 전환</li>
+</ul>
+</li>
+<li><strong>JVM은 자신이 생성한 모든 스레드의 TID를 관리</strong>: 애플리케이션 스레드와 GC 스레드를 구분하여 관리</li>
+<li><strong>STW는 JVM 프로세스 내부의 일</strong>: 다른 프로세스나 OS 전체에 영향 없음</li>
+<li><strong>협조적 대기</strong>: 스레드는 강제로 멈춘 것이 아니라, safepoint에 도달하여 플래그를 확인하고 자발적으로 대기 상태로 전환</li>
+</ul>
+<hr>
+<h2>💡 <strong>6. 스레드 생성 비용</strong></h2>
+<h3>왜 스레드 생성이 비싼가요?</h3>
+<p><strong>스레드 생성 비용이 높은 이유:</strong></p>
+<ol>
+<li>
+<p><strong>OS 시스템 콜</strong></p>
+<ul>
+<li>OS 커널에 스레드 생성 요청</li>
+<li>시스템 콜 오버헤드</li>
+</ul>
+</li>
+<li>
+<p><strong>메모리 할당</strong></p>
+<ul>
+<li>스택 메모리 할당 (기본 1MB)</li>
+<li>TCB (Thread Control Block) 생성</li>
+</ul>
+</li>
+<li>
+<p><strong>컨텍스트 스위칭 준비</strong></p>
+<ul>
+<li>레지스터 초기화</li>
+<li>스케줄러 등록</li>
+</ul>
+</li>
+</ol>
+<p><strong>비용 비교:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">객체 생성: 수십 나노초
+스레드 생성: 수백 마이크로초 ~ 수 밀리초
+</code></pre>
+<p><strong>비유:</strong></p>
+<ul>
+<li>객체 생성: 종이 한 장 만들기</li>
+<li>스레드 생성: 새 직원 채용하기 (서류, 면접, 등록 등)</li>
+</ul>
+<h3>스레드 풀의 필요성</h3>
+<p><strong>스레드 풀을 사용하는 이유:</strong></p>
+<ol>
+<li>
+<p><strong>생성 비용 절감</strong></p>
+<ul>
+<li>미리 생성된 스레드 재사용</li>
+<li>생성/종료 비용 없음</li>
+</ul>
+</li>
+<li>
+<p><strong>리소스 관리</strong></p>
+<ul>
+<li>스레드 개수 제한</li>
+<li>메모리 사용량 제어</li>
+</ul>
+</li>
+<li>
+<p><strong>성능 향상</strong></p>
+<ul>
+<li>즉시 실행 가능</li>
+<li>오버헤드 최소화</li>
+</ul>
+</li>
+</ol>
+<h3>⚠️ 커널 스레드의 제약과 JVM의 대응</h3>
+<p><strong>커널 스레드는 OS에 의해 관리되며, JVM은 이를 직접 제어할 수 없습니다.</strong></p>
+<p><strong>JVM의 제약:</strong></p>
+<ul>
+<li>OS 스케줄러가 최종 결정권을 가짐</li>
+<li>JVM은 스레드의 실행 순서를 완벽히 제어할 수 없음</li>
+<li>OS는 스레드의 성격이나 역할을 모름</li>
+</ul>
+<p><strong>JVM의 대응 방법:</strong></p>
+<ol>
+<li>
+<p><strong>스레드 풀 사용</strong></p>
+<ul>
+<li>스레드 생성과 관리를 효율적으로 수행</li>
+<li>스레드 생성/소멸 비용 최소화</li>
+</ul>
+</li>
+<li>
+<p><strong>스레드 우선순위 조정</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-java">thread.setPriority(Thread.MAX_PRIORITY);  // OS에 우선순위 요청
+</code></pre></pre>
+<ul>
+<li>OS에 우선순위 변경 요청</li>
+<li>OS가 최종 결정 (보장되지 않음)</li>
+</ul>
+</li>
+<li>
+<p><strong>스레드 상태 모니터링</strong></p>
+<ul>
+<li>스레드의 상태를 모니터링하여 필요에 따라 조정</li>
+<li>애플리케이션 성능 최적화</li>
+</ul>
+</li>
+</ol>
+<p><strong>⚠️ 중요한 점:</strong></p>
+<ul>
+<li>JVM은 OS의 스케줄링 메커니즘에 의존</li>
+<li>JVM이 요청해도 OS가 최종 결정</li>
+<li>커널 스레드의 제약을 이해하고, JVM의 대응 방식을 학습하는 것이 중요</li>
+</ul>
+<hr>
+<h2>🎓 <strong>핵심 정리</strong></h2>
+<h3>1. ⚠️ Java Thread ↔ OS Thread 관계</h3>
+<ul>
+<li><strong>1:1 매핑</strong>: 각 Java Thread 객체는 하나의 OS 스레드와 연결</li>
+<li><strong>Native Thread 모델</strong>: Java 1.1 이후 사용</li>
+<li><strong><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">new Thread()</code></strong>: Java 객체만 생성 (OS 스레드 아님)</li>
+<li><strong><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">Thread.start()</code></strong>: OS 스레드 생성 및 연결</li>
+</ul>
+<h3>2. ⚠️ Thread.start() 내부 동작</h3>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">Thread.start()
+  ↓
+JVM Native 코드 (start0())
+  ↓
+OS 시스템 콜 (pthread_create, CreateThread)
+  ↓
+OS 스레드 생성 (TCB, 스택 할당)
+  ↓
+OS 스레드 실행 (run() 메서드 실행)
+</code></pre>
+<h3>3. ⚠️ 스레드별 메모리 구조</h3>
+<ul>
+<li><strong>공유</strong>: Method Area, Heap</li>
+<li><strong>독립</strong>: 각 스레드의 Stack</li>
+</ul>
+<h3>4. ⚠️ 스레드 생성 비용</h3>
+<ul>
+<li><strong>높은 비용</strong>: OS 시스템 콜, 메모리 할당, 스케줄러 등록</li>
+<li><strong>해결책</strong>: 스레드 풀 사용</li>
+</ul>
+<h3>5. ⚠️ 스레드 상태</h3>
+<ul>
+<li><strong>NEW</strong>: 생성됨 (start() 호출 전)</li>
+<li><strong>RUNNABLE</strong>: 실행 가능 (OS 스레드 생성됨)</li>
+<li><strong>TERMINATED</strong>: 종료됨 (run() 완료)</li>
+</ul>
+<h3>6. ⚠️ JVM과 OS 스케줄러의 관계</h3>
+<ul>
+<li><strong>JVM은 유저 모드 애플리케이션</strong>: 커널 모드에서만 가능한 CPU 자원 접근 권한 없음</li>
+<li><strong>OS 스케줄러에 의존</strong>: JVM이 OS의 스케줄링 메커니즘을 활용</li>
+<li><strong>제어 제한</strong>: JVM은 스레드의 실행 순서를 완벽히 제어할 수 없음</li>
+<li><strong>OS는 스레드의 성격을 모름</strong>: 단순히 실행 상태와 우선순위만 기반으로 스케줄링</li>
+</ul>
+<h3>7. ⚠️ GC와 스레드의 관계</h3>
+<ul>
+<li><strong>GC도 스레드</strong>: GC는 별도의 스레드로 동작하며, 애플리케이션 스레드와 동일한 구조</li>
+<li><strong>GC 스레드도 OS 스레드와 1:1 매핑</strong>: GC 스레드도 OS 스레드와 1:1 매핑되어 OS 스케줄러에 의해 관리</li>
+<li><strong>OS는 GC 스레드와 애플리케이션 스레드를 구분하지 못함</strong>: OS는 단순히 우선순위와 실행 상태만 확인</li>
+<li><strong>Stop-the-World (STW)</strong>: GC가 모든 애플리케이션 스레드를 일시 중지</li>
+<li><strong>OS 시스템 콜 활용</strong>: JVM이 OS에 스레드 중지 요청</li>
+<li><strong>안정성 확보</strong>: GC의 안정성을 위해 필수</li>
+</ul>
+<hr>
+<h2>💡 <strong>실무에서 기억할 것</strong></h2>
+<h3>스레드 생성 시 주의사항</h3>
+<ol>
+<li>
+<p><strong>스레드 풀 사용</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-java">// ❌ 나쁜 예
+for (int i = 0; i &lt; 1000; i++) {
+    new Thread(() -&gt; { /* 작업 */ }).start();
+}
+
+// ✅ 좋은 예
+ExecutorService executor = Executors.newFixedThreadPool(10);
+for (int i = 0; i &lt; 1000; i++) {
+    executor.submit(() -&gt; { /* 작업 */ });
+}
+</code></pre></pre>
+</li>
+<li>
+<p><strong>스레드 개수 제한</strong></p>
+<ul>
+<li>무제한 스레드 생성은 메모리 부족 발생</li>
+<li>스레드 풀로 개수 제한</li>
+</ul>
+</li>
+<li>
+<p><strong>스레드 이름 지정</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-java">Thread thread = new Thread(() -&gt; { /* 작업 */ }, "Worker-1");
+// 디버깅 시 유용
+</code></pre></pre>
+</li>
+</ol>
+<hr>
+<p>이상으로 Java Thread 객체와 운영체제 스레드의 관계, JVM의 스레드 관리 방식, 실제 동작 과정을 설명했습니다. 1부와 2부를 통해 운영체제 스레드와 Java 스레드의 전체적인 그림을 완벽하게 이해하실 수 있을 것입니다.</p></div></div><div class="MuiBox-root css-1cpq4zq"><hr class="MuiDivider-root MuiDivider-fullWidth css-7jtdmc"><h5 class="MuiTypography-root MuiTypography-h5 css-85yo2n">같은 카테고리의 다른 글</h5><div class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-2 css-1eikg3m"><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] Serializable 깊이 파기 — Part 2: 바이트에서 다시 객체로, 그리고 함정들</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">직렬화된 바이트를 ObjectInputStream이 어떤 순서로 읽어 객체로 복원하는지, 그때 생성자가 호출되지 않는다는 점을 확인합니다. | serialVersionUID, transient, 커스텀 readObject·writeObject, 역직렬화 취약점, Java 직렬화의 현재로 마무리합니다.</p><div class="MuiBox-root css-107ld1r"></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 4월 5일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] Serializable 깊이 파기 — Part 1: 객체가 바이트가 되는 과정</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">Python이나 JavaScript와 달리 Java는 왜 Serializable을 선언해야 하는지, 메서드가 하나도 없는 이 인터페이스가 무슨 일을 하는지 묻는 글입니다. | ObjectOutputStream이 만든 실제 바이트를 열어 보고, 참조 객체가 들어 있을 때는 어떻게 되는지 확인합니다.</p><div class="MuiBox-root css-107ld1r"></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 4월 5일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] 주식 거래 엔진 직접 만들기 - Part 3: 오더북을 어떻게 구현할 것인가</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">주식 거래 엔진의 오더북을 TreeMap과 ArrayDeque 조합으로 만든 이유를, PriorityQueue, LinkedList, Skip List와 비교하며 설명합니다. | 주문 취소를 Lazy Removal로 처리한 방법과 Kafka를 연결하며 만난 멱등성 문제를 마지막에 둡니다.</p><div class="MuiBox-root css-107ld1r"></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 27일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] 주식 거래 엔진 직접 만들기 - Part 2: Phase 1 — 모놀리식으로 시작하기</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">단일 JAR 모놀리식 구조인 Phase 1에서 만난 문제를 차례로 다룹니다. | SELECT FOR UPDATE로 동시성을 해결했고, 락 보유 시간을 줄이고, 락 획득 순서를 통일해 데드락 위험을 없앴습니다. @Transactional 원칙과 Lazy Loading 함정도 짚습니다.</p><div class="MuiBox-root css-107ld1r"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Java</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Spring Boot</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">JPA</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">+2</span></div></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 27일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] 주식 거래 엔진 직접 만들기 - Part 1: 왜 주식 거래 엔진인가</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">F-lab 멘토링 프로젝트로 주식 거래 엔진을 직접 설계하고 구현한 과정을 기록하는 시리즈의 첫 글입니다. | 프로젝트를 고른 기준과 멀티모듈 구조, Phase 로드맵, 시리즈 전체에서 답할 질문들을 먼저 밝힙니다.</p><div class="MuiBox-root css-107ld1r"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Java</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Spring Boot</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Kafka</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">+5</span></div></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 27일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[개발자가 직접 써봤어요] Claude Code 완전 가이드: 설치부터 멀티에이전트까지</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">Claude Code를 Spring Boot와 Kafka 기반 주식 매매 엔진 프로젝트에 적용해 본 경험을 바탕으로, 설치부터 멀티에이전트까지 소개합니다. | CLAUDE.md, Skills, Subagents, Hooks, MCP, Agent Teams의 여섯 레이어와 Cursor AI와의 비교, 주의사항이 나옵니다.</p><div class="MuiBox-root css-107ld1r"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Claude Code</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">AI</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Developer Tools</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">+4</span></div></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 9일</span></div></div></div></div><div class="MuiBox-root css-1b94f21"><a class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways css-104ms0" href="/blog/posts" data-discover="true"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowBackIcon"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z"></path></svg>게시글 목록으로 돌아가기</a></div><button class="MuiButtonBase-root MuiFab-root MuiFab-circular MuiFab-sizeMedium MuiFab-primary MuiFab-root MuiFab-circular MuiFab-sizeMedium MuiFab-primary css-1nl6bps" tabindex="0" type="button" aria-label="scroll to top" style="opacity: 0; visibility: hidden;"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="KeyboardArrowUpIcon"><path d="M7.41 15.41 12 10.83l4.59 4.58L18 14l-6-6-6 6z"></path></svg></button></div></div></div></div><footer style="text-align: center; padding: 2rem 0px; color: rgb(0, 0, 0); font-size: 0.9rem; border-top: 1px solid rgb(0, 0, 0); margin-top: auto; background-color: rgb(255, 255, 255);"><p>© 2025 DevTaco Blog. All rights reserved.</p></footer><div class="MuiBox-root css-1hyfx7x"><div class="visitor-counter MuiBox-root css-19midj6"><h6 class="MuiTypography-root MuiTypography-h6 MuiTypography-gutterBottom css-izz7ci">방문자 수</h6><div class="MuiBox-root css-zwd3xv"><h4 class="MuiTypography-root MuiTypography-h4 css-1dg27va">72</h4><p class="MuiTypography-root MuiTypography-body2 css-l6pb42">오늘</p><h6 class="MuiTypography-root MuiTypography-h6 css-kh42wg">총 72명</h6></div></div></div><div class="MuiBox-root css-1y95mt5" data-testid="terminal-navigation"><div class="MuiBox-root css-1kw3y0a"><p class="MuiTypography-root MuiTypography-body2 css-1fktdtb">devtaco@portfolio:~$ navigation</p><div class="MuiBox-root css-j0ozid"><p class="MuiTypography-root MuiTypography-body2 css-1cn40rb">⌘M to close</p><button class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-470314" tabindex="0" type="button" id=":r1:"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeSmall css-vh810p" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="CloseIcon"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg></button></div></div><div class="MuiBox-root css-13t3iqc"><div class="MuiBox-root css-0"><p class="MuiTypography-root MuiTypography-body2 css-cbhj4f">Navigation:</p><div class="MuiBox-root css-1kkt86i"><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">1 → home</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">2 → about</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">3 → posts</p></div></div><div class="MuiBox-root css-0"><p class="MuiTypography-root MuiTypography-body2 css-cbhj4f">External:</p><div class="MuiBox-root css-1kkt86i"><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">g → github</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">e → email</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">l → linkedin</p></div></div></div><p class="MuiTypography-root MuiTypography-body2 css-1e7vt2">Press number keys (1,2,3) or letter keys (g,e,l) to navigate. Use ⌘+M to close.</p></div></div></div></body></html>

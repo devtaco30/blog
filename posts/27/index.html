@@ -1,0 +1,448 @@
+<!DOCTYPE html><html lang="en"><head><script type="text/javascript">!function(n){if("/"===n.search[1]){var a=n.search.slice(1).split("&").map((function(n){return n.replace(/~and~/g,"&")})).join("?");window.history.replaceState(null,null,n.pathname.slice(0,-1)+a+n.hash)}}(window.location)</script><meta charset="utf-8"><link rel="icon" href="/blog/favicon.ico"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#000000"><meta name="keywords" content="Java, Kotlin, Spring Boot, MSA, 개발, 백엔드, coroutine"><meta name="author" content="DevTaco"><meta property="og:image" content="https://devtaco30.github.io/blog/og-image.png"><meta property="twitter:image" content="https://devtaco30.github.io/blog/og-image.png"><meta property="twitter:url" content="https://devtaco30.github.io/blog/"><link rel="apple-touch-icon" href="/blog/apple-touch-icon.png"><link rel="manifest" href="/blog/manifest.json"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&amp;family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet"><script defer="defer" src="/blog/static/js/main.404b9165.js"></script><link href="/blog/static/css/main.5b86466f.css" rel="stylesheet"><style data-emotion="css" data-s=""></style><title>EST AI - Python(HR data) | DevTaco Blog</title><meta name="description" content="HR 데이터에 describe()를 적용해 통계량을 확인하고, 교육 수준별 평균 연봉을 groupby로 구합니다. 여러 기준으로 그룹화하는 방법과 상관계수 분석으로 끝납니다."><meta property="og:title" content="EST AI - Python(HR data)"><meta property="og:description" content="HR 데이터에 describe()를 적용해 통계량을 확인하고, 교육 수준별 평균 연봉을 groupby로 구합니다. 여러 기준으로 그룹화하는 방법과 상관계수 분석으로 끝납니다."><meta property="og:type" content="article"><meta property="og:url" content="https://devtaco30.github.io/blog/posts/27"><meta name="twitter:card" content="summary"></head><body><noscript>You need to enable JavaScript to run this app.</noscript><div id="root"><div class="App"><div class="MuiBox-root css-kurlqb"><div class="MuiBox-root css-171onha"><button class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-1f6w95t" tabindex="0" type="button" id=":r0:"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="MenuIcon"><path d="M3 18h18v-2H3zm0-5h18v-2H3zm0-7v2h18V6z"></path></svg></button><div class="MuiBox-root css-1szb58x"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-218waq" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowBackIcon"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z"></path></svg><div class="MuiBox-root css-wq4jw1"><span>⌘+M</span></div></div></div></div><div class="MuiContainer-root css-15jb5o1" data-testid="page-container"><div class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-2 MuiGrid-spacing-md-3 css-1ht06td"><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-md-12 css-15j76c0"><div class="MuiBox-root css-15rigdj"><nav class="MuiTypography-root MuiTypography-body1 MuiBreadcrumbs-root css-1v2kxik"><ol class="MuiBreadcrumbs-ol css-51eq8m"><li class="MuiBreadcrumbs-li"><a class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways css-gj78h6" href="/blog/posts" data-discover="true">게시글 목록</a></li><li aria-hidden="true" class="MuiBreadcrumbs-separator css-1nd5pgh">/</li><li class="MuiBreadcrumbs-li"><p class="MuiTypography-root MuiTypography-body1 css-1cr0rz6">EST AI - Python(HR data)</p></li></ol></nav><div class="MuiBox-root css-15djlns"><button class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-1y18wdw" tabindex="0" type="button" id=":r9:"><span class="MuiButton-icon MuiButton-startIcon MuiButton-iconSizeMedium css-1ygddt1"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowBackIcon"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z"></path></svg></span><div class="MuiBox-root css-0"><span class="MuiTypography-root MuiTypography-caption css-115rlu8">이전글</span><p class="MuiTypography-root MuiTypography-body2 css-10qk5g4">EST AI - Machine Learning (Overview)</p></div></button><button class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-1k0z50p" tabindex="0" type="button" id=":ra:"><div class="MuiBox-root css-0"><span class="MuiTypography-root MuiTypography-caption css-115rlu8">다음글</span><p class="MuiTypography-root MuiTypography-body2 css-10qk5g4">EST AI - Python(mile per gallon data)</p></div><span class="MuiButton-icon MuiButton-endIcon MuiButton-iconSizeMedium css-6bt4d2"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowForwardIcon"><path d="m12 4-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"></path></svg></span></button></div><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-10t0qv5" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h4 class="MuiTypography-root MuiTypography-h4 css-k5jvd2">EST AI - Python(HR data)</h4><p class="MuiTypography-root MuiTypography-body1 css-104xg3">HR 데이터에 describe()를 적용해 통계량을 확인하고, 교육 수준별 평균 연봉을 groupby로 구합니다. | 여러 기준으로 그룹화하는 방법과 상관계수 분석으로 끝납니다.</p><div class="MuiBox-root css-1prrn6n"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Python</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Programming</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Pandas</span></div></div><p class="MuiTypography-root MuiTypography-body2 css-l6pb42">2025년 12월 5일 오후 12:36</p></div><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-1i779yj" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><div class="MuiBox-root css-13lazol"><h2>📚 오늘의 학습 내용</h2>
+<p>오늘은 <strong>HR 데이터</strong>를 활용하여 기술통계 분석을 학습했습니다. 데이터 탐색부터 집계 함수, groupby를 활용한 분석, 그리고 상관계수 분석까지 단계별로 진행했습니다.</p>
+<hr>
+<h3>📋 HR 데이터 소개 및 로드</h3>
+<p><strong>HR 데이터란?</strong></p>
+<ul>
+<li>직원 정보 데이터셋</li>
+<li>인사 데이터 분석을 위한 실습 데이터</li>
+</ul>
+<p><strong>데이터 로드:</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python">import pandas as pd
+import os
+
+# 작업 디렉토리 변경 (선택사항)
+os.chdir('/Users/jack/Study/develop/EST/est_python/data')
+
+# 데이터 로드
+hr_info = pd.read_csv('hr-info.csv', encoding='euc-kr')
+hr_info.head()
+</code></pre></pre>
+<p><strong>데이터 샘플 확인:</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python">hr_info.head(3)
+</code></pre></pre>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">   EID  ENAME GENDER ORG_CD POS_CD  AGE  SERVICE_YEAR EDU_LEVEL  PERFORMANCE_SCORE  SALARY  ...
+0  E001  홍길동      M   ORG1   POS1   25            0   학사 학위             85.5    5000  ...
+1  E002  김철수      M   ORG2   POS2   30            5   석사 학위             92.0    6500  ...
+2  E003  이영희      F   ORG1   POS1   28            3   학사 학위             78.5    5500  ...
+</code></pre>
+<p><strong>데이터 정보 확인:</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python">hr_info.info()
+</code></pre></pre>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">&lt;class 'pandas.core.frame.DataFrame'&gt;
+RangeIndex: 200 entries, 0 to 199
+Data columns (total 20 columns):
+ #   Column              Non-Null Count  Dtype  
+---  ------              --------------  -----  
+ 0   EID                 200 non-null    object 
+ 1   ENAME               200 non-null    object 
+ 2   GENDER              200 non-null    object 
+ 3   ORG_CD              197 non-null    object 
+ 4   POS_CD              200 non-null    object 
+ 5   AGE                 200 non-null    int64  
+ 6   SERVICE_YEAR        200 non-null    int64  
+ 7   EDU_LEVEL           200 non-null    object 
+ 8   PERFORMANCE_SCORE   200 non-null    float64
+ 9   SALARY              200 non-null    int64  
+ 10  LAST_PROMO_DT       182 non-null    object 
+ 11  TRAINING_HOURS      200 non-null    int64  
+ 12  SKILLS              200 non-null    object 
+ 13  ACTIVE_STATE        200 non-null    object 
+ 14  HIRE_DATE           200 non-null    object 
+ 15  RETIRE_DATE         49 non-null     object 
+ 16  RETIRE_REASON       49 non-null     object 
+ 17  REHIRE_YN           49 non-null     object 
+ 18  NATION              200 non-null    object 
+ 19  ROUNDING_DEDUCTION  200 non-null    object 
+</code></pre>
+<p><strong>주요 컬럼 설명:</strong></p>
+<ul>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">EID</code>: 직원 ID</li>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">ENAME</code>: 직원 이름</li>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">GENDER</code>: 성별</li>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">AGE</code>: 나이</li>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">SERVICE_YEAR</code>: 근속 연수</li>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">EDU_LEVEL</code>: 교육 수준</li>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">PERFORMANCE_SCORE</code>: 성과 평가 점수</li>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">SALARY</code>: 연봉</li>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">RETIRE_DATE</code>: 퇴사일 (결측치 있음)</li>
+</ul>
+<hr>
+<h3>📋 describe() 함수로 통계량 확인</h3>
+<p><strong>기본 통계량:</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python"># 수치형 데이터에 대한 통계량
+hr_info.describe()
+
+# 문자열 데이터에 대한 통계량
+hr_info.describe(include=['object'])
+
+# 실수형 데이터에 대한 통계량
+hr_info.describe(include=['float'])
+</code></pre></pre>
+<p><strong>describe() 결과 해석:</strong></p>
+<ul>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">count</code>: 데이터 개수 (결측치 제외)</li>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">mean</code>: 평균</li>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">std</code>: 표준편차</li>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">min</code>: 최소값</li>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">25%</code>: 1사분위수 (25% 데이터가 이 값보다 작음)</li>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">50%</code>: 2사분위수 (중앙값)</li>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">75%</code>: 3사분위수 (75% 데이터가 이 값보다 작음)</li>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">max</code>: 최대값</li>
+</ul>
+<hr>
+<h3>📋 개별 통계값 확인</h3>
+<p><strong>기본 통계 함수들:</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python"># sum: 합계
+print(f'전체 총 지출한 인건비 : {hr_info["SALARY"].sum()}')
+
+# mean: 평균
+print(f'평균 연봉 : {hr_info["SALARY"].mean()}')
+
+# count: 개수 (결측치는 계산에 포함되지 않음)
+print(f'퇴사자 수 : {hr_info["RETIRE_DATE"].count()}')
+
+# value_counts(): 값의 빈도수 확인
+print(f'남녀 비율 : {hr_info["GENDER"].value_counts()}')
+
+# unique(): 고유값 확인
+print(f'직원들의 국적: {hr_info["NATION"].unique()}')
+
+# max, min: 최대값, 최소값
+print(f'최대 근속 연수: {hr_info["SERVICE_YEAR"].max()}')
+print(f'최소 근속 연수: {hr_info["SERVICE_YEAR"].min()}')
+</code></pre></pre>
+<p><strong>출력 결과:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">전체 총 지출한 인건비 : 1197400
+평균 연봉 :  5987.0
+퇴사자 수 :  49
+남녀 비율 : GENDER
+M    117
+F     83
+Name: count, dtype: int64
+직원들의 국적: ['KOREA' 'Japan' 'USA' 'India' 'China' 'UK']
+최대 근속 연수: 25
+최소 근속 연수: 0
+평균 근속 연수: 4.66
+</code></pre>
+<hr>
+<h3>📋 교육수준별 평균 연봉 분석</h3>
+<p><strong>반복문을 사용한 분석:</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python"># f-string (formatted string literal): Python 3.6+에서 도입된 문자열 포맷팅 방법
+# f'...' 형태로 사용하며, 중괄호 {} 안에 변수나 표현식을 넣으면 그 값이 문자열에 삽입됨
+# 
+# 포맷 지정자(format specifier)를 사용하여 출력 형식을 제어할 수 있음:
+# - {값} : 기본 출력
+# - {값:.2f} : 소수점 2자리까지 표시 (f = fixed point)
+# - {값:,} : 천 단위 구분 기호(쉼표) 추가
+# - {값:.0f} : 소수점 없이 정수로 표시
+
+for i in hr_info['EDU_LEVEL'].unique():
+    print(f'{i} 평균 연봉 : {hr_info[hr_info["EDU_LEVEL"] == i]["SALARY"].mean():,.2f}')
+</code></pre></pre>
+<p><strong>출력 결과:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">박사 학위 평균 연봉 :  8,166.67
+학사 학위 평균 연봉 :  5,727.04
+석사 학위 평균 연봉 :  6,900.00
+고등학교 졸업 평균 연봉 :  6,140.00
+전문대 학위 평균 연봉 :  5,050.00
+</code></pre>
+<p><strong>groupby를 사용한 분석:</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python"># groupby를 사용하면 더 간결하게 작성 가능
+hr_info.groupby('EDU_LEVEL')['SALARY'].mean()
+</code></pre></pre>
+<blockquote>
+<p>💡 <strong>DataFrame 내장 함수들의 기본 출력 포맷:</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>함수</th><th>입력 데이터 타입</th><th>반환 타입</th><th>출력 포맷 예시</th></tr></thead><tbody><tr><td><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">sum()</code></td><td><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">int64</code></td><td><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">int64</code></td><td><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">1197400</code> (정수)</td></tr><tr><td><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">mean()</code></td><td><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">int64</code> 또는 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">float64</code></td><td><strong>항상 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">float64</code></strong></td><td><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">5987.0</code> 또는 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">8166.666666666667</code></td></tr><tr><td><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">count()</code></td><td>모든 타입</td><td><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">int64</code></td><td><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">49</code> (정수)</td></tr><tr><td><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">max()</code>, <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">min()</code></td><td><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">int64</code></td><td><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">int64</code></td><td><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">25</code>, <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">0</code> (정수)</td></tr></tbody></table>
+<p><strong>주요 특징:</strong></p>
+<ul>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">mean()</code> 함수는 항상 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">float64</code> 반환: 정수 데이터의 평균도 소수점으로 표시됨</li>
+<li>소수점이 길게 표시될 수 있음: <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">8166.666666666667</code> (15자리 소수점)</li>
+<li><strong>출력 포맷 제어 방법</strong>: f-string의 포맷 지정자 사용
+<ul>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">{값:.2f}</code>: 소수점 2자리</li>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">{값:,.2f}</code>: 천 단위 구분 기호 + 소수점 2자리</li>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">{값:.0f}</code>: 정수로 표시</li>
+</ul>
+</li>
+</ul>
+</blockquote>
+<hr>
+<h3>📋 다중 기준 그룹화 및 집계 함수</h3>
+<p><strong>교육수준과 성별에 따른 통계:</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python"># 교육수준과 성별에 따른 평균, 최대, 최소, 중앙 연봉값 확인
+hr_info[['SALARY', 'EDU_LEVEL', 'GENDER']].groupby(['EDU_LEVEL', 'GENDER']).agg(['mean', 'max', 'min', 'median'])
+</code></pre></pre>
+<p><strong>컬럼별로 다른 집계 함수 적용:</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python"># 국적에 따른 평균 성과평가점수와 최대 연봉 확인
+# 동일하게 모두 적용할 때에는 agg에 list 형태로 적용할 집계함수를 넣어준다.
+# 하지만, 각 컬럼별로 다른 집계함수를 적용할 때에는 딕셔너리 형태로 적용해야 한다.
+hr_info.groupby('NATION').agg({'PERFORMANCE_SCORE': 'mean', 'SALARY': 'max'})
+</code></pre></pre>
+<p><strong>agg() 함수 사용법:</strong></p>
+<ul>
+<li><strong>리스트 형태</strong>: 모든 컬럼에 동일한 집계 함수들을 적용
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python">df.groupby('컬럼').agg(['mean', 'max', 'min'])
+</code></pre></pre>
+</li>
+<li><strong>딕셔너리 형태</strong>: 각 컬럼별로 다른 집계 함수 적용
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python">df.groupby('컬럼').agg({'컬럼1': 'mean', '컬럼2': 'max'})
+</code></pre></pre>
+</li>
+</ul>
+<hr>
+<h3>📋 상관계수 분석</h3>
+<p>상관계수를 이해하기 위해 먼저 기술통계의 기본 개념들을 알아보겠습니다.</p>
+<h4>📊 분산과 표준편차</h4>
+<p><strong>1. 편차 (Deviation)</strong></p>
+<p><strong>편차란?</strong> 각 데이터와 평균의 차이</p>
+<ul>
+<li>데이터: <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>x</mi><mn>1</mn></msub><mo separator="true">,</mo><msub><mi>x</mi><mn>2</mn></msub><mo separator="true">,</mo><msub><mi>x</mi><mn>3</mn></msub><mo separator="true">,</mo><mo>⋯</mo><mtext> </mtext><mo separator="true">,</mo><msub><mi>x</mi><mi>n</mi></msub></mrow><annotation encoding="application/x-tex">x_1, x_2, x_3, \cdots, x_n</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.625em; vertical-align: -0.1944em;"></span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height: 0.3011em;"><span style="top: -2.55em; margin-left: 0em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height: 0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right: 0.1667em;"></span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height: 0.3011em;"><span style="top: -2.55em; margin-left: 0em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height: 0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right: 0.1667em;"></span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height: 0.3011em;"><span style="top: -2.55em; margin-left: 0em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">3</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height: 0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right: 0.1667em;"></span><span class="minner">⋯</span><span class="mspace" style="margin-right: 0.1667em;"></span><span class="mspace" style="margin-right: 0.1667em;"></span><span class="mpunct">,</span><span class="mspace" style="margin-right: 0.1667em;"></span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height: 0.1514em;"><span style="top: -2.55em; margin-left: 0em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">n</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height: 0.15em;"><span></span></span></span></span></span></span></span></span></span></li>
+<li>평균: <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>m</mi><mo>=</mo><mfrac><mrow><msub><mi>x</mi><mn>1</mn></msub><mo>+</mo><msub><mi>x</mi><mn>2</mn></msub><mo>+</mo><mo>⋯</mo><mo>+</mo><msub><mi>x</mi><mi>n</mi></msub></mrow><mi>n</mi></mfrac></mrow><annotation encoding="application/x-tex">m = \frac{x_1 + x_2 + \cdots + x_n}{n}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.4306em;"></span><span class="mord mathnormal">m</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 1.1634em; vertical-align: -0.345em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height: 0.8184em;"><span style="top: -2.655em;"><span class="pstrut" style="height: 3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">n</span></span></span></span><span style="top: -3.23em;"><span class="pstrut" style="height: 3em;"></span><span class="frac-line" style="border-bottom-width: 0.04em;"></span></span><span style="top: -3.4101em;"><span class="pstrut" style="height: 3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathnormal mtight">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height: 0.3173em;"><span style="top: -2.357em; margin-left: 0em; margin-right: 0.0714em;"><span class="pstrut" style="height: 2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height: 0.143em;"><span></span></span></span></span></span></span><span class="mbin mtight">+</span><span class="mord mtight"><span class="mord mathnormal mtight">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height: 0.3173em;"><span style="top: -2.357em; margin-left: 0em; margin-right: 0.0714em;"><span class="pstrut" style="height: 2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height: 0.143em;"><span></span></span></span></span></span></span><span class="mbin mtight">+</span><span class="minner mtight">⋯</span><span class="mbin mtight">+</span><span class="mord mtight"><span class="mord mathnormal mtight">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height: 0.1645em;"><span style="top: -2.357em; margin-left: 0em; margin-right: 0.0714em;"><span class="pstrut" style="height: 2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathnormal mtight">n</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height: 0.143em;"><span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height: 0.345em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></li>
+<li>편차: <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>x</mi><mn>1</mn></msub><mo>−</mo><mi>m</mi><mo separator="true">,</mo><msub><mi>x</mi><mn>2</mn></msub><mo>−</mo><mi>m</mi><mo separator="true">,</mo><msub><mi>x</mi><mn>3</mn></msub><mo>−</mo><mi>m</mi><mo separator="true">,</mo><mo>⋯</mo><mtext> </mtext><mo separator="true">,</mo><msub><mi>x</mi><mi>n</mi></msub><mo>−</mo><mi>m</mi></mrow><annotation encoding="application/x-tex">x_1 - m, x_2 - m, x_3 - m, \cdots, x_n - m</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.7333em; vertical-align: -0.15em;"></span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height: 0.3011em;"><span style="top: -2.55em; margin-left: 0em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height: 0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right: 0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right: 0.2222em;"></span></span><span class="base"><span class="strut" style="height: 0.7778em; vertical-align: -0.1944em;"></span><span class="mord mathnormal">m</span><span class="mpunct">,</span><span class="mspace" style="margin-right: 0.1667em;"></span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height: 0.3011em;"><span style="top: -2.55em; margin-left: 0em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height: 0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right: 0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right: 0.2222em;"></span></span><span class="base"><span class="strut" style="height: 0.7778em; vertical-align: -0.1944em;"></span><span class="mord mathnormal">m</span><span class="mpunct">,</span><span class="mspace" style="margin-right: 0.1667em;"></span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height: 0.3011em;"><span style="top: -2.55em; margin-left: 0em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">3</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height: 0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right: 0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right: 0.2222em;"></span></span><span class="base"><span class="strut" style="height: 0.7778em; vertical-align: -0.1944em;"></span><span class="mord mathnormal">m</span><span class="mpunct">,</span><span class="mspace" style="margin-right: 0.1667em;"></span><span class="minner">⋯</span><span class="mspace" style="margin-right: 0.1667em;"></span><span class="mspace" style="margin-right: 0.1667em;"></span><span class="mpunct">,</span><span class="mspace" style="margin-right: 0.1667em;"></span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height: 0.1514em;"><span style="top: -2.55em; margin-left: 0em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">n</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height: 0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right: 0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right: 0.2222em;"></span></span><span class="base"><span class="strut" style="height: 0.4306em;"></span><span class="mord mathnormal">m</span></span></span></span></li>
+</ul>
+<p><strong>2. 편차의 합이 0이 되는 이유</strong></p>
+<p>편차들의 합을 구하면:
+<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><msub><mi>x</mi><mn>1</mn></msub><mo>−</mo><mi>m</mi><mo stretchy="false">)</mo><mo>+</mo><mo stretchy="false">(</mo><msub><mi>x</mi><mn>2</mn></msub><mo>−</mo><mi>m</mi><mo stretchy="false">)</mo><mo>+</mo><mo stretchy="false">(</mo><msub><mi>x</mi><mn>3</mn></msub><mo>−</mo><mi>m</mi><mo stretchy="false">)</mo><mo>+</mo><mo>⋯</mo><mo>+</mo><mo stretchy="false">(</mo><msub><mi>x</mi><mi>n</mi></msub><mo>−</mo><mi>m</mi><mo stretchy="false">)</mo><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">(x_1 - m) + (x_2 - m) + (x_3 - m) + \cdots + (x_n - m) = 0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height: 0.3011em;"><span style="top: -2.55em; margin-left: 0em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height: 0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right: 0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right: 0.2222em;"></span></span><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mord mathnormal">m</span><span class="mclose">)</span><span class="mspace" style="margin-right: 0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right: 0.2222em;"></span></span><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height: 0.3011em;"><span style="top: -2.55em; margin-left: 0em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height: 0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right: 0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right: 0.2222em;"></span></span><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mord mathnormal">m</span><span class="mclose">)</span><span class="mspace" style="margin-right: 0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right: 0.2222em;"></span></span><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height: 0.3011em;"><span style="top: -2.55em; margin-left: 0em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">3</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height: 0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right: 0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right: 0.2222em;"></span></span><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mord mathnormal">m</span><span class="mclose">)</span><span class="mspace" style="margin-right: 0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right: 0.2222em;"></span></span><span class="base"><span class="strut" style="height: 0.6667em; vertical-align: -0.0833em;"></span><span class="minner">⋯</span><span class="mspace" style="margin-right: 0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right: 0.2222em;"></span></span><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height: 0.1514em;"><span style="top: -2.55em; margin-left: 0em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">n</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height: 0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right: 0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right: 0.2222em;"></span></span><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mord mathnormal">m</span><span class="mclose">)</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 0.6444em;"></span><span class="mord">0</span></span></span></span></p>
+<p><strong>왜 0이 될까?</strong></p>
+<ul>
+<li>양수 편차와 음수 편차가 서로 상쇄되기 때문</li>
+<li>평균보다 큰 값의 편차(양수)와 평균보다 작은 값의 편차(음수)가 합쳐져서 0이 됨</li>
+</ul>
+<p><strong>3. 분산 (Variance)</strong></p>
+<p><strong>분산이 필요한 이유:</strong></p>
+<ul>
+<li>편차들의 평균을 구하고 싶지만, 편차의 합이 0이 되어 평균을 구할 수 없음</li>
+<li>따라서 <strong>편차를 제곱</strong>하여 항상 양수로 만든 후 평균을 구함</li>
+</ul>
+<p><strong>분산의 정의:</strong></p>
+<ul>
+<li>확률변수가 기댓값(평균)으로부터 얼마나 떨어진 곳에 분포하는지 가늠하는 숫자</li>
+<li><strong>편차 제곱의 평균</strong></li>
+</ul>
+<p><strong>분산 공식 (표본 분산):</strong>
+<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>s</mi><mn>2</mn></msup><mo>=</mo><mfrac><mrow><mo stretchy="false">(</mo><msub><mi>x</mi><mn>1</mn></msub><mo>−</mo><mi>m</mi><msup><mo stretchy="false">)</mo><mn>2</mn></msup><mo>+</mo><mo stretchy="false">(</mo><msub><mi>x</mi><mn>2</mn></msub><mo>−</mo><mi>m</mi><msup><mo stretchy="false">)</mo><mn>2</mn></msup><mo>+</mo><mo>⋯</mo><mo>+</mo><mo stretchy="false">(</mo><msub><mi>x</mi><mi>n</mi></msub><mo>−</mo><mi>m</mi><msup><mo stretchy="false">)</mo><mn>2</mn></msup></mrow><mrow><mi>n</mi><mo>−</mo><mn>1</mn></mrow></mfrac><mo>=</mo><mfrac><mrow><msubsup><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></msubsup><mo stretchy="false">(</mo><msub><mi>x</mi><mi>i</mi></msub><mo>−</mo><mi>m</mi><msup><mo stretchy="false">)</mo><mn>2</mn></msup></mrow><mrow><mi>n</mi><mo>−</mo><mn>1</mn></mrow></mfrac></mrow><annotation encoding="application/x-tex">s^2 = \frac{(x_1 - m)^2 + (x_2 - m)^2 + \cdots + (x_n - m)^2}{n-1} = \frac{\sum_{i=1}^{n}(x_i - m)^2}{n-1}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.8141em;"></span><span class="mord"><span class="mord mathnormal">s</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height: 0.8141em;"><span style="top: -3.063em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 1.5123em; vertical-align: -0.4033em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height: 1.1089em;"><span style="top: -2.655em;"><span class="pstrut" style="height: 3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">n</span><span class="mbin mtight">−</span><span class="mord mtight">1</span></span></span></span><span style="top: -3.23em;"><span class="pstrut" style="height: 3em;"></span><span class="frac-line" style="border-bottom-width: 0.04em;"></span></span><span style="top: -3.485em;"><span class="pstrut" style="height: 3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mopen mtight">(</span><span class="mord mtight"><span class="mord mathnormal mtight">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height: 0.3173em;"><span style="top: -2.357em; margin-left: 0em; margin-right: 0.0714em;"><span class="pstrut" style="height: 2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height: 0.143em;"><span></span></span></span></span></span></span><span class="mbin mtight">−</span><span class="mord mathnormal mtight">m</span><span class="mclose mtight"><span class="mclose mtight">)</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height: 0.8913em;"><span style="top: -2.931em; margin-right: 0.0714em;"><span class="pstrut" style="height: 2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mbin mtight">+</span><span class="mopen mtight">(</span><span class="mord mtight"><span class="mord mathnormal mtight">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height: 0.3173em;"><span style="top: -2.357em; margin-left: 0em; margin-right: 0.0714em;"><span class="pstrut" style="height: 2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height: 0.143em;"><span></span></span></span></span></span></span><span class="mbin mtight">−</span><span class="mord mathnormal mtight">m</span><span class="mclose mtight"><span class="mclose mtight">)</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height: 0.8913em;"><span style="top: -2.931em; margin-right: 0.0714em;"><span class="pstrut" style="height: 2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span><span class="mbin mtight">+</span><span class="minner mtight">⋯</span><span class="mbin mtight">+</span><span class="mopen mtight">(</span><span class="mord mtight"><span class="mord mathnormal mtight">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height: 0.1645em;"><span style="top: -2.357em; margin-left: 0em; margin-right: 0.0714em;"><span class="pstrut" style="height: 2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathnormal mtight">n</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height: 0.143em;"><span></span></span></span></span></span></span><span class="mbin mtight">−</span><span class="mord mathnormal mtight">m</span><span class="mclose mtight"><span class="mclose mtight">)</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height: 0.8913em;"><span style="top: -2.931em; margin-right: 0.0714em;"><span class="pstrut" style="height: 2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height: 0.4033em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 1.5623em; vertical-align: -0.4033em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height: 1.1589em;"><span style="top: -2.655em;"><span class="pstrut" style="height: 3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">n</span><span class="mbin mtight">−</span><span class="mord mtight">1</span></span></span></span><span style="top: -3.23em;"><span class="pstrut" style="height: 3em;"></span><span class="frac-line" style="border-bottom-width: 0.04em;"></span></span><span style="top: -3.535em;"><span class="pstrut" style="height: 3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mop mtight"><span class="mop op-symbol small-op mtight" style="position: relative; top: 0em;">∑</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height: 0.7385em;"><span style="top: -2.1786em; margin-left: 0em; margin-right: 0.0714em;"><span class="pstrut" style="height: 2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">i</span><span class="mrel mtight">=</span><span class="mord mtight">1</span></span></span></span><span style="top: -2.931em; margin-right: 0.0714em;"><span class="pstrut" style="height: 2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">n</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height: 0.3214em;"><span></span></span></span></span></span></span><span class="mopen mtight">(</span><span class="mord mtight"><span class="mord mathnormal mtight">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height: 0.3281em;"><span style="top: -2.357em; margin-left: 0em; margin-right: 0.0714em;"><span class="pstrut" style="height: 2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height: 0.143em;"><span></span></span></span></span></span></span><span class="mbin mtight">−</span><span class="mord mathnormal mtight">m</span><span class="mclose mtight"><span class="mclose mtight">)</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height: 0.8913em;"><span style="top: -2.931em; margin-right: 0.0714em;"><span class="pstrut" style="height: 2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height: 0.4033em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></p>
+<blockquote>
+<p><strong>참고:</strong> 분모가 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mo>−</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">n-1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.6667em; vertical-align: -0.0833em;"></span><span class="mord mathnormal">n</span><span class="mspace" style="margin-right: 0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right: 0.2222em;"></span></span><span class="base"><span class="strut" style="height: 0.6444em;"></span><span class="mord">1</span></span></span></span>인 이유는 표본 분산을 구할 때 자유도(degree of freedom)를 고려하기 때문입니다.</p>
+</blockquote>
+<p><strong>4. 표준편차 (Standard Deviation)</strong></p>
+<p><strong>표준편차란?</strong> 분산의 제곱근</p>
+<p><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>s</mi><mo>=</mo><msqrt><msup><mi>s</mi><mn>2</mn></msup></msqrt><mo>=</mo><msqrt><mfrac><mrow><msubsup><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>n</mi></msubsup><mo stretchy="false">(</mo><msub><mi>x</mi><mi>i</mi></msub><mo>−</mo><mi>m</mi><msup><mo stretchy="false">)</mo><mn>2</mn></msup></mrow><mrow><mi>n</mi><mo>−</mo><mn>1</mn></mrow></mfrac></msqrt></mrow><annotation encoding="application/x-tex">s = \sqrt{s^2} = \sqrt{\frac{\sum_{i=1}^{n}(x_i - m)^2}{n-1}}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.4306em;"></span><span class="mord mathnormal">s</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 1.04em; vertical-align: -0.0849em;"></span><span class="mord sqrt"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height: 0.9551em;"><span class="svg-align" style="top: -3em;"><span class="pstrut" style="height: 3em;"></span><span class="mord" style="padding-left: 0.833em;"><span class="mord"><span class="mord mathnormal">s</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height: 0.7401em;"><span style="top: -2.989em; margin-right: 0.05em;"><span class="pstrut" style="height: 2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span></span><span style="top: -2.9151em;"><span class="pstrut" style="height: 3em;"></span><span class="hide-tail" style="min-width: 0.853em; height: 1.08em;"><svg xmlns="http://www.w3.org/2000/svg" width="400em" height="1.08em" viewBox="0 0 400000 1080" preserveAspectRatio="xMinYMin slice"><path d="M95,702
+c-2.7,0,-7.17,-2.7,-13.5,-8c-5.8,-5.3,-9.5,-10,-9.5,-14
+c0,-2,0.3,-3.3,1,-4c1.3,-2.7,23.83,-20.7,67.5,-54
+c44.2,-33.3,65.8,-50.3,66.5,-51c1.3,-1.3,3,-2,5,-2c4.7,0,8.7,3.3,12,10
+s173,378,173,378c0.7,0,35.3,-71,104,-213c68.7,-142,137.5,-285,206.5,-429
+c69,-144,104.5,-217.7,106.5,-221
+l0 -0
+c5.3,-9.3,12,-14,20,-14
+H400000v40H845.2724
+s-225.272,467,-225.272,467s-235,486,-235,486c-2.7,4.7,-9,7,-19,7
+c-6,0,-10,-1,-12,-3s-194,-422,-194,-422s-65,47,-65,47z
+M834 80h400000v40h-400000z"></path></svg></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height: 0.0849em;"><span></span></span></span></span></span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 1.84em; vertical-align: -0.5267em;"></span><span class="mord sqrt"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height: 1.3133em;"><span class="svg-align" style="top: -3.8em;"><span class="pstrut" style="height: 3.8em;"></span><span class="mord" style="padding-left: 1em;"><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height: 1.06em;"><span style="top: -2.655em;"><span class="pstrut" style="height: 3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">n</span><span class="mbin mtight">−</span><span class="mord mtight">1</span></span></span></span><span style="top: -3.23em;"><span class="pstrut" style="height: 3em;"></span><span class="frac-line" style="border-bottom-width: 0.04em;"></span></span><span style="top: -3.535em;"><span class="pstrut" style="height: 3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mop mtight"><span class="mop op-symbol small-op mtight" style="position: relative; top: 0em;">∑</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height: 0.7047em;"><span style="top: -2.1786em; margin-left: 0em; margin-right: 0.0714em;"><span class="pstrut" style="height: 2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">i</span><span class="mrel mtight">=</span><span class="mord mtight">1</span></span></span></span><span style="top: -2.8971em; margin-right: 0.0714em;"><span class="pstrut" style="height: 2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">n</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height: 0.3214em;"><span></span></span></span></span></span></span><span class="mopen mtight">(</span><span class="mord mtight"><span class="mord mathnormal mtight">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height: 0.3281em;"><span style="top: -2.357em; margin-left: 0em; margin-right: 0.0714em;"><span class="pstrut" style="height: 2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height: 0.143em;"><span></span></span></span></span></span></span><span class="mbin mtight">−</span><span class="mord mathnormal mtight">m</span><span class="mclose mtight"><span class="mclose mtight">)</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height: 0.7463em;"><span style="top: -2.786em; margin-right: 0.0714em;"><span class="pstrut" style="height: 2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mtight">2</span></span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height: 0.4033em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span><span style="top: -3.2733em;"><span class="pstrut" style="height: 3.8em;"></span><span class="hide-tail" style="min-width: 1.02em; height: 1.88em;"><svg xmlns="http://www.w3.org/2000/svg" width="400em" height="1.88em" viewBox="0 0 400000 1944" preserveAspectRatio="xMinYMin slice"><path d="M983 90
+l0 -0
+c4,-6.7,10,-10,18,-10 H400000v40
+H1013.1s-83.4,268,-264.1,840c-180.7,572,-277,876.3,-289,913c-4.7,4.7,-12.7,7,-24,7
+s-12,0,-12,0c-1.3,-3.3,-3.7,-11.7,-7,-25c-35.3,-125.3,-106.7,-373.3,-214,-744
+c-10,12,-21,25,-33,39s-32,39,-32,39c-6,-5.3,-15,-14,-27,-26s25,-30,25,-30
+c26.7,-32.7,52,-63,76,-91s52,-60,52,-60s208,722,208,722
+c56,-175.3,126.3,-397.3,211,-666c84.7,-268.7,153.8,-488.2,207.5,-658.5
+c53.7,-170.3,84.5,-266.8,92.5,-289.5z
+M1001 80h400000v40h-400000z"></path></svg></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height: 0.5267em;"><span></span></span></span></span></span></span></span></span></p>
+<p><strong>왜 표준편차를 사용할까?</strong></p>
+<ul>
+<li>분산은 제곱 단위이므로 원래 데이터의 단위와 다름 (예: 연봉의 분산은 "원²")</li>
+<li>표준편차는 원래 데이터와 같은 단위를 가지므로 해석이 용이함 (예: 연봉의 표준편차는 "원")</li>
+</ul>
+<h4>📊 공분산과 상관계수</h4>
+<p><strong>1. 공분산 (Covariance)</strong></p>
+<p><strong>공분산이란?</strong></p>
+<ul>
+<li>하나의 변수가 아닌, <strong>두 개의 변수</strong>로 구한 분산 값</li>
+<li>예: 키와 몸무게가 있다면 그 두 개로 구한 분산값</li>
+</ul>
+<p><strong>공분산의 특징:</strong></p>
+<ul>
+<li>두 변수가 함께 변하는 정도를 측정</li>
+<li>양수: 한 변수가 증가하면 다른 변수도 증가하는 경향</li>
+<li>음수: 한 변수가 증가하면 다른 변수는 감소하는 경향</li>
+</ul>
+<p><strong>2. 정규화 (Normalization)</strong></p>
+<p><strong>정규화가 필요한 이유:</strong></p>
+<ul>
+<li>일반적으로 공분산은 데이터의 스케일(단위)에 영향을 받음 → 비교하기가 힘듦</li>
+<li>예: 키(cm)와 몸무게(kg)의 공분산 200 vs 시력과 눈의 굴절률의 공분산 2</li>
+<li>단위가 다르면 공분산 값만으로는 비교하기 어려움</li>
+</ul>
+<p><strong>해결 방법:</strong></p>
+<ul>
+<li>각 변수의 표준편차의 곱으로 나눔</li>
+<li>이를 통해 <strong>상관계수</strong>를 구함</li>
+</ul>
+<p><strong>3. 상관계수 (Correlation Coefficient)</strong></p>
+<p><strong>상관계수란?</strong></p>
+<ul>
+<li>공분산 값을 <strong>-1 ~ 1 사이의 값</strong>으로 정규화한 값</li>
+<li>단위에 영향받지 않아 비교하기 쉬움</li>
+<li>두 변수 사이의 관계를 수치화하는 방법</li>
+<li><strong>선형 관계</strong>를 측정 (한 변수가 증가할 때 다른 변수가 증가/감소하는 경향)</li>
+</ul>
+<p><strong>상관계수 해석:</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>범위</th><th>해석</th><th>설명</th></tr></thead><tbody><tr><td><strong><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0.0</mn><mo>≤</mo><mi mathvariant="normal">∥</mi><mi>r</mi><mi mathvariant="normal">∥</mi><mo>&lt;</mo><mn>0.2</mn></mrow><annotation encoding="application/x-tex">0.0 \leq \|r\| &lt; 0.2</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.7804em; vertical-align: -0.136em;"></span><span class="mord">0.0</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">≤</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mord">∥</span><span class="mord mathnormal" style="margin-right: 0.02778em;">r</span><span class="mord">∥</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">&lt;</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 0.6444em;"></span><span class="mord">0.2</span></span></span></span></strong></td><td>상관관계가 없다</td><td>선형의 관계가 없다</td></tr><tr><td><strong><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0.2</mn><mo>≤</mo><mi mathvariant="normal">∥</mi><mi>r</mi><mi mathvariant="normal">∥</mi><mo>&lt;</mo><mn>0.4</mn></mrow><annotation encoding="application/x-tex">0.2 \leq \|r\| &lt; 0.4</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.7804em; vertical-align: -0.136em;"></span><span class="mord">0.2</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">≤</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mord">∥</span><span class="mord mathnormal" style="margin-right: 0.02778em;">r</span><span class="mord">∥</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">&lt;</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 0.6444em;"></span><span class="mord">0.4</span></span></span></span></strong></td><td>약한 상관관계가 있다</td><td>약한 선형 관계</td></tr><tr><td><strong><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0.4</mn><mo>≤</mo><mi mathvariant="normal">∥</mi><mi>r</mi><mi mathvariant="normal">∥</mi><mo>&lt;</mo><mn>0.6</mn></mrow><annotation encoding="application/x-tex">0.4 \leq \|r\| &lt; 0.6</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.7804em; vertical-align: -0.136em;"></span><span class="mord">0.4</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">≤</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mord">∥</span><span class="mord mathnormal" style="margin-right: 0.02778em;">r</span><span class="mord">∥</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">&lt;</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 0.6444em;"></span><span class="mord">0.6</span></span></span></span></strong></td><td>보통의 상관관계가 있다</td><td>중간 정도의 선형 관계</td></tr><tr><td><strong><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0.6</mn><mo>≤</mo><mi mathvariant="normal">∥</mi><mi>r</mi><mi mathvariant="normal">∥</mi><mo>&lt;</mo><mn>0.8</mn></mrow><annotation encoding="application/x-tex">0.6 \leq \|r\| &lt; 0.8</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.7804em; vertical-align: -0.136em;"></span><span class="mord">0.6</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">≤</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mord">∥</span><span class="mord mathnormal" style="margin-right: 0.02778em;">r</span><span class="mord">∥</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">&lt;</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 0.6444em;"></span><span class="mord">0.8</span></span></span></span></strong></td><td>강한 (높은) 상관관계가 있다</td><td>강한 선형 관계</td></tr><tr><td><strong><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0.8</mn><mo>≤</mo><mi mathvariant="normal">∥</mi><mi>r</mi><mi mathvariant="normal">∥</mi><mo>≤</mo><mn>1.0</mn></mrow><annotation encoding="application/x-tex">0.8 \leq \|r\| \leq 1.0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.7804em; vertical-align: -0.136em;"></span><span class="mord">0.8</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">≤</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 1em; vertical-align: -0.25em;"></span><span class="mord">∥</span><span class="mord mathnormal" style="margin-right: 0.02778em;">r</span><span class="mord">∥</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">≤</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 0.6444em;"></span><span class="mord">1.0</span></span></span></span></strong></td><td>매우 강한 (매우 높은) 상관관계가 있다</td><td>매우 강한 선형 관계</td></tr></tbody></table>
+<p><strong>상관계수의 부호:</strong></p>
+<ul>
+<li><strong>양수 (<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>r</mi><mo>&gt;</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">r &gt; 0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.5782em; vertical-align: -0.0391em;"></span><span class="mord mathnormal" style="margin-right: 0.02778em;">r</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">&gt;</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 0.6444em;"></span><span class="mord">0</span></span></span></span>)</strong>: 양의 상관관계
+<ul>
+<li>한 변수가 증가하면 다른 변수도 증가하는 경향</li>
+<li>예: 연봉과 근속연수, 키와 몸무게</li>
+</ul>
+</li>
+<li><strong>음수 (<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>r</mi><mo>&lt;</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">r &lt; 0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.5782em; vertical-align: -0.0391em;"></span><span class="mord mathnormal" style="margin-right: 0.02778em;">r</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">&lt;</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 0.6444em;"></span><span class="mord">0</span></span></span></span>)</strong>: 음의 상관관계
+<ul>
+<li>한 변수가 증가하면 다른 변수는 감소하는 경향</li>
+<li>예: 운동량과 체중, 공부시간과 게임시간</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h4>HR 데이터에서의 상관계수 분석</h4>
+<p><strong>단일 상관계수 확인:</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python"># 직원 성과평가점수와 연봉의 상관계수 확인
+hr_info[['PERFORMANCE_SCORE', 'SALARY']].corr()
+</code></pre></pre>
+<p><strong>출력 결과:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">                   PERFORMANCE_SCORE    SALARY
+PERFORMANCE_SCORE           1.000000  0.609152
+SALARY                      0.609152  1.000000
+</code></pre>
+<blockquote>
+<p>💡 <strong>상관계수 해석:</strong></p>
+<ul>
+<li>표를 볼 때는 <strong>대각선</strong>으로 보면 됩니다</li>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">PERFORMANCE_SCORE</code>와 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">SALARY</code>의 상관계수는 약 <strong>0.609</strong>로 보통의 상관관계가 있습니다</li>
+</ul>
+</blockquote>
+<p><strong>다중 변수 상관계수 확인:</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python"># 수치 데이터의 전체 상관계수 확인
+hr_info[['PERFORMANCE_SCORE', 'SALARY', 'AGE', 'SERVICE_YEAR', 'TRAINING_HOURS']].corr()
+</code></pre></pre>
+<p><strong>상관관계 해석:</strong></p>
+<ul>
+<li>상관관계를 볼 때에는 <strong>선형상 관계</strong>를 봅니다</li>
+<li>다른 게 증가할 때 같이 증가/감소하게 되면 <strong>선형상 관계</strong>가 있다고 볼 수 있습니다</li>
+<li>이번 케이스에서는 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">(AGE, SALARY)</code>, <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">(SERVICE_YEAR, SALARY)</code>가 강한 선형 관계를 보입니다</li>
+</ul>
+<blockquote>
+<p><strong>주의사항:</strong></p>
+<ul>
+<li>상관계수는 <strong>선형 관계</strong>만 측정합니다</li>
+<li>비선형 관계나 인과관계를 의미하지는 않습니다</li>
+<li><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>r</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">r = 0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.4306em;"></span><span class="mord mathnormal" style="margin-right: 0.02778em;">r</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 0.6444em;"></span><span class="mord">0</span></span></span></span>이어도 관계가 전혀 없다는 의미는 아닙니다 (비선형 관계일 수 있음)</li>
+</ul>
+</blockquote>
+<hr>
+<h2>💡 핵심 정리</h2>
+<h3>배운 것</h3>
+<ul>
+<li><strong>기술통계 분석</strong>: <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">describe()</code>, <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">sum()</code>, <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">mean()</code>, <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">count()</code>, <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">max()</code>, <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">min()</code> 등</li>
+<li><strong>groupby with agg</strong>: 컬럼별로 다른 집계 함수 적용</li>
+<li><strong>다중 기준 groupby</strong>: 여러 컬럼을 기준으로 그룹화하여 세밀한 분석 수행</li>
+<li><strong>상관계수 분석</strong>: <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">corr()</code> 함수로 변수 간 관계 파악</li>
+<li><strong>기술통계 개념</strong>: 편차, 분산, 표준편차, 공분산, 상관계수</li>
+<li><strong>f-string 포맷팅</strong>: 출력 형식을 제어하여 가독성 향상</li>
+</ul>
+<h3>인사이트</h3>
+<ul>
+<li><strong>다중 기준 분석</strong>: 여러 기준으로 그룹화하면 더 세밀한 인사이트 도출 가능</li>
+<li><strong>상관관계 vs 인과관계</strong>: 상관계수가 높다고 해서 인과관계를 의미하지는 않음</li>
+<li><strong>정규화의 필요성</strong>: 공분산은 단위에 영향받지만, 상관계수는 정규화되어 비교 가능</li>
+<li><strong>표준편차의 장점</strong>: 분산과 달리 원래 데이터와 같은 단위를 가져 해석이 용이함</li>
+<li><strong>f-string 포맷팅</strong>: 출력 형식을 제어하여 가독성 향상</li>
+<li><strong>agg() 딕셔너리 형태</strong>: 컬럼별로 다른 집계 함수 적용 시 딕셔너리 형태 사용</li>
+</ul>
+<h3>주의사항</h3>
+<ul>
+<li>⚠️ <strong>상관계수 해석</strong>: 선형 관계만 측정하며, 인과관계를 의미하지는 않음</li>
+<li>⚠️ <strong>상관관계 ≠ 인과관계</strong>: 상관계수가 높다고 해서 한 변수가 다른 변수의 원인은 아님</li>
+<li>⚠️ <strong>비선형 관계</strong>: <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>r</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">r = 0</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height: 0.4306em;"></span><span class="mord mathnormal" style="margin-right: 0.02778em;">r</span><span class="mspace" style="margin-right: 0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right: 0.2778em;"></span></span><span class="base"><span class="strut" style="height: 0.6444em;"></span><span class="mord">0</span></span></span></span>이어도 비선형 관계가 있을 수 있음</li>
+<li>⚠️ <strong>mean() 반환 타입</strong>: 항상 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">float64</code>를 반환하므로 소수점이 길게 표시될 수 있음</li>
+<li>✅ <strong>f-string 포맷팅 권장</strong>: <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">{값:,.2f}</code> 형태로 가독성 향상</li>
+<li>✅ <strong>agg() 딕셔너리 형태</strong>: 컬럼별로 다른 집계 함수 적용 시 딕셔너리 형태 사용</li>
+</ul>
+<hr>
+<h2>🔍 추가 학습 필요 사항</h2>
+<ul class="contains-task-list">
+<li class="task-list-item"><input disabled="" type="checkbox"> 상관계수 히트맵 시각화</li>
+<li class="task-list-item"><input disabled="" type="checkbox"> 통계적 가설 검정</li>
+<li class="task-list-item"><input disabled="" type="checkbox"> 회귀 분석</li>
+</ul>
+<hr></div></div><div class="MuiBox-root css-1cpq4zq"><hr class="MuiDivider-root MuiDivider-fullWidth css-7jtdmc"><h5 class="MuiTypography-root MuiTypography-h5 css-85yo2n">같은 카테고리의 다른 글</h5><div class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-2 css-1eikg3m"><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] Serializable 깊이 파기 — Part 2: 바이트에서 다시 객체로, 그리고 함정들</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">직렬화된 바이트를 ObjectInputStream이 어떤 순서로 읽어 객체로 복원하는지, 그때 생성자가 호출되지 않는다는 점을 확인합니다. | serialVersionUID, transient, 커스텀 readObject·writeObject, 역직렬화 취약점, Java 직렬화의 현재로 마무리합니다.</p><div class="MuiBox-root css-107ld1r"></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 4월 5일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] Serializable 깊이 파기 — Part 1: 객체가 바이트가 되는 과정</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">Python이나 JavaScript와 달리 Java는 왜 Serializable을 선언해야 하는지, 메서드가 하나도 없는 이 인터페이스가 무슨 일을 하는지 묻는 글입니다. | ObjectOutputStream이 만든 실제 바이트를 열어 보고, 참조 객체가 들어 있을 때는 어떻게 되는지 확인합니다.</p><div class="MuiBox-root css-107ld1r"></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 4월 5일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] 주식 거래 엔진 직접 만들기 - Part 3: 오더북을 어떻게 구현할 것인가</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">주식 거래 엔진의 오더북을 TreeMap과 ArrayDeque 조합으로 만든 이유를, PriorityQueue, LinkedList, Skip List와 비교하며 설명합니다. | 주문 취소를 Lazy Removal로 처리한 방법과 Kafka를 연결하며 만난 멱등성 문제를 마지막에 둡니다.</p><div class="MuiBox-root css-107ld1r"></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 27일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] 주식 거래 엔진 직접 만들기 - Part 2: Phase 1 — 모놀리식으로 시작하기</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">단일 JAR 모놀리식 구조인 Phase 1에서 만난 문제를 차례로 다룹니다. | SELECT FOR UPDATE로 동시성을 해결했고, 락 보유 시간을 줄이고, 락 획득 순서를 통일해 데드락 위험을 없앴습니다. @Transactional 원칙과 Lazy Loading 함정도 짚습니다.</p><div class="MuiBox-root css-107ld1r"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Java</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Spring Boot</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">JPA</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">+2</span></div></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 27일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] 주식 거래 엔진 직접 만들기 - Part 1: 왜 주식 거래 엔진인가</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">F-lab 멘토링 프로젝트로 주식 거래 엔진을 직접 설계하고 구현한 과정을 기록하는 시리즈의 첫 글입니다. | 프로젝트를 고른 기준과 멀티모듈 구조, Phase 로드맵, 시리즈 전체에서 답할 질문들을 먼저 밝힙니다.</p><div class="MuiBox-root css-107ld1r"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Java</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Spring Boot</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Kafka</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">+5</span></div></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 27일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[개발자가 직접 써봤어요] Claude Code 완전 가이드: 설치부터 멀티에이전트까지</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">Claude Code를 Spring Boot와 Kafka 기반 주식 매매 엔진 프로젝트에 적용해 본 경험을 바탕으로, 설치부터 멀티에이전트까지 소개합니다. | CLAUDE.md, Skills, Subagents, Hooks, MCP, Agent Teams의 여섯 레이어와 Cursor AI와의 비교, 주의사항이 나옵니다.</p><div class="MuiBox-root css-107ld1r"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Claude Code</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">AI</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Developer Tools</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">+4</span></div></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 9일</span></div></div></div></div><div class="MuiBox-root css-1b94f21"><a class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways css-104ms0" href="/blog/posts" data-discover="true"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowBackIcon"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z"></path></svg>게시글 목록으로 돌아가기</a></div><button class="MuiButtonBase-root MuiFab-root MuiFab-circular MuiFab-sizeMedium MuiFab-primary MuiFab-root MuiFab-circular MuiFab-sizeMedium MuiFab-primary css-1nl6bps" tabindex="0" type="button" aria-label="scroll to top" style="opacity: 0; visibility: hidden;"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="KeyboardArrowUpIcon"><path d="M7.41 15.41 12 10.83l4.59 4.58L18 14l-6-6-6 6z"></path></svg></button></div></div></div></div><footer style="text-align: center; padding: 2rem 0px; color: rgb(0, 0, 0); font-size: 0.9rem; border-top: 1px solid rgb(0, 0, 0); margin-top: auto; background-color: rgb(255, 255, 255);"><p>© 2025 DevTaco Blog. All rights reserved.</p></footer><div class="MuiBox-root css-1hyfx7x"><div class="visitor-counter MuiBox-root css-19midj6"><h6 class="MuiTypography-root MuiTypography-h6 MuiTypography-gutterBottom css-izz7ci">방문자 수</h6><div class="MuiBox-root css-zwd3xv"><h4 class="MuiTypography-root MuiTypography-h4 css-1dg27va">88</h4><p class="MuiTypography-root MuiTypography-body2 css-l6pb42">오늘</p><h6 class="MuiTypography-root MuiTypography-h6 css-kh42wg">총 88명</h6></div></div></div><div class="MuiBox-root css-1y95mt5" data-testid="terminal-navigation"><div class="MuiBox-root css-1kw3y0a"><p class="MuiTypography-root MuiTypography-body2 css-1fktdtb">devtaco@portfolio:~$ navigation</p><div class="MuiBox-root css-j0ozid"><p class="MuiTypography-root MuiTypography-body2 css-1cn40rb">⌘M to close</p><button class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-470314" tabindex="0" type="button" id=":r1:"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeSmall css-vh810p" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="CloseIcon"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg></button></div></div><div class="MuiBox-root css-13t3iqc"><div class="MuiBox-root css-0"><p class="MuiTypography-root MuiTypography-body2 css-cbhj4f">Navigation:</p><div class="MuiBox-root css-1kkt86i"><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">1 → home</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">2 → about</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">3 → posts</p></div></div><div class="MuiBox-root css-0"><p class="MuiTypography-root MuiTypography-body2 css-cbhj4f">External:</p><div class="MuiBox-root css-1kkt86i"><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">g → github</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">e → email</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">l → linkedin</p></div></div></div><p class="MuiTypography-root MuiTypography-body2 css-1e7vt2">Press number keys (1,2,3) or letter keys (g,e,l) to navigate. Use ⌘+M to close.</p></div></div></div></body></html>

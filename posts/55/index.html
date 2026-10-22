@@ -1,0 +1,416 @@
+<!DOCTYPE html><html lang="en"><head><script type="text/javascript">!function(n){if("/"===n.search[1]){var a=n.search.slice(1).split("&").map((function(n){return n.replace(/~and~/g,"&")})).join("?");window.history.replaceState(null,null,n.pathname.slice(0,-1)+a+n.hash)}}(window.location)</script><meta charset="utf-8"><link rel="icon" href="/blog/favicon.ico"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#000000"><meta name="keywords" content="Java, Kotlin, Spring Boot, MSA, 개발, 백엔드, coroutine"><meta name="author" content="DevTaco"><meta property="og:image" content="https://devtaco30.github.io/blog/og-image.png"><meta property="twitter:image" content="https://devtaco30.github.io/blog/og-image.png"><meta property="twitter:url" content="https://devtaco30.github.io/blog/"><link rel="apple-touch-icon" href="/blog/apple-touch-icon.png"><link rel="manifest" href="/blog/manifest.json"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&amp;family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet"><script defer="defer" src="/blog/static/js/main.404b9165.js"></script><link href="/blog/static/css/main.5b86466f.css" rel="stylesheet"><style data-emotion="css" data-s=""></style><title>EST AI - 자연어처리 : BERTopic &amp; 텍스트 마이닝 파이프라인 | DevTaco Blog</title><meta name="description" content="한국어 SNS 대화 데이터를 요약, 문장 임베딩, 토픽 모델링, 감성 분석 순으로 처리하는 텍스트 마이닝 파이프라인을 사전 학습 모델만으로 만듭니다. KoT5 요약 모델, KR-SBERT, BERTopic을 사용합니다."><meta property="og:title" content="EST AI - 자연어처리 : BERTopic &amp; 텍스트 마이닝 파이프라인"><meta property="og:description" content="한국어 SNS 대화 데이터를 요약, 문장 임베딩, 토픽 모델링, 감성 분석 순으로 처리하는 텍스트 마이닝 파이프라인을 사전 학습 모델만으로 만듭니다. KoT5 요약 모델, KR-SBERT, BERTopic을 사용합니다."><meta property="og:type" content="article"><meta property="og:url" content="https://devtaco30.github.io/blog/posts/55"><meta name="twitter:card" content="summary"></head><body><noscript>You need to enable JavaScript to run this app.</noscript><div id="root"><div class="App"><div class="MuiBox-root css-kurlqb"><div class="MuiBox-root css-171onha"><button class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-1f6w95t" tabindex="0" type="button" id=":r0:"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="MenuIcon"><path d="M3 18h18v-2H3zm0-5h18v-2H3zm0-7v2h18V6z"></path></svg></button><div class="MuiBox-root css-1szb58x"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-218waq" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowBackIcon"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z"></path></svg><div class="MuiBox-root css-wq4jw1"><span>⌘+M</span></div></div></div></div><div class="MuiContainer-root css-15jb5o1" data-testid="page-container"><div class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-2 MuiGrid-spacing-md-3 css-1ht06td"><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-md-12 css-15j76c0"><div class="MuiBox-root css-15rigdj"><nav class="MuiTypography-root MuiTypography-body1 MuiBreadcrumbs-root css-1v2kxik"><ol class="MuiBreadcrumbs-ol css-51eq8m"><li class="MuiBreadcrumbs-li"><a class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways css-gj78h6" href="/blog/posts" data-discover="true">게시글 목록</a></li><li aria-hidden="true" class="MuiBreadcrumbs-separator css-1nd5pgh">/</li><li class="MuiBreadcrumbs-li"><p class="MuiTypography-root MuiTypography-body1 css-1cr0rz6">EST AI - 자연어처리 : BERTopic &amp; 텍스트 마이닝 파이프라인</p></li></ol></nav><div class="MuiBox-root css-15djlns"><button class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-1y18wdw" tabindex="0" type="button" id=":r7:"><span class="MuiButton-icon MuiButton-startIcon MuiButton-iconSizeMedium css-1ygddt1"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowBackIcon"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z"></path></svg></span><div class="MuiBox-root css-0"><span class="MuiTypography-root MuiTypography-caption css-115rlu8">이전글</span><p class="MuiTypography-root MuiTypography-body2 css-10qk5g4">EST AI - 자연어처리 : BERTopic 심화 &amp; 토픽 비교 분석</p></div></button><button class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-1k0z50p" tabindex="0" type="button" id=":r8:"><div class="MuiBox-root css-0"><span class="MuiTypography-root MuiTypography-caption css-115rlu8">다음글</span><p class="MuiTypography-root MuiTypography-body2 css-10qk5g4">EST AI - 자연어처리 : Transformer &amp; Hugging Face</p></div><span class="MuiButton-icon MuiButton-endIcon MuiButton-iconSizeMedium css-6bt4d2"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowForwardIcon"><path d="m12 4-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"></path></svg></span></button></div><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-10t0qv5" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h4 class="MuiTypography-root MuiTypography-h4 css-k5jvd2">EST AI - 자연어처리 : BERTopic &amp; 텍스트 마이닝 파이프라인</h4><p class="MuiTypography-root MuiTypography-body1 css-104xg3">한국어 SNS 대화 데이터를 요약, 문장 임베딩, 토픽 모델링, 감성 분석 순으로 처리하는 텍스트 마이닝 파이프라인을 사전 학습 모델만으로 만듭니다. | KoT5 요약 모델, KR-SBERT, BERTopic을 사용합니다.</p><div class="MuiBox-root css-1prrn6n"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">NLP</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">BERTopic</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Text Mining</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Summarization</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Embedding</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Clustering</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">SBERT</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">KoT5</span></div></div><p class="MuiTypography-root MuiTypography-body2 css-l6pb42">2026년 1월 20일 오후 05:34</p></div><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-1i779yj" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><div class="MuiBox-root css-13lazol"><h2>📚 오늘의 학습 내용</h2>
+<p>오늘은 <strong>BERTopic을 활용한 통합 텍스트 마이닝 파이프라인</strong>을 학습했습니다. 한국어 SNS 대화 데이터를 사용하여 요약 → 임베딩 → 클러스터링 → 감성 분석까지 전체 과정을 사전 학습 모델만으로 구현하는 방법을 익혔습니다.</p>
+<hr>
+<h2>1️⃣ 학습 시나리오</h2>
+<h3>가상 시나리오 설정</h3>
+<p><strong>상황:</strong></p>
+<ul>
+<li>월간 50만 건 이상의 SNS 대화를 처리하는 기업용 분석 플랫폼 'K-인사이트' 개발</li>
+<li>AI Hub의 한국어 SNS 데이터('미용과 건강', '식음료', '일과 직업')를 활용</li>
+</ul>
+<p><strong>문제:</strong></p>
+<ul>
+<li>긴 대화 로그에 메타정보, 반복, 발화, 잡음이 포함되어 핵심 주제 파악 어려움</li>
+<li>실시간 감성 분석과 토픽 모니터링 필요</li>
+</ul>
+<p><strong>학습 목표:</strong></p>
+<ul>
+<li>요약 → 임베딩 → 클러스터링 → 감성 분석의 <strong>통합 파이프라인</strong> 구현 방법 학습</li>
+<li>사전 학습 모델만 활용한 효율적인 분석 시스템 구축 경험</li>
+</ul>
+<h3>데이터셋</h3>
+<p><strong>AI Hub - 한국어 SNS 데이터셋</strong></p>
+<ul>
+<li>출처: <a href="https://aihub.or.kr/aihubdata/data/view.do?dataSetSn=71694">https://aihub.or.kr/aihubdata/data/view.do?dataSetSn=71694</a></li>
+<li>형식: JSON (메타정보 + 발화 리스트)</li>
+<li>사용 카테고리: 미용과 건강, 식음료, 일과 직업</li>
+<li>각 카테고리당 200개 대화 샘플링 (총 600개)</li>
+</ul>
+<hr>
+<h2>2️⃣ 데이터 준비 및 전처리</h2>
+<h3>데이터 로드 함수 구현</h3>
+<p><strong>주요 개념:</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python">def load_and_normalize(path):
+    corpus = []
+    
+    for fname in tqdm(sorted(os.listdir(path)), desc=f'Loading data from {path}'):
+        file_path = os.path.join(path, fname)  # ⚠️ path 변수 덮어쓰기 주의!
+        count = 0
+        
+        with open(file_path, 'r', encoding='utf-8') as f:
+            dataset = json.load(f)
+        
+        for dialogue in tqdm(dataset['data'], desc=f'Processing {fname}'):
+            # 라벨당 제한 (limit_per_label)
+            if count &gt;= limit_per_label:
+                break
+            
+            # 대화의 모든 발화를 하나의 문자열로 결합
+            text = ' '.join([utterance['utterance'] for utterance in dialogue['body']])
+            corpus.append(text)
+            count += 1
+            
+    return corpus
+</code></pre></pre>
+<p><strong>주의 사항:</strong></p>
+<ul>
+<li>변수명 충돌 주의: <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">path</code> 파라미터를 덮어쓰지 않도록 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">file_path</code> 사용</li>
+<li>각 파일에서 200개씩, 총 600개의 대화가 하나의 corpus에 통합됨</li>
+</ul>
+<p><strong>결과:</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python">train_corpus = load_and_normalize(train_dir)
+valid_corpus = load_and_normalize(valid_dir)
+
+print(f'Training corpus size: {len(train_corpus)}')  # 600
+print(f'Validation corpus size: {len(valid_corpus)}')  # 600
+</code></pre></pre>
+<hr>
+<h2>3️⃣ 대화 요약 (Summarization)</h2>
+<h3>요약이 필요한 이유</h3>
+<ol>
+<li><strong>문서 길이 절감</strong>: 핵심 내용만 남겨 연산 속도 향상</li>
+<li><strong>노이즈 제거</strong>: 불필요한 대화(인사, 중복) 압축</li>
+<li><strong>토픽 명확화</strong>: BERTopic이 더 뚜렷한 주제어 학습 가능</li>
+</ol>
+<h3>KoT5 요약 모델</h3>
+<p><strong>모델 정보:</strong></p>
+<ul>
+<li>Hugging Face: <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">psyche/KoT5-summarization</code></li>
+<li>T5 (Text-to-Text Transfer Transformer) 기반 한국어 요약 모델</li>
+<li>입력: 최대 512 토큰</li>
+<li>출력: 최대 256 토큰 (설정 가능)</li>
+</ul>
+<p><strong>사전 학습:</strong></p>
+<ul>
+<li>코퍼스: 위키백과, 신문기사 등 23개 출처 (총 42GB)</li>
+<li>WordPiece 토크나이저 사용</li>
+</ul>
+<p><strong>파인튜닝:</strong></p>
+<ul>
+<li>데이터: AI-Hub '도서자료 요약' 데이터셋</li>
+<li>디코딩: Greedy decoding</li>
+<li>Repetition penalty: 2.0 (반복 억제)</li>
+</ul>
+<h3>Device 설정 및 모델 로드</h3>
+<p><strong>Device 설정:</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python"># Mac (Apple Silicon)
+device = (
+    torch.device("mps")  # Metal Performance Shaders
+    if torch.backends.mps.is_available()
+    else torch.device("cpu")
+)
+
+# Windows/Linux (NVIDIA GPU)
+device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
+
+print(f"Using device: {device}")
+</code></pre></pre>
+<p><strong>⚠️ 중요: Tokenizer와 Device 관계</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python"># ============================================================
+# [중요] Tokenizer와 Device 관계
+# ============================================================
+# 
+# 1. 모델의 device 이동
+#    - model.to(device) 호출 시 모델의 모든 파라미터가 해당 device로 이동
+#    - 예: model.to('mps') → 모델이 Apple GPU 메모리에 적재
+#
+# 2. Tokenizer의 특성
+#    - Tokenizer는 PyTorch 모델(nn.Module)이 아닌 단순 텍스트 전처리 도구
+#    - return_tensors='pt'를 사용해도 항상 CPU 텐서를 반환
+#    - device 설정과 무관하게 작동 (device 개념이 없음)
+#
+# 3. Device 불일치 문제
+#    - 모델: MPS/CUDA에 위치
+#    - 입력: CPU에 위치
+#    - → RuntimeError 발생 (다른 메모리 공간에서 연산 불가)
+#
+# 4. 해결 방법
+#    - tokenizer 출력을 명시적으로 device로 이동
+#    - inputs = tokenizer(...).to(device)
+#
+# 5. 핵심
+#    - Tokenizer는 device를 인식하지 못함
+#    - 개발자가 직접 .to(device)로 이동 필수
+# ============================================================
+</code></pre></pre>
+<p><strong>모델 로드:</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python">from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
+
+# 토크나이저 로드
+tokenizer = AutoTokenizer.from_pretrained('psyche/KoT5-summarization')
+
+# 모델 로드 및 device 이동
+model = AutoModelForSeq2SeqLM.from_pretrained('psyche/KoT5-summarization').to(device)
+</code></pre></pre>
+<h3>요약 함수 구현</h3>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python">def summarize_text(text):
+    # 입력 토큰화 및 device 이동
+    inputs = tokenizer(
+        text,
+        return_tensors='pt',  # PyTorch 텐서 형태로 반환
+        truncation=True,  # 최대 길이 초과 시 자동 잘라냄
+        max_length=512  # 입력 토큰의 최대 길이
+    ).to(device)  # ⚠️ 반드시 device로 이동!
+    
+    # 요약문 생성
+    outputs = model.generate(
+        **inputs,  # tokenizer가 반환한 dict 형태로 전달
+        max_length=100,  # 요약문의 최대 토큰 길이
+        min_length=20,  # 요약문의 최소 토큰 길이
+        num_beams=4,  # beam search 수: 4개 후보 유지
+        early_stopping=True,  # EOS 토큰 만나면 즉시 생성 멈춤
+        length_penalty=2.0  # 값&gt;1.0: 긴 요약 선호, 값&lt;1.0: 짧은 요약 선호
+    )
+    
+    # 디코딩 및 반환
+    summary = tokenizer.decode(outputs[0], skip_special_tokens=True)
+    return summary
+</code></pre></pre>
+<p><strong>파라미터 설명:</strong></p>
+<ul>
+<li>
+<p><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">num_beams</code>: Beam Search의 빔 개수</p>
+<ul>
+<li>매 단계에서 가장 가능성 높은 N개 후보를 유지하며 탐색</li>
+<li>값이 클수록 품질 향상, 속도 감소</li>
+</ul>
+</li>
+<li>
+<p><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">length_penalty</code>: 길이 가중치</p>
+<ul>
+<li>값 &gt; 1.0: 긴 문장 선호</li>
+<li>값 = 1.0: 중립</li>
+<li>값 &lt; 1.0: 짧은 문장 선호</li>
+</ul>
+</li>
+</ul>
+<h3>전체 코퍼스 요약</h3>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python"># Train 샘플 요약
+summaries = [summarize_text(doc) for doc in tqdm(train_corpus, desc='Summarizing')]
+
+print(f'원본: {train_corpus[0][:100]}...')
+print(f'요약: {summaries[0]}')
+</code></pre></pre>
+<hr>
+<h2>4️⃣ 문장 임베딩 (Sentence Embedding)</h2>
+<h3>Sentence-BERT (SBERT)</h3>
+<p><strong>개념:</strong></p>
+<ul>
+<li>문장 전체를 하나의 벡터로 표현</li>
+<li>의미적으로 유사한 문장들이 벡터 공간에서 가까이 위치</li>
+<li>문장 간 유사도 계산 및 클러스터링에 활용</li>
+</ul>
+<p><strong>일반 BERT vs SBERT:</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>구분</th><th>일반 BERT</th><th>SBERT</th></tr></thead><tbody><tr><td>출력</td><td>토큰별 벡터</td><td>문장 하나당 벡터 1개</td></tr><tr><td>용도</td><td>토큰 분류, 질의응답</td><td>문장 유사도, 클러스터링</td></tr><tr><td>Pooling</td><td>없음</td><td>Average Pooling</td></tr></tbody></table>
+<h3>KR-SBERT 모델</h3>
+<p><strong>모델 정보:</strong></p>
+<ul>
+<li>Hugging Face: <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">snunlp/KR-SBERT-V40K-klueNLI-augSTS</code></li>
+<li>한국어 특화 Sentence-BERT</li>
+<li>출력: 768차원 밀집 벡터</li>
+</ul>
+<p><strong>사전 학습:</strong></p>
+<ul>
+<li>KR-BERT-V40K (WordPiece 토크나이저)</li>
+<li>Average Pooling으로 문장 벡터 생성</li>
+</ul>
+<p><strong>Average Pooling 과정:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">문장: "나는 밥을 먹었다"
+토큰: [나는] [밥을] [먹었다]
+
+각 토큰의 벡터:
+[나는]   → [0.1, 0.2, 0.3, ...]
+[밥을]   → [0.4, 0.5, 0.6, ...]
+[먹었다] → [0.7, 0.8, 0.9, ...]
+
+Average Pooling (평균):
+→ [(0.1+0.4+0.7)/3, (0.2+0.5+0.8)/3, ...]
+→ 문장 하나 = 벡터 하나 (768차원)
+</code></pre>
+<h3>Siamese 네트워크 구조</h3>
+<p><strong>파인튜닝 방법:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">입력: 문장 A, 문장 B
+
+1. 두 문장을 동일한 BERT 모델(가중치 공유)에 통과
+   문장 A → SBERT → 벡터 A (768차원)
+   문장 B → SBERT → 벡터 B (768차원)
+
+2. 두 벡터 간 거리 계산
+   Distance = ||벡터 A - 벡터 B||
+
+3. 분류기로 유사도 판단
+   Probability = sigmoid(Distance)
+
+학습 목표:
+- 비슷한 문장 → 벡터 거리 작게
+- 다른 문장 → 벡터 거리 크게
+</code></pre>
+<p><strong>학습 데이터:</strong></p>
+<ul>
+<li>KLUE-NLI (한국어 자연어 추론)</li>
+<li>KorSTS (한국어 의미 유사도)</li>
+<li>in-domain 증강 전략: 한국어 문체 다양화</li>
+</ul>
+<p><strong>Siamese 네트워크의 핵심:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">구조:
+Input 1, Input 2 → Siamese Subnetwork (가중치 공유)
+                 → Embedding 1, Embedding 2
+                 → Distance 계산
+                 → Probability (같은 클래스일 확률)
+
+결과:
+- 같은 클래스끼리는 모이고
+- 다른 클래스끼리는 멀어짐
+</code></pre>
+<h3>임베딩 모델 사용</h3>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python">from sentence_transformers import SentenceTransformer
+
+# 모델 로드
+embedding_model = SentenceTransformer('snunlp/KR-SBERT-V40K-klueNLI-augSTS')
+
+# 요약문을 벡터로 변환
+embeddings = embedding_model.encode(summaries, show_progress_bar=True)
+# shape: (600, 768)
+</code></pre></pre>
+<hr>
+<h2>5️⃣ BERTopic을 이용한 토픽 모델링</h2>
+<h3>BERTopic이란?</h3>
+<p><strong>개념:</strong></p>
+<ul>
+<li>BERT 기반 토픽 모델링 기법</li>
+<li>클러스터링과 TF-IDF를 결합하여 주제 추출</li>
+<li>사전 학습 임베딩을 활용하여 의미적 주제 파악</li>
+</ul>
+<p><strong>전통적 LDA vs BERTopic:</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>구분</th><th>LDA</th><th>BERTopic</th></tr></thead><tbody><tr><td>임베딩</td><td>Bag of Words</td><td>BERT 임베딩</td></tr><tr><td>클러스터링</td><td>확률 기반</td><td>HDBSCAN</td></tr><tr><td>주제 표현</td><td>단어 분포</td><td>TF-IDF 키워드</td></tr><tr><td>의미 파악</td><td>단어 동시 출현</td><td>문맥 이해</td></tr></tbody></table>
+<h3>BERTopic 파이프라인</h3>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python">from bertopic import BERTopic
+from umap import UMAP
+from hdbscan import HDBSCAN
+from sklearn.feature_extraction.text import CountVectorizer
+
+# UMAP: 차원 축소 (768차원 → 5차원)
+umap_model = UMAP(
+    n_neighbors=15,
+    n_components=5,
+    min_dist=0.0,
+    metric='cosine'
+)
+
+# HDBSCAN: 밀도 기반 클러스터링
+hdbscan_model = HDBSCAN(
+    min_cluster_size=10,
+    metric='euclidean',
+    cluster_selection_method='eom'
+)
+
+# CountVectorizer: 한국어 토큰화
+vectorizer_model = CountVectorizer(stop_words=['은', '는', '이', '가'])
+
+# BERTopic 모델 생성
+topic_model = BERTopic(
+    embedding_model=embedding_model,
+    umap_model=umap_model,
+    hdbscan_model=hdbscan_model,
+    vectorizer_model=vectorizer_model,
+    language='korean',
+    verbose=True
+)
+
+# 토픽 추출
+topics, probs = topic_model.fit_transform(summaries)
+</code></pre></pre>
+<h3>결과 분석</h3>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python"># 토픽 정보 확인
+topic_info = topic_model.get_topic_info()
+print(topic_info)
+
+# 특정 토픽의 주요 키워드
+topic_0 = topic_model.get_topic(0)
+print(f"Topic 0: {topic_0[:10]}")
+# [('운동', 0.15), ('건강', 0.12), ('헬스', 0.10), ...]
+
+# 시각화
+topic_model.visualize_topics()
+topic_model.visualize_barchart()
+topic_model.visualize_heatmap()
+</code></pre></pre>
+<hr>
+<h2>6️⃣ 감성 분석 (Sentiment Analysis)</h2>
+<h3>한국어 감성 분석 모델</h3>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python">from transformers import pipeline
+
+# 감성 분석 파이프라인
+sentiment_analyzer = pipeline(
+    "sentiment-analysis",
+    model="beomi/kcbert-base"
+)
+
+# 토픽별 감성 분석
+for topic_id in range(len(topic_model.get_topic_info())):
+    # 해당 토픽에 속한 문서들
+    docs_in_topic = [summaries[i] for i, t in enumerate(topics) if t == topic_id]
+    
+    # 감성 분석
+    sentiments = sentiment_analyzer(docs_in_topic[:10])
+    
+    print(f"Topic {topic_id}:")
+    for doc, sent in zip(docs_in_topic[:3], sentiments[:3]):
+        print(f"  {doc[:50]}... → {sent['label']} ({sent['score']:.2f})")
+</code></pre></pre>
+<hr></div></div><div class="MuiBox-root css-1cpq4zq"><hr class="MuiDivider-root MuiDivider-fullWidth css-7jtdmc"><h5 class="MuiTypography-root MuiTypography-h5 css-85yo2n">같은 카테고리의 다른 글</h5><div class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-2 css-1eikg3m"><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] Serializable 깊이 파기 — Part 2: 바이트에서 다시 객체로, 그리고 함정들</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">직렬화된 바이트를 ObjectInputStream이 어떤 순서로 읽어 객체로 복원하는지, 그때 생성자가 호출되지 않는다는 점을 확인합니다. | serialVersionUID, transient, 커스텀 readObject·writeObject, 역직렬화 취약점, Java 직렬화의 현재로 마무리합니다.</p><div class="MuiBox-root css-107ld1r"></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 4월 5일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] Serializable 깊이 파기 — Part 1: 객체가 바이트가 되는 과정</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">Python이나 JavaScript와 달리 Java는 왜 Serializable을 선언해야 하는지, 메서드가 하나도 없는 이 인터페이스가 무슨 일을 하는지 묻는 글입니다. | ObjectOutputStream이 만든 실제 바이트를 열어 보고, 참조 객체가 들어 있을 때는 어떻게 되는지 확인합니다.</p><div class="MuiBox-root css-107ld1r"></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 4월 5일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] 주식 거래 엔진 직접 만들기 - Part 3: 오더북을 어떻게 구현할 것인가</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">주식 거래 엔진의 오더북을 TreeMap과 ArrayDeque 조합으로 만든 이유를, PriorityQueue, LinkedList, Skip List와 비교하며 설명합니다. | 주문 취소를 Lazy Removal로 처리한 방법과 Kafka를 연결하며 만난 멱등성 문제를 마지막에 둡니다.</p><div class="MuiBox-root css-107ld1r"></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 27일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] 주식 거래 엔진 직접 만들기 - Part 2: Phase 1 — 모놀리식으로 시작하기</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">단일 JAR 모놀리식 구조인 Phase 1에서 만난 문제를 차례로 다룹니다. | SELECT FOR UPDATE로 동시성을 해결했고, 락 보유 시간을 줄이고, 락 획득 순서를 통일해 데드락 위험을 없앴습니다. @Transactional 원칙과 Lazy Loading 함정도 짚습니다.</p><div class="MuiBox-root css-107ld1r"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Java</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Spring Boot</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">JPA</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">+2</span></div></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 27일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] 주식 거래 엔진 직접 만들기 - Part 1: 왜 주식 거래 엔진인가</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">F-lab 멘토링 프로젝트로 주식 거래 엔진을 직접 설계하고 구현한 과정을 기록하는 시리즈의 첫 글입니다. | 프로젝트를 고른 기준과 멀티모듈 구조, Phase 로드맵, 시리즈 전체에서 답할 질문들을 먼저 밝힙니다.</p><div class="MuiBox-root css-107ld1r"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Java</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Spring Boot</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Kafka</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">+5</span></div></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 27일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[개발자가 직접 써봤어요] Claude Code 완전 가이드: 설치부터 멀티에이전트까지</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">Claude Code를 Spring Boot와 Kafka 기반 주식 매매 엔진 프로젝트에 적용해 본 경험을 바탕으로, 설치부터 멀티에이전트까지 소개합니다. | CLAUDE.md, Skills, Subagents, Hooks, MCP, Agent Teams의 여섯 레이어와 Cursor AI와의 비교, 주의사항이 나옵니다.</p><div class="MuiBox-root css-107ld1r"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Claude Code</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">AI</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Developer Tools</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">+4</span></div></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 9일</span></div></div></div></div><div class="MuiBox-root css-1b94f21"><a class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways css-104ms0" href="/blog/posts" data-discover="true"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowBackIcon"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z"></path></svg>게시글 목록으로 돌아가기</a></div><button class="MuiButtonBase-root MuiFab-root MuiFab-circular MuiFab-sizeMedium MuiFab-primary MuiFab-root MuiFab-circular MuiFab-sizeMedium MuiFab-primary css-1nl6bps" tabindex="0" type="button" aria-label="scroll to top" style="opacity: 0; visibility: hidden;"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="KeyboardArrowUpIcon"><path d="M7.41 15.41 12 10.83l4.59 4.58L18 14l-6-6-6 6z"></path></svg></button></div></div></div></div><footer style="text-align: center; padding: 2rem 0px; color: rgb(0, 0, 0); font-size: 0.9rem; border-top: 1px solid rgb(0, 0, 0); margin-top: auto; background-color: rgb(255, 255, 255);"><p>© 2025 DevTaco Blog. All rights reserved.</p></footer><div class="MuiBox-root css-1hyfx7x"><div class="visitor-counter MuiBox-root css-19midj6"><h6 class="MuiTypography-root MuiTypography-h6 MuiTypography-gutterBottom css-izz7ci">방문자 수</h6><div class="MuiBox-root css-zwd3xv"><h4 class="MuiTypography-root MuiTypography-h4 css-1dg27va">61</h4><p class="MuiTypography-root MuiTypography-body2 css-l6pb42">오늘</p><h6 class="MuiTypography-root MuiTypography-h6 css-kh42wg">총 61명</h6></div></div></div><div class="MuiBox-root css-1y95mt5" data-testid="terminal-navigation"><div class="MuiBox-root css-1kw3y0a"><p class="MuiTypography-root MuiTypography-body2 css-1fktdtb">devtaco@portfolio:~$ navigation</p><div class="MuiBox-root css-j0ozid"><p class="MuiTypography-root MuiTypography-body2 css-1cn40rb">⌘M to close</p><button class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-470314" tabindex="0" type="button" id=":r1:"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeSmall css-vh810p" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="CloseIcon"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg></button></div></div><div class="MuiBox-root css-13t3iqc"><div class="MuiBox-root css-0"><p class="MuiTypography-root MuiTypography-body2 css-cbhj4f">Navigation:</p><div class="MuiBox-root css-1kkt86i"><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">1 → home</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">2 → about</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">3 → posts</p></div></div><div class="MuiBox-root css-0"><p class="MuiTypography-root MuiTypography-body2 css-cbhj4f">External:</p><div class="MuiBox-root css-1kkt86i"><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">g → github</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">e → email</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">l → linkedin</p></div></div></div><p class="MuiTypography-root MuiTypography-body2 css-1e7vt2">Press number keys (1,2,3) or letter keys (g,e,l) to navigate. Use ⌘+M to close.</p></div></div></div></body></html>

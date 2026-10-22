@@ -1,0 +1,938 @@
+<!DOCTYPE html><html lang="en"><head><script type="text/javascript">!function(n){if("/"===n.search[1]){var a=n.search.slice(1).split("&").map((function(n){return n.replace(/~and~/g,"&")})).join("?");window.history.replaceState(null,null,n.pathname.slice(0,-1)+a+n.hash)}}(window.location)</script><meta charset="utf-8"><link rel="icon" href="/blog/favicon.ico"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#000000"><meta name="keywords" content="Java, Kotlin, Spring Boot, MSA, 개발, 백엔드, coroutine"><meta name="author" content="DevTaco"><meta property="og:image" content="https://devtaco30.github.io/blog/og-image.png"><meta property="twitter:image" content="https://devtaco30.github.io/blog/og-image.png"><meta property="twitter:url" content="https://devtaco30.github.io/blog/"><link rel="apple-touch-icon" href="/blog/apple-touch-icon.png"><link rel="manifest" href="/blog/manifest.json"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&amp;family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet"><script defer="defer" src="/blog/static/js/main.404b9165.js"></script><link href="/blog/static/css/main.5b86466f.css" rel="stylesheet"><style data-emotion="css" data-s=""></style><title>EST AI - 딥러닝 : 신경망 구조와 작동 원리 | DevTaco Blog</title><meta name="description" content="유방암 데이터 이진 분류 실습으로 신경망의 구조와 작동 원리를 확인합니다. 입력층·은닉층·출력층의 역할, 가중치, 선형과 비선형 변환, 학습과 예측의 차이, 머신러닝과 딥러닝의 근본적인 차이가 나옵니다."><meta property="og:title" content="EST AI - 딥러닝 : 신경망 구조와 작동 원리"><meta property="og:description" content="유방암 데이터 이진 분류 실습으로 신경망의 구조와 작동 원리를 확인합니다. 입력층·은닉층·출력층의 역할, 가중치, 선형과 비선형 변환, 학습과 예측의 차이, 머신러닝과 딥러닝의 근본적인 차이가 나옵니다."><meta property="og:type" content="article"><meta property="og:url" content="https://devtaco30.github.io/blog/posts/46"><meta name="twitter:card" content="summary"></head><body><noscript>You need to enable JavaScript to run this app.</noscript><div id="root"><div class="App"><div class="MuiBox-root css-kurlqb"><div class="MuiBox-root css-171onha"><button class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-1f6w95t" tabindex="0" type="button" id=":r0:"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="MenuIcon"><path d="M3 18h18v-2H3zm0-5h18v-2H3zm0-7v2h18V6z"></path></svg></button><div class="MuiBox-root css-1szb58x"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-218waq" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowBackIcon"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z"></path></svg><div class="MuiBox-root css-wq4jw1"><span>⌘+M</span></div></div></div></div><div class="MuiContainer-root css-15jb5o1" data-testid="page-container"><div class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-2 MuiGrid-spacing-md-3 css-1ht06td"><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-md-12 css-15j76c0"><div class="MuiBox-root css-15rigdj"><nav class="MuiTypography-root MuiTypography-body1 MuiBreadcrumbs-root css-1v2kxik"><ol class="MuiBreadcrumbs-ol css-51eq8m"><li class="MuiBreadcrumbs-li"><a class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways css-gj78h6" href="/blog/posts" data-discover="true">게시글 목록</a></li><li aria-hidden="true" class="MuiBreadcrumbs-separator css-1nd5pgh">/</li><li class="MuiBreadcrumbs-li"><p class="MuiTypography-root MuiTypography-body1 css-1cr0rz6">EST AI - 딥러닝 : 신경망 구조와 작동 원리</p></li></ol></nav><div class="MuiBox-root css-15djlns"><button class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-1y18wdw" tabindex="0" type="button" id=":r9:"><span class="MuiButton-icon MuiButton-startIcon MuiButton-iconSizeMedium css-1ygddt1"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowBackIcon"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z"></path></svg></span><div class="MuiBox-root css-0"><span class="MuiTypography-root MuiTypography-caption css-115rlu8">이전글</span><p class="MuiTypography-root MuiTypography-body2 css-10qk5g4">EST AI - 딥러닝 : 퍼셉트론</p></div></button><button class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-1k0z50p" tabindex="0" type="button" id=":ra:"><div class="MuiBox-root css-0"><span class="MuiTypography-root MuiTypography-caption css-115rlu8">다음글</span><p class="MuiTypography-root MuiTypography-body2 css-10qk5g4">EST AI - 딥러닝 기초 (TensorFlow, Keras)</p></div><span class="MuiButton-icon MuiButton-endIcon MuiButton-iconSizeMedium css-6bt4d2"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowForwardIcon"><path d="m12 4-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"></path></svg></span></button></div><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-10t0qv5" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h4 class="MuiTypography-root MuiTypography-h4 css-k5jvd2">EST AI - 딥러닝 : 신경망 구조와 작동 원리</h4><p class="MuiTypography-root MuiTypography-body1 css-104xg3">유방암 데이터 이진 분류 실습으로 신경망의 구조와 작동 원리를 확인합니다. | 입력층·은닉층·출력층의 역할, 가중치, 선형과 비선형 변환, 학습과 예측의 차이, 머신러닝과 딥러닝의 근본적인 차이가 나옵니다.</p><div class="MuiBox-root css-1prrn6n"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Deep Learning</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">TensorFlow</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Keras</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Neural Network</span></div></div><p class="MuiTypography-root MuiTypography-body2 css-l6pb42">2026년 1월 9일 오후 05:32</p></div><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-1i779yj" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><div class="MuiBox-root css-13lazol"><h2>📚 오늘의 학습 내용</h2>
+<p>오늘은 <strong>유방암 데이터를 활용한 이진 분류</strong> 실습을 통해 신경망의 구조와 작동 원리를 심화 학습했습니다. 각 계층의 역할, 가중치의 의미, 선형/비선형 변환, 그리고 학습과 예측의 차이를 구체적으로 이해했습니다. 또한 머신러닝과 딥러닝의 근본적인 차이점도 학습했습니다.</p>
+<hr>
+<h2>0️⃣ 머신러닝 vs 딥러닝: 근본적인 차이</h2>
+<h3>머신러닝: 이미 완성된 것을 '사용'하는 형태</h3>
+<p><strong>특징:</strong></p>
+<ul>
+<li>이미 구현된 알고리즘 클래스를 선택하여 사용</li>
+<li><strong>비유</strong>: 완제품 피규어를 색칠하는 느낌
+<ul>
+<li>피규어의 기본 형태는 이미 정해져 있음</li>
+<li>색상(하이퍼 파라미터)만 조절 가능</li>
+</ul>
+</li>
+<li>특정 알고리즘을 선택하고 그 알고리즘의 하이퍼 파라미터를 조정하는 과정에 집중</li>
+</ul>
+<p><strong>작업 과정:</strong></p>
+<ol>
+<li>알고리즘 선택 (예: 선형 회귀, 결정 트리, SVM 등)</li>
+<li>하이퍼 파라미터 조정 (예: max_depth, learning_rate 등)</li>
+<li>모델 학습 및 평가</li>
+</ol>
+<p><strong>특성공학:</strong></p>
+<ul>
+<li><strong>특성공학이 머신러닝 학습 자체에서는 불가능</strong></li>
+<li>데이터 전처리 단계에서 수동으로 특성을 만들어야 함</li>
+<li>3~4단계(데이터 전처리, 탐색적 데이터 분석)가 중요하고 오래 걸림</li>
+</ul>
+<p><strong>예시:</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python"># Scikit-learn: 이미 완성된 알고리즘 사용
+from sklearn.linear_model import LogisticRegression
+model = LogisticRegression()  # 이미 완성된 구조
+model.fit(X_train, y_train)   # 하이퍼 파라미터만 조정
+</code></pre></pre>
+<hr>
+<h3>딥러닝: 직접 조립해서 만들어 사용하는 형태</h3>
+<p><strong>특징:</strong></p>
+<ul>
+<li>신경망의 각 층(layer)을 직접 정의하고 조합하여 모델 설계</li>
+<li><strong>비유</strong>: 레고 블록을 하나하나 쌓아 올려 구조물을 만드는 느낌
+<ul>
+<li>어떤 블록을 몇 개 쌓을지, 어떻게 연결할지 모두 직접 결정</li>
+<li>층의 개수, 뉴런 개수, 활성화 함수 등 모든 것을 설계</li>
+</ul>
+</li>
+</ul>
+<p><strong>작업 과정:</strong></p>
+<ol>
+<li>모델 구조 직접 설계
+<ul>
+<li>입력층 크기 결정</li>
+<li>은닉층 개수, 뉴런 개수 결정</li>
+<li>활성화 함수 선택</li>
+<li>출력층 구조 결정</li>
+</ul>
+</li>
+<li>모델 학습 및 평가</li>
+</ol>
+<p><strong>특성공학:</strong></p>
+<ul>
+<li><strong>딥러닝 학습 자체에서 특성공학이 가능</strong></li>
+<li>모델이 데이터로부터 계층적인 특징(feature)을 자동으로 학습</li>
+<li>전처리 단계에서 수동으로 특성을 만들 필요가 적음</li>
+</ul>
+<p><strong>예시:</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python"># TensorFlow/Keras: 모델 구조 직접 설계
+model = Sequential()
+model.add(InputLayer(shape=(30,)))           # 입력층 직접 정의
+model.add(Dense(units=32, activation='sigmoid'))  # 은닉층1 직접 설계
+model.add(Dense(units=64, activation='sigmoid'))  # 은닉층2 직접 설계
+model.add(Dense(units=1, activation='sigmoid'))   # 출력층 직접 설계
+model.compile(...)
+model.fit(X_train, y_train)  # 설계한 구조로 학습
+</code></pre></pre>
+<hr>
+<h3>핵심 차이점 정리</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>구분</th><th>머신러닝</th><th>딥러닝</th></tr></thead><tbody><tr><td><strong>모델 구조</strong></td><td>이미 완성된 알고리즘 선택</td><td>직접 설계 (층, 뉴런, 활성화 함수 등)</td></tr><tr><td><strong>비유</strong></td><td>완제품 피규어 색칠</td><td>레고 블록 조립</td></tr><tr><td><strong>특성공학</strong></td><td>수동으로 전처리 단계에서 수행</td><td>모델이 자동으로 학습</td></tr><tr><td><strong>유연성</strong></td><td>제한적 (알고리즘에 따라 구조 고정)</td><td>매우 높음 (원하는 대로 설계 가능)</td></tr><tr><td><strong>작업 집중도</strong></td><td>하이퍼 파라미터 조정에 집중</td><td>모델 구조 설계에 집중</td></tr></tbody></table>
+<p><strong>왜 이런 차이가 생기는가?</strong></p>
+<ul>
+<li><strong>머신러닝</strong>: 이미 검증된 알고리즘을 사용 → 빠르고 간단하지만 구조 변경 불가</li>
+<li><strong>딥러닝</strong>: 문제에 맞는 맞춤형 구조 설계 → 복잡하지만 유연하고 강력함</li>
+</ul>
+<hr>
+<h2>1️⃣ 실습: 유방암 데이터 이진 분류</h2>
+<h3>데이터 개요</h3>
+<ul>
+<li><strong>데이터셋</strong>: Wisconsin Breast Cancer (Diagnostic) Dataset</li>
+<li><strong>샘플 수</strong>: 569개</li>
+<li><strong>특성 수</strong>: 30개 (평균 반경, 질감, 둘레, 면적, 오목점 등)</li>
+<li><strong>목표</strong>: 악성(Malignant) vs 양성(Benign) 분류</li>
+<li><strong>클래스 분포</strong>: 악성 212개, 양성 357개</li>
+</ul>
+<p><strong>데이터 구조 예시:</strong></p>
+<p><strong>특성명 (30개):</strong></p>
+<ul>
+<li>mean radius (평균 반경)</li>
+<li>mean texture (평균 질감)</li>
+<li>mean perimeter (평균 둘레)</li>
+<li>mean area (평균 면적)</li>
+<li>mean smoothness (평균 매끄러움)</li>
+<li>... (총 30개)</li>
+</ul>
+<p><strong>샘플 데이터 예시 (1행):</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">[17.99, 10.38, 122.8, 1001.0, 0.1184, 0.2776, 0.3001, 0.1471, 0.2419, 0.07871, 
+ 1.095, 0.9053, 8.589, 153.4, 0.006399, 0.04904, 0.05373, 0.01587, 0.03003, 0.006193, 
+ 25.38, 17.33, 184.6, 2019.0, 0.1622, 0.6656, 0.7119, 0.2654, 0.4601, 0.1189]
+→ 정답: 0 (악성)
+</code></pre>
+<p><strong>데이터 형태:</strong></p>
+<ul>
+<li>X (입력): (569, 30) - 569개 샘플, 각각 30개 특성</li>
+<li>y (정답): (569,) - 0 (악성) 또는 1 (양성)</li>
+</ul>
+<h3>모델 구조</h3>
+<p><strong>핵심 개념: 뉴런 → 층 → 여러 층 → 값이 거쳐가면서 추론</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">입력층(30) → 은닉층1(32) → 은닉층2(64) → 은닉층3(128) 
+→ 은닉층4(64) → 은닉층5(32) → 은닉층6(16) → 출력층(1)
+</code></pre>
+<p><strong>구조의 의미:</strong></p>
+<ol>
+<li>
+<p><strong>뉴런 (인공신경세포)</strong>: 각 층에 여러 개의 뉴런이 있음</p>
+<ul>
+<li>입력층: 30개 뉴런 (30개 특성 각각을 담당)</li>
+<li>은닉층1: 32개 뉴런</li>
+<li>은닉층2: 64개 뉴런</li>
+<li>... (각 층마다 뉴런 개수 다름)</li>
+<li>출력층: 1개 뉴런 (최종 결과 출력)</li>
+</ul>
+</li>
+<li>
+<p><strong>층 (Layer)</strong>: 뉴런들이 모여서 하나의 층을 이룸</p>
+<ul>
+<li>각 층은 여러 개의 뉴런으로 구성됨</li>
+<li>뉴런들이 함께 작동하여 정보를 처리</li>
+</ul>
+</li>
+<li>
+<p><strong>여러 층을 세팅</strong>: 층을 여러 개 쌓아 올림</p>
+<ul>
+<li>입력층 → 은닉층들 → 출력층</li>
+<li>각 층마다 역할이 다름</li>
+</ul>
+</li>
+<li>
+<p><strong>값들이 층을 거쳐가면서 추론</strong>:</p>
+<ul>
+<li>입력 데이터가 첫 번째 층(입력층)에 들어감</li>
+<li>각 층을 지날 때마다 뉴런들이 계산을 수행</li>
+<li>계산된 값이 다음 층으로 전달됨</li>
+<li>최종 층(출력층)에서 추론 결과가 나옴</li>
+</ul>
+</li>
+</ol>
+<p><strong>설계 의도:</strong></p>
+<ul>
+<li>입력층: 30개 검사 결과를 받음 (30개 뉴런)</li>
+<li>은닉층: 점진적으로 확장(32→64→128) 후 압축(128→64→32→16)
+<ul>
+<li>확장: 더 많은 관점으로 정보 분석 (뉴런 수 증가)</li>
+<li>압축: 중요한 정보만 추출하여 최종 판단 준비 (뉴런 수 감소)</li>
+</ul>
+</li>
+<li>출력층: 1개 뉴런 (이진 분류이므로 확률값 1개만 필요)</li>
+</ul>
+<h3>손실 함수와 옵티마이저</h3>
+<ul>
+<li><strong>손실 함수</strong>: <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">binary_crossentropy</code> (이진 분류 전용)</li>
+<li><strong>옵티마이저</strong>: <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">SGD</code> (확률적 경사하강법)</li>
+<li><strong>평가 지표</strong>: <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">accuracy</code> (정확도)</li>
+</ul>
+<hr>
+<h2>2️⃣ 신경망의 기본 개념: 선형 vs 비선형</h2>
+<h3>선형 (Linear)</h3>
+<ul>
+<li><strong>특징</strong>: 일정한 패턴을 가짐</li>
+<li>입력이 2배 증가하면 출력도 2배 증가 (비율이 일정)</li>
+<li>그래프: 직선</li>
+<li><strong>한계</strong>: 복잡한 관계를 표현할 수 없음
+<ul>
+<li>예: "반경이 크면 악성" (단순한 관계만 표현)</li>
+</ul>
+</li>
+</ul>
+<h3>비선형 (Non-linear)</h3>
+<ul>
+<li><strong>특징</strong>: 일정하지 않은 패턴</li>
+<li>입력이 2배 증가해도 출력이 2배가 아닐 수 있음</li>
+<li>그래프: 곡선 (S자, 지수 등)</li>
+<li><strong>장점</strong>: 복잡한 관계를 표현할 수 있음
+<ul>
+<li>예: "반경이 크고 질감이 거칠고 둘레가 일정 이상이면 악성" (복잡한 조건 표현 가능)</li>
+</ul>
+</li>
+</ul>
+<h3>신경망에서의 차이</h3>
+<p><strong>활성화 함수 없이 (선형만):</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">입력 → 선형결합 → 선형결합 → 선형결합 → 출력
+결과: 결국 선형 결합만 반복 → 복잡한 패턴 학습 불가
+</code></pre>
+<ul>
+<li>여러 층을 쌓아도 결국 선형 결합의 합성 → 여전히 선형</li>
+<li>예: "반경이 크면 악성" (단순한 관계만 표현 가능)</li>
+</ul>
+<p><strong>활성화 함수 있이 (선형 + 비선형 조합):</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">입력 → 선형결합 → sigmoid(비선형) → 선형결합 → sigmoid(비선형) → 출력
+결과: 각 층마다 비선형 변환 → 복잡한 패턴 학습 가능
+</code></pre>
+<ul>
+<li>각 층마다 <strong>선형 결합 + 비선형 변환</strong>이 반복됨</li>
+<li>층을 쌓을수록 복잡한 패턴 학습 가능</li>
+<li>예: "반경이 크고 질감이 거칠고 둘레가 일정 이상이면 악성" (복잡한 조건 표현 가능)</li>
+</ul>
+<p><strong>핵심 정리: 딥러닝은 비선형을 사용합니다 (YES)</strong></p>
+<p><strong>명확한 답변:</strong></p>
+<ul>
+<li><strong>딥러닝은 비선형을 사용합니다</strong> ✅</li>
+<li>하지만 선형 결합도 함께 사용합니다</li>
+<li><strong>비선형 활성화 함수가 핵심</strong>입니다</li>
+</ul>
+<p><strong>작동 방식: 선형 + 비선형 조합</strong></p>
+<ul>
+<li>각 뉴런마다: <strong>선형 결합 (가중치 연산)</strong> → <strong>비선형 변환 (활성화 함수)</strong></li>
+<li>선형 결합: <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">z = w1*입력1 + w2*입력2 + ... + b</code> (가중치로 곱하고 더함)</li>
+<li>비선형 변환: <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">출력 = sigmoid(z)</code> (활성화 함수 적용) ← <strong>이것이 핵심!</strong></li>
+</ul>
+<p><strong>왜 비선형이 핵심인가?</strong></p>
+<ul>
+<li><strong>선형 결합만으로는 복잡한 패턴을 학습할 수 없음</strong></li>
+<li>활성화 함수(비선형)가 있어야 복잡한 관계를 학습할 수 있음</li>
+<li><strong>비선형 변환이 딥러닝의 핵심 능력</strong>을 만들어냄</li>
+<li>따라서 "딥러닝은 비선형을 사용한다" = "비선형 활성화 함수가 필수다"</li>
+</ul>
+<ol start="3">
+<li><strong>비유로 이해하기:</strong>
+<ul>
+<li>선형 결합 = 재료 준비 (가중치로 정보를 조합)</li>
+<li>비선형 변환 = 요리 (활성화 함수로 복잡한 맛을 만들어냄)</li>
+<li>재료 준비만으로는 맛있는 요리가 안 되듯, 선형 결합만으로는 복잡한 패턴 학습 불가</li>
+<li><strong>요리(비선형 변환)가 핵심이지만, 재료 준비(선형 결합)도 필수</strong></li>
+</ul>
+</li>
+</ol>
+<p><strong>구체적인 예시 (유방암 진단):</strong></p>
+<ul>
+<li><strong>선형만 사용</strong>: "반경이 크면 악성" (단순한 관계만 표현)</li>
+<li><strong>선형+비선형 사용</strong>: "반경이 크고 질감이 거칠고 둘레가 일정 이상이면 악성" (복잡한 조건 표현 가능)</li>
+</ul>
+<hr>
+<h2>3️⃣ 가중치와 확률 변환 과정</h2>
+<h3>뉴런의 계산 과정</h3>
+<p><strong>공식:</strong> <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">z = w1*입력1 + w2*입력2 + ... + w30*입력30 + b</code></p>
+<h4>각 요소의 의미</h4>
+<ol>
+<li>
+<p><strong>입력 (30개 검사 결과)</strong></p>
+<ul>
+<li>유방암 환자의 30개 검사 결과</li>
+<li>예: 평균 반경 17.99, 평균 질감 10.38, 평균 둘레 122.8, ...</li>
+</ul>
+</li>
+<li>
+<p><strong>가중치 (w1, w2, ..., w30)</strong></p>
+<ul>
+<li>각 검사 결과의 <strong>중요도</strong>를 나타내는 숫자</li>
+<li>예: w1 = 0.8 (반경이 중요), w2 = 0.3 (질감은 덜 중요)</li>
+<li><strong>TensorFlow가 자동으로 관리:</strong>
+<ul>
+<li>초기화: 모델 생성 시 랜덤하게 초기화</li>
+<li>학습: <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">model.fit()</code> 실행 시 역전파 알고리즘으로 자동 조정</li>
+<li>저장: 학습된 가중치는 모델에 저장됨</li>
+</ul>
+</li>
+<li><strong>사용자는 모델 구조만 정의하고, 가중치는 TensorFlow가 알아서 처리!</strong></li>
+</ul>
+</li>
+<li>
+<p><strong>편향 (b)</strong></p>
+<ul>
+<li>추가적인 조정값</li>
+<li>모든 검사 결과가 낮아도 기본적으로 악성일 가능성을 조금 높여줌</li>
+</ul>
+</li>
+<li>
+<p><strong>선형 결합 결과 (z)</strong></p>
+<ul>
+<li>30개 검사 결과를 가중치로 곱해서 더한 값</li>
+<li><strong>아직 확률이 아님!</strong> (음수일 수도, 100보다 클 수도 있음)</li>
+</ul>
+</li>
+</ol>
+<h3>확률로 변환하는 3단계</h3>
+<h4>1단계: 선형 결합 (가중치 연산)</h4>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">z = w1*입력1 + w2*입력2 + ... + w30*입력30 + b
+</code></pre>
+<ul>
+<li><strong>이것은 선형 연산입니다!</strong></li>
+<li>검사 결과들을 가중치로 곱해서 더함</li>
+<li>결과: 어떤 숫자든 나올 수 있음 (예: -5.2, 0.3, 10.5, ...)</li>
+<li><strong>확률로 변환하지 않음!</strong></li>
+</ul>
+<h4>2단계: 활성화 함수 적용 (sigmoid)</h4>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">출력 = sigmoid(z) = 1 / (1 + e^(-z))
+</code></pre>
+<ul>
+<li><strong>이것은 비선형 변환입니다!</strong></li>
+<li>sigmoid 함수가 z 값을 0~1 사이 확률로 변환</li>
+<li><strong>sigmoid의 역할 (2가지):</strong>
+<ol>
+<li><strong>비선형 변환 (가장 중요!)</strong>: 복잡한 패턴 학습 가능하게 함</li>
+<li><strong>확률 변환</strong>: z 값을 0~1 사이로 압축 (출력층에서 확률로 해석)</li>
+</ol>
+</li>
+</ul>
+<p><strong>예시:</strong></p>
+<ul>
+<li>z = 5.2 → sigmoid(5.2) = 0.995 (99.5%)</li>
+<li>z = 0 → sigmoid(0) = 0.5 (50%)</li>
+<li>z = -5.2 → sigmoid(-5.2) = 0.005 (0.5%)</li>
+</ul>
+<h4>3단계: 최종 해석</h4>
+<ul>
+<li><strong>0.7 (70%)</strong> = 악성일 확률 70%, 양성일 확률 30%</li>
+<li><strong>0.3 (30%)</strong> = 악성일 확률 30%, 양성일 확률 70%</li>
+</ul>
+<p><strong>중요한 구분:</strong></p>
+<ul>
+<li><strong>가중치 연산</strong> = 선형 결합 (선형, 확률 변환 안 함)</li>
+<li><strong>sigmoid 함수</strong> = 비선형 변환 + 확률 변환 (비선형, 확률로 변환함)</li>
+</ul>
+<hr>
+<h2>4️⃣ 신경망의 각 계층 상세 설명</h2>
+<h3>1️⃣ 입력층 (Input Layer)</h3>
+<p><strong>역할:</strong></p>
+<ul>
+<li>데이터를 받아 신경망으로 전달하는 첫 번째 층</li>
+<li>데이터의 특성 개수와 뉴런 개수가 일치해야 함 (30개 특성 → 30개 뉴런)</li>
+</ul>
+<p><strong>구체적인 동작:</strong></p>
+<ul>
+<li>샘플 1개 입력: [특성1, 특성2, ..., 특성30]</li>
+<li>각 뉴런이 특성 하나씩 받아서 그대로 다음 층으로 전달</li>
+</ul>
+<p><strong>비유:</strong> 30명의 의사가 각자 환자의 검사 결과 한 가지씩(평균 반경, 질감, 둘레 등) 받아서 확인하고, 다음 층에 전달</p>
+<hr>
+<h3>2️⃣ 은닉층 (Hidden Layer)</h3>
+<p><strong>역할:</strong></p>
+<ul>
+<li>입력과 출력 사이에서 패턴을 학습하는 층</li>
+<li>여러 층을 쌓아 복잡한 관계를 학습</li>
+</ul>
+<h4>은닉층의 핵심 메커니즘</h4>
+<p><strong>각 뉴런이 하는 일:</strong></p>
+<ol>
+<li>이전 층의 <strong>모든 뉴런과 연결</strong>됨 (완전연결층, Dense)</li>
+<li>각 연결마다 <strong>가중치</strong>가 있어서, 입력값에 곱해져서 더해짐</li>
+<li>선형 결합: <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">z = w1*입력1 + w2*입력2 + ... + b</code></li>
+<li>활성화 함수 적용: <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">출력 = sigmoid(z)</code> (비선형 변환)</li>
+<li>이 출력을 다음 층으로 전달</li>
+</ol>
+<h4>은닉층을 지날 때마다 일어나는 일</h4>
+<p><strong>중요한 구분: 학습 vs 예측</strong></p>
+<p><strong>학습 과정 (가중치 조정 중):</strong></p>
+<ul>
+<li>가중치가 계속 조정됨 (변경됨)</li>
+<li>각 샘플마다 예측 → 오차 계산 → 가중치 조정</li>
+<li>가중치가 최적값에 가까워지도록 학습</li>
+</ul>
+<p><strong>예측 과정 (학습 완료 후):</strong></p>
+<ul>
+<li>가중치가 고정되어 있음 (학습된 가중치 사용)</li>
+<li><strong>입력층 → 은닉층1 → 은닉층2 → ... → 출력층으로 모든 층을 거쳐감</strong></li>
+<li>이전 층의 **출력값(결과값)**을 받아서 고정된 가중치로 계산</li>
+<li>"확률을 높여간다"기보다는 <strong>"정보를 변환하고 종합해간다"</strong></li>
+</ul>
+<p><strong>전체 흐름:</strong></p>
+<ol>
+<li><strong>입력층</strong>: 새로운 환자의 검사 결과 (30개 특성) 입력</li>
+<li><strong>은닉층1</strong>: 입력층의 30개 값을 받아서 가중치로 계산 → 32개 출력값 생성</li>
+<li><strong>은닉층2</strong>: 은닉층1의 32개 출력값을 받아서 가중치로 계산 → 64개 출력값 생성</li>
+<li><strong>은닉층3</strong>: 은닉층2의 64개 출력값을 받아서 가중치로 계산 → 32개 출력값 생성</li>
+<li><strong>출력층</strong>: 은닉층3의 32개 출력값을 받아서 가중치로 계산 → 최종 확률값 출력</li>
+</ol>
+<p><strong>구체적인 과정:</strong></p>
+<p><strong>은닉층1 → 은닉층2 예시 (예측 과정 기준):</strong></p>
+<ol>
+<li>
+<p><strong>은닉층1의 출력값 (32개)</strong></p>
+<ul>
+<li>뉴런1: 0.995 (악성 가능성 99.5%)</li>
+<li>뉴런2: 0.850 (악성 가능성 85.0%)</li>
+<li>...</li>
+<li>뉴런32: 0.680 (악성 가능성 68.0%)</li>
+</ul>
+</li>
+<li>
+<p><strong>은닉층2의 뉴런1이 하는 일:</strong></p>
+<ul>
+<li>은닉층1의 32개 출력값 <strong>모두</strong>를 받음</li>
+<li>각각에 <strong>학습된 가중치</strong>를 곱해서 더함 (예측 시에는 가중치 고정)
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">z = w1*0.995 + w2*0.850 + ... + w32*0.680 + b
+</code></pre>
+</li>
+<li>활성화 함수 적용
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">출력 = sigmoid(z) = 0.920 (악성 가능성 92.0%)
+</code></pre>
+</li>
+<li>이 새로운 값을 다음 층으로 전달</li>
+</ul>
+</li>
+<li>
+<p><strong>은닉층2의 뉴런2도 동일한 과정:</strong></p>
+<ul>
+<li>같은 32개 입력을 받지만, <strong>다른 가중치</strong> 사용 (각 뉴런마다 다른 가중치)</li>
+<li>다른 결과값 생성 (예: 0.750)</li>
+</ul>
+</li>
+</ol>
+<p><strong>학습 과정에서는:</strong></p>
+<ul>
+<li>위와 동일하게 계산하지만, 예측값과 정답을 비교하여 오차를 계산</li>
+<li>오차를 역방향으로 전파하여 가중치를 조정 (w1, w2, ... 값이 변경됨)</li>
+<li>다음 샘플에서는 조정된 가중치로 다시 계산</li>
+</ul>
+<p><strong>핵심 포인트:</strong></p>
+<ul>
+<li>각 층마다 <strong>이미 학습된 가중치</strong>를 사용 (새로 만드는 게 아님!)</li>
+<li>이전 층의 **출력값(결과값)**을 받아서 가중치로 재계산</li>
+<li>각 층을 지날수록 정보가 <strong>변환되고 종합</strong>됨</li>
+<li>최종 출력층에서 최종 확률값 출력</li>
+</ul>
+<p><strong>완전연결의 의미:</strong></p>
+<ul>
+<li>은닉층2의 뉴런1은 은닉층1의 뉴런1~32 <strong>모두</strong>와 연결됨</li>
+<li>은닉층2의 뉴런2도 은닉층1의 뉴런1~32 <strong>모두</strong>와 연결됨</li>
+<li><strong>총 연결 수</strong>: 64개 뉴런 × 32개 연결 = 2,048개 연결선 (각각 다른 가중치)</li>
+</ul>
+<p><strong>뉴런 수 변화의 의미:</strong></p>
+<ul>
+<li><strong>증가</strong> (30→32→64→128): 더 많은 관점으로 정보를 분석</li>
+<li><strong>감소</strong> (128→64→32→16): 정보 압축 및 최종 판단을 위한 요약</li>
+</ul>
+<p><strong>비유:</strong></p>
+<ul>
+<li>32명의 진단 전문가가 각자 30명의 의사 모두에게서 검사 결과를 받음</li>
+<li>각 전문가는 받은 30개 결과를 각자 다른 중요도(가중치)로 평가</li>
+<li>30개 결과를 가중치로 곱해서 더한 후, 각자 진단 의견을 만듦</li>
+</ul>
+<hr>
+<h3>3️⃣ 출력층 (Output Layer)</h3>
+<p><strong>역할:</strong></p>
+<ul>
+<li>최종 결과를 출력하는 층</li>
+<li>문제 유형에 따라 뉴런 개수와 활성화 함수가 결정됨</li>
+</ul>
+<p><strong>이진 분류의 경우:</strong></p>
+<ul>
+<li>뉴런 개수: 1개 (확률값 1개만 필요)</li>
+<li>활성화 함수: sigmoid (0~1 사이 확률로 변환)</li>
+<li>예: 0.7 = 악성 70%, 양성 30% (자동으로 계산됨)</li>
+</ul>
+<p><strong>비유:</strong> 모든 전문가들의 진단 의견을 종합해 주치의가 최종 판단 → "악성일 확률 70%"라고 진단</p>
+<hr>
+<h2>5️⃣ 학습(훈련) vs 예측</h2>
+<h3>학습(훈련) 과정 - 가중치를 조정하는 단계</h3>
+<p><strong>목적:</strong> 정답 데이터를 보고 가중치를 최적화</p>
+<p><strong>중요:</strong> 모든 과정은 TensorFlow가 자동으로 처리합니다!</p>
+<p><strong>과정:</strong></p>
+<p><strong>각 샘플마다 반복되는 과정:</strong></p>
+<ol>
+<li>
+<p><strong>초기화 (첫 번째 샘플 전)</strong>: TensorFlow가 가중치를 랜덤하게 초기화</p>
+<ul>
+<li>예: w1 = 0.1, w2 = -0.3, w3 = 0.5, ...</li>
+</ul>
+</li>
+<li>
+<p><strong>샘플 1 처리:</strong></p>
+<ul>
+<li><strong>예측</strong>: 현재 가중치로 예측값 계산
+<ul>
+<li>입력층 → 은닉층1 (가중치 w1, w2, ... 사용) → 은닉층2 (가중치 w1', w2', ... 사용) → ... → 출력층</li>
+<li>예: 예측 = 0.3 (악성 30%)</li>
+</ul>
+</li>
+<li><strong>정답 확인</strong>: 실제 정답 데이터와 비교
+<ul>
+<li>예: 실제 = 1 (악성), 예측 = 0.3 → 오차 = 0.7</li>
+</ul>
+</li>
+<li><strong>오차 계산</strong>: 손실 함수로 오차 측정</li>
+<li><strong>가중치 조정</strong>: 역전파 알고리즘으로 오차가 큰 방향으로 가중치를 조금씩 변경
+<ul>
+<li>예: w1을 0.1 → 0.12로 증가 (반경을 더 중요하게)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>샘플 2 처리:</strong></p>
+<ul>
+<li><strong>예측</strong>: 조정된 가중치로 예측값 계산 (w1 = 0.12 사용)</li>
+<li><strong>정답 확인</strong>: 실제 정답과 비교</li>
+<li><strong>가중치 조정</strong>: 다시 조정 (w1 = 0.12 → 0.14)</li>
+</ul>
+</li>
+<li>
+<p><strong>반복 (Epoch):</strong></p>
+<ul>
+<li>모든 샘플에 대해 반복 (1 epoch = 모든 샘플 1번 처리)</li>
+<li>여러 epoch 반복 (예: epochs=100 → 100번 반복)</li>
+<li>각 epoch마다 가중치가 점점 최적값에 가까워짐</li>
+<li><strong>마지막 epoch의 가중치가 최종 가중치로 저장됨</strong></li>
+</ul>
+</li>
+</ol>
+<p><strong>Epoch별 가중치 변화 예시:</strong></p>
+<ul>
+<li>Epoch 1: w1 = 0.1 → 0.3 → 0.5 (모든 샘플 처리 후)</li>
+<li>Epoch 2: w1 = 0.5 → 0.6 → 0.7</li>
+<li>...</li>
+<li>Epoch 100: w1 = 0.8 (최종 가중치)</li>
+<li><strong>기본적으로는 마지막 epoch의 가중치(w1=0.8)가 예측에 사용됨!</strong></li>
+</ul>
+<p><strong>중요한 이해:</strong></p>
+<ul>
+<li><strong>학습 과정</strong>: 모든 epoch이 중요함! 각 epoch마다 가중치가 개선되어 점점 최적값에 가까워짐
+<ul>
+<li>Epoch 1의 가중치 → Epoch 2의 가중치 → ... → Epoch 100의 가중치</li>
+<li>각 epoch의 가중치는 이전 epoch의 학습 결과를 바탕으로 더 개선됨</li>
+</ul>
+</li>
+<li><strong>예측 과정</strong>: 기본적으로 마지막 epoch의 가중치만 사용
+<ul>
+<li>모델이 완성되면 마지막 epoch의 가중치만 저장되고 사용됨</li>
+<li>이전 epoch의 가중치는 예측에 사용되지 않음</li>
+</ul>
+</li>
+</ul>
+<p><strong>⚠️ 중요한 예외: 중간에 더 좋은 결과가 나왔을 때</strong></p>
+<p><strong>문제 상황:</strong></p>
+<ul>
+<li>20번 학습을 돌렸는데, 14번째 epoch에서 가장 좋은 결과가 나왔다면?</li>
+<li>예: Epoch 14에서 accuracy = 0.95 (가장 좋음), Epoch 20에서 accuracy = 0.90 (나빠짐)</li>
+</ul>
+<p><strong>기본 동작 (설정 없이):</strong></p>
+<ul>
+<li><strong>자동으로 마지막 epoch(20번째)의 가중치가 사용됨</strong></li>
+<li>더 좋은 결과가 나온 14번째 epoch의 가중치는 사용되지 않음</li>
+<li>이는 <strong>과대적합(Overfitting)</strong> 때문일 수 있음</li>
+<li><strong>별도 설정 없이도 마지막 epoch의 가중치가 자동으로 저장되고 사용됨</strong></li>
+</ul>
+<p><strong>더 좋은 결과를 저장하려면:</strong></p>
+<ul>
+<li><strong>별도로 Callback 함수를 설정해야 함</strong> (기본 동작이 아님!)</li>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">ModelCheckpoint</code>: 가장 좋은 성능의 가중치를 자동으로 저장하도록 설정</li>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">EarlyStopping</code>: 성능이 더 이상 개선되지 않으면 학습 중단하도록 설정</li>
+<li>이렇게 설정하면 14번째 epoch의 가중치를 저장하고 사용할 수 있음</li>
+</ul>
+<p><strong>예시 코드:</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python">from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping
+
+# 가장 좋은 성능의 가중치를 자동으로 저장
+checkpoint = ModelCheckpoint(
+    'best_model.h5',           # 저장할 파일명
+    monitor='val_accuracy',     # 모니터링할 지표
+    save_best_only=True,        # 가장 좋은 것만 저장
+    verbose=1
+)
+
+# 성능이 개선되지 않으면 학습 중단
+early_stop = EarlyStopping(
+    monitor='val_accuracy',      # 모니터링할 지표
+    patience=5,                 # 5번 연속 개선 없으면 중단
+    verbose=1
+)
+
+# 학습 시 callback 사용
+model.fit(X_train, y_train,
+          validation_split=0.3,
+          epochs=100,
+          callbacks=[checkpoint, early_stop])  # callback 추가
+
+# 가장 좋은 가중치로 모델 로드
+model.load_weights('best_model.h5')  # 14번째 epoch의 가중치 사용
+</code></pre></pre>
+<p><strong>핵심 정리:</strong></p>
+<ul>
+<li>학습 과정에서는 가중치가 계속 조정됨 (변경됨)</li>
+<li>각 샘플마다 예측 → 오차 계산 → 가중치 조정이 반복됨</li>
+<li><strong>기본적으로는 마지막 epoch의 가중치가 사용되지만, 더 좋은 결과가 중간에 나왔다면 Callback을 사용하여 그 시점의 가중치를 저장하고 사용할 수 있음</strong></li>
+<li>정답 데이터가 있어야 함! (X_train, y_train)</li>
+</ul>
+<hr>
+<h3>평가 과정 - 학습된 모델로 테스트 데이터 평가</h3>
+<p><strong>목적:</strong> 학습된 가중치로 테스트 데이터의 성능을 평가</p>
+<p><strong>중요:</strong> 학습이 완료된 후 가중치가 고정되어 있음!</p>
+<p><strong>기본 동작:</strong></p>
+<ul>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">model.evaluate(X_test, y_test)</code>를 호출하면 <strong>자동으로 마지막 epoch의 가중치로 평가됨</strong></li>
+<li>별도 설정 없이도 마지막 epoch의 가중치가 사용됨</li>
+<li>머신러닝의 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">score()</code> 함수와 비슷한 역할</li>
+</ul>
+<p><strong>예시 코드:</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python"># 학습
+model.fit(X_train, y_train, epochs=100)
+
+# 평가 (자동으로 마지막 epoch의 가중치 사용)
+model.evaluate(X_test, y_test)  # 가장 마지막 학습결과로 평가
+</code></pre></pre>
+<p><strong>과정:</strong></p>
+<ol>
+<li>
+<p><strong>학습 완료</strong>: 마지막 epoch의 가중치가 최종 가중치로 저장됨 (고정)</p>
+<ul>
+<li>예: Epoch 100의 가중치 w1 = 0.8, w2 = 0.2, w3 = 0.6, ... (더 이상 변경 안 함)</li>
+<li><strong>모델이 완성되면 마지막 epoch의 가중치만 저장되고 사용됨</strong></li>
+<li>이전 epoch의 가중치는 평가에 사용되지 않음</li>
+</ul>
+</li>
+<li>
+<p><strong>테스트 데이터 평가</strong>: <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">model.evaluate()</code> 호출</p>
+<ul>
+<li>자동으로 마지막 epoch의 가중치를 사용하여 테스트 데이터 평가</li>
+<li>정답(y_test)과 비교하여 성능 측정</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3>예측 과정 - 학습된 모델로 새로운 데이터 예측</h3>
+<p><strong>목적:</strong> 학습된 가중치로 새로운 환자의 결과를 예측</p>
+<p><strong>중요:</strong> 학습이 완료된 후 가중치가 고정되어 있음!</p>
+<p><strong>과정:</strong></p>
+<ol>
+<li>
+<p><strong>학습 완료</strong>: 마지막 epoch의 가중치가 최종 가중치로 저장됨 (고정)</p>
+<ul>
+<li>예: Epoch 100의 가중치 w1 = 0.8, w2 = 0.2, w3 = 0.6, ... (더 이상 변경 안 함)</li>
+<li><strong>모델이 완성되면 마지막 epoch의 가중치만 저장되고 사용됨</strong></li>
+<li>이전 epoch의 가중치는 예측에 사용되지 않음</li>
+</ul>
+</li>
+<li>
+<p><strong>새로운 데이터 입력</strong>: 새로운 환자의 검사 결과 입력</p>
+<ul>
+<li>예: [평균 반경 20.5, 평균 질감 12.3, ...]</li>
+</ul>
+</li>
+<li>
+<p><strong>예측 계산 (가중치 고정, 모든 층을 거쳐감):</strong></p>
+<ul>
+<li><strong>입력층</strong>: 새로운 환자의 검사 결과 (30개 특성) 입력</li>
+<li><strong>은닉층1</strong>: 입력층의 30개 값을 받아서 고정된 가중치로 계산 → 32개 출력값 생성</li>
+<li><strong>은닉층2</strong>: 은닉층1의 32개 출력값을 받아서 고정된 가중치로 계산 → 64개 출력값 생성</li>
+<li><strong>은닉층3</strong>: 은닉층2의 64개 출력값을 받아서 고정된 가중치로 계산 → 32개 출력값 생성</li>
+<li><strong>출력층</strong>: 은닉층3의 32개 출력값을 받아서 고정된 가중치로 계산 → 최종 확률값 출력</li>
+<li>학습된 가중치로 계산하여 확률값 출력</li>
+<li>예: sigmoid(z) = 0.85 (악성일 확률 85%)</li>
+</ul>
+<p><strong>중요</strong>: 예측 과정에서도 <strong>모든 층을 거쳐감</strong>. 학습과 구조는 동일하지만, 가중치가 고정되어 있다는 점만 다름!</p>
+</li>
+<li>
+<p><strong>결과 출력</strong>: 예측값만 출력 (정답 확인 없음!)</p>
+</li>
+</ol>
+<p><strong>핵심:</strong></p>
+<ul>
+<li>예측 과정에서도 <strong>모든 층을 거쳐감</strong> (입력층 → 은닉층들 → 출력층)</li>
+<li>학습과 구조는 동일하지만, 가중치가 고정되어 있다는 점만 다름</li>
+<li>예측 과정에서는 가중치가 고정되어 있음 (변경 안 함)</li>
+<li><strong>마지막 epoch의 가중치만 사용</strong>하여 계산만 수행</li>
+<li>모델이 완성되면 마지막 epoch의 가중치만 저장되고, 이전 epoch의 가중치는 사용되지 않음</li>
+<li>정답 데이터가 없어도 됨! (X_test만 있으면 됨)</li>
+</ul>
+<hr>
+<h3>학습 vs 예측 비교</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>구분</th><th>학습(훈련)</th><th>예측</th></tr></thead><tbody><tr><td><strong>입력</strong></td><td>X_train + y_train (정답 포함)</td><td>X_test (검사 결과만)</td></tr><tr><td><strong>목적</strong></td><td>가중치 최적화</td><td>결과 예측</td></tr><tr><td><strong>정답 필요</strong></td><td>✅ 필요 (오차 계산용)</td><td>❌ 불필요</td></tr><tr><td><strong>구조</strong></td><td>입력층 → 은닉층들 → 출력층 (모든 층을 거쳐감)</td><td>입력층 → 은닉층들 → 출력층 (모든 층을 거쳐감)</td></tr><tr><td><strong>가중치 상태</strong></td><td>✅ 계속 변경됨 (조정)</td><td>❌ 고정됨 (마지막 epoch의 가중치 사용)</td></tr><tr><td><strong>각 샘플 처리</strong></td><td>예측 → 오차 계산 → 가중치 조정</td><td>예측만 수행 (가중치 변경 없음)</td></tr><tr><td><strong>반복</strong></td><td>여러 epoch 반복 (예: epochs=100)</td><td>1번만 실행</td></tr><tr><td><strong>가중치 저장</strong></td><td>마지막 epoch의 가중치가 최종 가중치로 저장</td><td>마지막 epoch의 가중치 사용</td></tr><tr><td><strong>모델 완성 후</strong></td><td>모든 epoch이 중요하지만, 마지막 epoch의 가중치만 저장됨</td><td>마지막 epoch의 가중치만 사용 (이전 epoch의 가중치는 사용 안 함)</td></tr></tbody></table>
+<p><strong>예시:</strong></p>
+<ul>
+<li><strong>학습</strong>: "이 환자는 악성이었어 (정답), 내가 30%라고 했네? 가중치를 조정해야겠다"</li>
+<li><strong>예측</strong>: "이 환자는 몇 %일까? (정답 모름) 학습된 가중치로 계산해보자 → 85%"</li>
+</ul>
+<hr>
+<h2>6️⃣ 구체적인 예시: 유방암 진단 과정</h2>
+<h3>환자 데이터</h3>
+<ul>
+<li>평균 반경: 17.99</li>
+<li>평균 질감: 10.38</li>
+<li>평균 둘레: 122.8</li>
+<li>... (총 30개)</li>
+</ul>
+<h3>뉴런1의 계산 과정</h3>
+<p><strong>학습된 가중치:</strong></p>
+<ul>
+<li>w1 = 0.8 (반경이 매우 중요)</li>
+<li>w2 = 0.2 (질감은 덜 중요)</li>
+<li>w3 = 0.6 (둘레도 중요)</li>
+<li>...</li>
+<li>b1 = 0.1</li>
+</ul>
+<p><strong>1단계: 선형 결합</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">z1 = 0.8×17.99 + 0.2×10.38 + 0.6×122.8 + ... + 0.1
+   = 14.39 + 2.08 + 73.68 + ... + 0.1
+   = 5.2
+</code></pre>
+<p><strong>2단계: 활성화 함수 (sigmoid)</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">출력1 = sigmoid(5.2) = 1 / (1 + e^(-5.2))
+                   = 1 / (1 + 0.0055)
+                   = 0.995
+</code></pre>
+<p>→ 이 뉴런은 "악성일 가능성 99.5%"라고 판단</p>
+<p><strong>3단계: 여러 뉴런의 의견 종합</strong></p>
+<ul>
+<li>뉴런1: 0.995 (99.5%)</li>
+<li>뉴런2: 0.850 (85.0%)</li>
+<li>뉴런3: 0.720 (72.0%)</li>
+<li>...</li>
+<li>뉴런32: 0.680 (68.0%)</li>
+</ul>
+<p>→ 이 32개 값이 다음 층(은닉층2)으로 전달</p>
+<p><strong>4단계: 은닉층2에서 재계산</strong></p>
+<ul>
+<li>은닉층2의 각 뉴런(64개)이 은닉층1의 32개 출력값을 받음</li>
+<li>각 뉴런마다 <strong>다른 가중치</strong>로 재계산
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">은닉층2 뉴런1: w1*0.995 + w2*0.850 + ... + w32*0.680 + b → sigmoid → 0.920
+은닉층2 뉴런2: w1'*0.995 + w2'*0.850 + ... + w32'*0.680 + b' → sigmoid → 0.750
+...
+</code></pre>
+</li>
+<li>64개의 새로운 값 생성 → 다음 층으로 전달</li>
+</ul>
+<p><strong>5단계: 계속 변환 및 종합</strong></p>
+<ul>
+<li>은닉층3: 64개 → 128개 (더 많은 관점으로 분석)</li>
+<li>은닉층4: 128개 → 64개 (정보 압축 시작)</li>
+<li>은닉층5: 64개 → 32개 (더 압축)</li>
+<li>은닉층6: 32개 → 16개 (최종 정리)</li>
+</ul>
+<p><strong>6단계: 최종 출력층</strong></p>
+<ul>
+<li>은닉층6의 16개 값을 받아서 최종 계산</li>
+<li>모든 층을 거쳐 최종적으로 하나의 확률값 출력</li>
+<li>예: 0.7 (악성일 확률 70%)</li>
+</ul>
+<p><strong>핵심:</strong></p>
+<ul>
+<li><strong>학습 과정</strong>:
+<ul>
+<li>각 샘플마다 예측 → 오차 계산 → 가중치 조정 (가중치가 계속 변경됨)</li>
+<li>이전 층의 출력값을 받아서 현재 가중치로 계산하고, 오차를 계산하여 가중치를 조정</li>
+</ul>
+</li>
+<li><strong>예측 과정 (학습 완료 후)</strong>:
+<ul>
+<li>각 층마다 <strong>학습된 가중치</strong>를 사용 (고정)</li>
+<li>이전 층의 **출력값(결과값)**을 받아서 고정된 가중치로 재계산</li>
+</ul>
+</li>
+<li>각 층을 지날수록 정보가 <strong>변환되고 종합</strong>되어 최종 판단에 가까워짐</li>
+</ul>
+<hr>
+<h2>7️⃣ 핵심 개념 정리</h2>
+<h3>완전연결 (Dense)</h3>
+<ul>
+<li>각 뉴런은 이전 층의 <strong>모든 뉴런과 연결</strong>됨</li>
+<li>뉴런 수가 늘어나도 각 뉴런은 여전히 이전 층의 <strong>모두</strong>와 연결</li>
+<li>모든 정보를 종합하여 판단 (일부만 보는 게 아니라 전부 다 봄)</li>
+</ul>
+<h3>가중치의 역할</h3>
+<ul>
+<li>각 연결마다 가중치가 있음 (입력값에 곱해지는 숫자)</li>
+<li>뉴런마다 다른 가중치 → 같은 입력이어도 다른 결과</li>
+<li>가중치가 크면 → 그 입력을 중요하게 봄</li>
+<li><strong>TensorFlow가 자동으로 관리:</strong>
+<ul>
+<li>초기화: 모델 생성 시 자동으로 랜덤 초기화</li>
+<li>학습: <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">model.fit()</code> 실행 시 역전파로 자동 조정</li>
+<li>사용자는 모델 구조만 정의하면 됨!</li>
+</ul>
+</li>
+</ul>
+<h3>활성화 함수의 역할</h3>
+<ul>
+<li><strong>주요 역할</strong>: 비선형 변환 (복잡한 패턴 학습 가능하게 함)</li>
+<li><strong>부가 효과</strong>: z 값을 0~1 사이로 압축 (출력층에서 확률로 해석 가능)</li>
+<li>활성화 함수가 없으면 → 선형 결합만 반복 → 복잡한 패턴 학습 불가</li>
+<li>활성화 함수가 있으면 → 비선형 변환 → 복잡한 패턴 학습 가능</li>
+</ul>
+<h3>뉴런 수 변화의 의미</h3>
+<ul>
+<li><strong>증가</strong> (30→32→64→128): 더 많은 관점으로 분석</li>
+<li><strong>감소</strong> (128→64→32→16→1): 정보 압축 및 최종 판단</li>
+</ul>
+<h3>각 층을 지날 때마다 일어나는 일</h3>
+<p><strong>학습 과정:</strong></p>
+<ul>
+<li>이전 층의 출력값을 받아서 현재 가중치로 계산</li>
+<li>오차를 계산하고 가중치를 조정 (변경)</li>
+<li>다음 샘플에서는 조정된 가중치로 다시 계산</li>
+</ul>
+<p><strong>예측 과정 (학습 완료 후):</strong></p>
+<ul>
+<li>이전 층의 출력값(결과값)을 받음: 각 뉴런이 이전 층의 모든 뉴런 출력값을 받음</li>
+<li><strong>마지막 epoch의 가중치로 재계산</strong>: 각 층마다 고정된 가중치(마지막 epoch의 가중치)를 사용하여 선형 결합 수행</li>
+<li>활성화 함수로 변환: sigmoid 함수로 비선형 변환 및 확률값 생성</li>
+<li>정보 변환 및 종합: 각 층을 지날수록 정보가 변환되고 종합되어 최종 판단에 가까워짐</li>
+<li><strong>중요</strong>: "확률을 높여간다"기보다는 **"정보를 변환하고 종합해간다"**가 정확한 표현</li>
+</ul>
+<hr>
+<h2>💡 핵심 정리</h2>
+<h3>배운 것</h3>
+<ul>
+<li>신경망의 각 계층이 어떻게 작동하는지 구체적으로 이해</li>
+<li>가중치가 무엇이고, TensorFlow가 어떻게 자동으로 관리하는지</li>
+<li>선형 결합과 활성화 함수의 차이 (선형 vs 비선형)</li>
+<li>학습과 예측의 근본적인 차이</li>
+<li>완전연결(Dense)의 의미와 각 뉴런이 모든 이전 뉴런과 연결되는 구조</li>
+</ul>
+<h3>인사이트</h3>
+<ul>
+<li><strong>가중치 = 각 검사 결과의 중요도</strong>: TensorFlow가 학습 과정에서 자동으로 최적값을 찾음</li>
+<li><strong>선형 결합 ≠ 확률 변환</strong>: 가중치로 계산하는 것은 선형 연산이고, 확률로 변환하는 것은 sigmoid 함수의 역할</li>
+<li><strong>비선형성이 핵심</strong>: 활성화 함수가 있어야 복잡한 패턴을 학습할 수 있음</li>
+<li><strong>완전연결의 의미</strong>: 각 뉴런이 이전 층의 모든 정보를 종합하여 판단</li>
+<li><strong>학습 vs 예측</strong>: 학습은 가중치를 조정하는 과정, 예측은 마지막 epoch의 가중치로 결과를 계산하는 과정</li>
+<li><strong>마지막 epoch의 가중치</strong>: 학습이 완료되면 마지막 epoch의 가중치가 최종 가중치로 저장되고, 이 가중치만 예측에 사용됨. 이전 epoch의 가중치는 예측에 사용되지 않음.</li>
+<li><strong>모든 epoch의 중요성</strong>: 학습 과정에서는 모든 epoch이 중요함 (각 epoch마다 가중치가 개선됨). 하지만 모델이 완성되면 마지막 epoch의 가중치만 사용됨.</li>
+<li><strong>각 층을 지날 때마다</strong>:
+<ul>
+<li><strong>학습 과정</strong>: 이전 층의 출력값을 받아서 현재 가중치로 계산하고, 오차를 계산하여 가중치를 조정함 (가중치 변경)</li>
+<li><strong>예측 과정</strong>: 이전 층의 출력값(결과값)을 받아서 학습된 가중치로 재계산하고, 정보를 변환하고 종합해간다 (가중치 고정)</li>
+<li>"확률을 높여간다"기보다는 "정보를 변환하고 종합해간다"가 정확한 표현이다.</li>
+</ul>
+</li>
+</ul>
+<h3>주의사항</h3>
+<ul>
+<li>⚠️ 가중치로 곱하고 더하는 것 자체는 선형 연산 (확률로 변환하지 않음)</li>
+<li>⚠️ 확률로 변환하는 것은 sigmoid 함수의 역할 (비선형 변환)</li>
+<li>⚠️ 학습 시에는 정답 데이터가 필요하지만, 예측 시에는 불필요</li>
+<li>⚠️ TensorFlow가 가중치를 자동으로 관리하므로, 사용자는 모델 구조만 정의하면 됨</li>
+<li>⚠️ 뉴런 수가 늘어나도 각 뉴런은 여전히 이전 층의 모든 뉴런과 연결됨</li>
+<li>⚠️ <strong>학습 과정</strong>: 각 샘플마다 예측 → 오차 계산 → 가중치 조정 (가중치가 계속 변경됨)</li>
+<li>⚠️ <strong>예측 과정</strong>: 학습 완료 후 마지막 epoch의 가중치가 고정되어 있고, 이전 층의 결과값을 받아서 고정된 가중치로 재계산</li>
+<li>⚠️ <strong>마지막 epoch의 가중치</strong>: 학습이 완료되면 마지막 epoch의 가중치가 최종 가중치로 저장되고, 이 가중치가 예측에 사용됨</li>
+<li>⚠️ 각 층을 지날 때마다 이전 층의 출력값(결과값)을 받아서 가중치로 재계산함 (학습 중에는 가중치가 조정되고, 예측 시에는 고정된 가중치 사용)</li>
+</ul>
+<hr></div></div><div class="MuiBox-root css-1cpq4zq"><hr class="MuiDivider-root MuiDivider-fullWidth css-7jtdmc"><h5 class="MuiTypography-root MuiTypography-h5 css-85yo2n">같은 카테고리의 다른 글</h5><div class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-2 css-1eikg3m"><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] Serializable 깊이 파기 — Part 2: 바이트에서 다시 객체로, 그리고 함정들</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">직렬화된 바이트를 ObjectInputStream이 어떤 순서로 읽어 객체로 복원하는지, 그때 생성자가 호출되지 않는다는 점을 확인합니다. | serialVersionUID, transient, 커스텀 readObject·writeObject, 역직렬화 취약점, Java 직렬화의 현재로 마무리합니다.</p><div class="MuiBox-root css-107ld1r"></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 4월 5일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] Serializable 깊이 파기 — Part 1: 객체가 바이트가 되는 과정</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">Python이나 JavaScript와 달리 Java는 왜 Serializable을 선언해야 하는지, 메서드가 하나도 없는 이 인터페이스가 무슨 일을 하는지 묻는 글입니다. | ObjectOutputStream이 만든 실제 바이트를 열어 보고, 참조 객체가 들어 있을 때는 어떻게 되는지 확인합니다.</p><div class="MuiBox-root css-107ld1r"></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 4월 5일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] 주식 거래 엔진 직접 만들기 - Part 3: 오더북을 어떻게 구현할 것인가</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">주식 거래 엔진의 오더북을 TreeMap과 ArrayDeque 조합으로 만든 이유를, PriorityQueue, LinkedList, Skip List와 비교하며 설명합니다. | 주문 취소를 Lazy Removal로 처리한 방법과 Kafka를 연결하며 만난 멱등성 문제를 마지막에 둡니다.</p><div class="MuiBox-root css-107ld1r"></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 27일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] 주식 거래 엔진 직접 만들기 - Part 2: Phase 1 — 모놀리식으로 시작하기</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">단일 JAR 모놀리식 구조인 Phase 1에서 만난 문제를 차례로 다룹니다. | SELECT FOR UPDATE로 동시성을 해결했고, 락 보유 시간을 줄이고, 락 획득 순서를 통일해 데드락 위험을 없앴습니다. @Transactional 원칙과 Lazy Loading 함정도 짚습니다.</p><div class="MuiBox-root css-107ld1r"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Java</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Spring Boot</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">JPA</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">+2</span></div></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 27일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] 주식 거래 엔진 직접 만들기 - Part 1: 왜 주식 거래 엔진인가</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">F-lab 멘토링 프로젝트로 주식 거래 엔진을 직접 설계하고 구현한 과정을 기록하는 시리즈의 첫 글입니다. | 프로젝트를 고른 기준과 멀티모듈 구조, Phase 로드맵, 시리즈 전체에서 답할 질문들을 먼저 밝힙니다.</p><div class="MuiBox-root css-107ld1r"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Java</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Spring Boot</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Kafka</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">+5</span></div></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 27일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[개발자가 직접 써봤어요] Claude Code 완전 가이드: 설치부터 멀티에이전트까지</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">Claude Code를 Spring Boot와 Kafka 기반 주식 매매 엔진 프로젝트에 적용해 본 경험을 바탕으로, 설치부터 멀티에이전트까지 소개합니다. | CLAUDE.md, Skills, Subagents, Hooks, MCP, Agent Teams의 여섯 레이어와 Cursor AI와의 비교, 주의사항이 나옵니다.</p><div class="MuiBox-root css-107ld1r"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Claude Code</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">AI</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Developer Tools</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">+4</span></div></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 9일</span></div></div></div></div><div class="MuiBox-root css-1b94f21"><a class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways css-104ms0" href="/blog/posts" data-discover="true"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowBackIcon"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z"></path></svg>게시글 목록으로 돌아가기</a></div><button class="MuiButtonBase-root MuiFab-root MuiFab-circular MuiFab-sizeMedium MuiFab-primary MuiFab-root MuiFab-circular MuiFab-sizeMedium MuiFab-primary css-1nl6bps" tabindex="0" type="button" aria-label="scroll to top" style="opacity: 0; visibility: hidden;"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="KeyboardArrowUpIcon"><path d="M7.41 15.41 12 10.83l4.59 4.58L18 14l-6-6-6 6z"></path></svg></button></div></div></div></div><footer style="text-align: center; padding: 2rem 0px; color: rgb(0, 0, 0); font-size: 0.9rem; border-top: 1px solid rgb(0, 0, 0); margin-top: auto; background-color: rgb(255, 255, 255);"><p>© 2025 DevTaco Blog. All rights reserved.</p></footer><div class="MuiBox-root css-1hyfx7x"><div class="visitor-counter MuiBox-root css-19midj6"><h6 class="MuiTypography-root MuiTypography-h6 MuiTypography-gutterBottom css-izz7ci">방문자 수</h6><div class="MuiBox-root css-zwd3xv"><h4 class="MuiTypography-root MuiTypography-h4 css-1dg27va">70</h4><p class="MuiTypography-root MuiTypography-body2 css-l6pb42">오늘</p><h6 class="MuiTypography-root MuiTypography-h6 css-kh42wg">총 70명</h6></div></div></div><div class="MuiBox-root css-1y95mt5" data-testid="terminal-navigation"><div class="MuiBox-root css-1kw3y0a"><p class="MuiTypography-root MuiTypography-body2 css-1fktdtb">devtaco@portfolio:~$ navigation</p><div class="MuiBox-root css-j0ozid"><p class="MuiTypography-root MuiTypography-body2 css-1cn40rb">⌘M to close</p><button class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-470314" tabindex="0" type="button" id=":r1:"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeSmall css-vh810p" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="CloseIcon"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg></button></div></div><div class="MuiBox-root css-13t3iqc"><div class="MuiBox-root css-0"><p class="MuiTypography-root MuiTypography-body2 css-cbhj4f">Navigation:</p><div class="MuiBox-root css-1kkt86i"><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">1 → home</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">2 → about</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">3 → posts</p></div></div><div class="MuiBox-root css-0"><p class="MuiTypography-root MuiTypography-body2 css-cbhj4f">External:</p><div class="MuiBox-root css-1kkt86i"><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">g → github</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">e → email</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">l → linkedin</p></div></div></div><p class="MuiTypography-root MuiTypography-body2 css-1e7vt2">Press number keys (1,2,3) or letter keys (g,e,l) to navigate. Use ⌘+M to close.</p></div></div></div></body></html>

@@ -1,0 +1,524 @@
+<!DOCTYPE html><html lang="en"><head><script type="text/javascript">!function(n){if("/"===n.search[1]){var a=n.search.slice(1).split("&").map((function(n){return n.replace(/~and~/g,"&")})).join("?");window.history.replaceState(null,null,n.pathname.slice(0,-1)+a+n.hash)}}(window.location)</script><meta charset="utf-8"><link rel="icon" href="/blog/favicon.ico"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#000000"><meta name="keywords" content="Java, Kotlin, Spring Boot, MSA, 개발, 백엔드, coroutine"><meta name="author" content="DevTaco"><meta property="og:image" content="https://devtaco30.github.io/blog/og-image.png"><meta property="twitter:image" content="https://devtaco30.github.io/blog/og-image.png"><meta property="twitter:url" content="https://devtaco30.github.io/blog/"><link rel="apple-touch-icon" href="/blog/apple-touch-icon.png"><link rel="manifest" href="/blog/manifest.json"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&amp;family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet"><script defer="defer" src="/blog/static/js/main.404b9165.js"></script><link href="/blog/static/css/main.5b86466f.css" rel="stylesheet"><style data-emotion="css" data-s=""></style><title>EST AI - 딥러닝 : CNN &amp; 데이터 증강 &amp; 전이학습 | DevTaco Blog</title><meta name="description" content="이미지 분류에서 MLP가 가진 한계를 CNN으로 넘는 과정을 따라갑니다. Conv2D와 MaxPooling2D 구성, 과대적합을 줄이는 데이터 증강과 Dropout, VGG16 전이학습이 나옵니다."><meta property="og:title" content="EST AI - 딥러닝 : CNN &amp; 데이터 증강 &amp; 전이학습"><meta property="og:description" content="이미지 분류에서 MLP가 가진 한계를 CNN으로 넘는 과정을 따라갑니다. Conv2D와 MaxPooling2D 구성, 과대적합을 줄이는 데이터 증강과 Dropout, VGG16 전이학습이 나옵니다."><meta property="og:type" content="article"><meta property="og:url" content="https://devtaco30.github.io/blog/posts/52"><meta name="twitter:card" content="summary"></head><body><noscript>You need to enable JavaScript to run this app.</noscript><div id="root"><div class="App"><div class="MuiBox-root css-kurlqb"><div class="MuiBox-root css-171onha"><button class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-1f6w95t" tabindex="0" type="button" id=":r0:"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="MenuIcon"><path d="M3 18h18v-2H3zm0-5h18v-2H3zm0-7v2h18V6z"></path></svg></button><div class="MuiBox-root css-1szb58x"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-218waq" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowBackIcon"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z"></path></svg><div class="MuiBox-root css-wq4jw1"><span>⌘+M</span></div></div></div></div><div class="MuiContainer-root css-15jb5o1" data-testid="page-container"><div class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-2 MuiGrid-spacing-md-3 css-1ht06td"><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-md-12 css-15j76c0"><div class="MuiBox-root css-15rigdj"><nav class="MuiTypography-root MuiTypography-body1 MuiBreadcrumbs-root css-1v2kxik"><ol class="MuiBreadcrumbs-ol css-51eq8m"><li class="MuiBreadcrumbs-li"><a class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways css-gj78h6" href="/blog/posts" data-discover="true">게시글 목록</a></li><li aria-hidden="true" class="MuiBreadcrumbs-separator css-1nd5pgh">/</li><li class="MuiBreadcrumbs-li"><p class="MuiTypography-root MuiTypography-body1 css-1cr0rz6">EST AI - 딥러닝 : CNN &amp; 데이터 증강 &amp; 전이학습</p></li></ol></nav><div class="MuiBox-root css-15djlns"><button class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-1y18wdw" tabindex="0" type="button" id=":r5:"><span class="MuiButton-icon MuiButton-startIcon MuiButton-iconSizeMedium css-1ygddt1"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowBackIcon"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z"></path></svg></span><div class="MuiBox-root css-0"><span class="MuiTypography-root MuiTypography-caption css-115rlu8">이전글</span><p class="MuiTypography-root MuiTypography-body2 css-10qk5g4">EST AI - 자연어처리 : RNN &amp; LSTM &amp; GRU &amp; Word Embedding</p></div></button><button class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-1k0z50p" tabindex="0" type="button" id=":r6:"><div class="MuiBox-root css-0"><span class="MuiTypography-root MuiTypography-caption css-115rlu8">다음글</span><p class="MuiTypography-root MuiTypography-body2 css-10qk5g4">[6년차 쯤 되면 좀 알자] HashMap putVal과 resize - 2부 -</p></div><span class="MuiButton-icon MuiButton-endIcon MuiButton-iconSizeMedium css-6bt4d2"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowForwardIcon"><path d="m12 4-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"></path></svg></span></button></div><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-10t0qv5" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h4 class="MuiTypography-root MuiTypography-h4 css-k5jvd2">EST AI - 딥러닝 : CNN &amp; 데이터 증강 &amp; 전이학습</h4><p class="MuiTypography-root MuiTypography-body1 css-104xg3">이미지 분류에서 MLP가 가진 한계를 CNN으로 넘는 과정을 따라갑니다. | Conv2D와 MaxPooling2D 구성, 과대적합을 줄이는 데이터 증강과 Dropout, VGG16 전이학습이 나옵니다.</p><div class="MuiBox-root css-1prrn6n"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Deep Learning</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">CNN</span></div></div><p class="MuiTypography-root MuiTypography-body2 css-l6pb42">2026년 1월 20일 오후 05:30</p></div><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-1i779yj" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><div class="MuiBox-root css-13lazol"><h2>📚 오늘의 학습 내용</h2>
+<p>오늘은 <strong>CNN(Convolutional Neural Network)</strong> 모델을 활용한 이미지 분류 실습을 진행했습니다. MLP 모델의 한계를 극복하기 위해 CNN을 도입하고, 과대적합 문제를 해결하기 위한 기법들인 <strong>데이터 증강(Data Augmentation)</strong>, <strong>Dropout</strong>, 그리고 **전이학습(Transfer Learning)**을 학습했습니다.</p>
+<hr>
+<h2>1️⃣ CNN (Convolutional Neural Network, 합성곱 신경망)</h2>
+<h3>CNN의 개념</h3>
+<p><strong>CNN이란?</strong></p>
+<ul>
+<li>공간적인 구조가 중요한 데이터에 주로 사용되는 신경망</li>
+<li>이미지, 영상, 음성처럼 패턴이나 위치가 중요한 데이터에서 사용됨</li>
+<li>MLP 모델의 한계를 극복하기 위한 모델 구조</li>
+</ul>
+<p><strong>MLP 모델의 한계:</strong></p>
+<ul>
+<li>Flatten으로 인해 이미지의 공간적 정보 손실</li>
+<li>픽셀 간의 위치 관계를 학습하기 어려움</li>
+<li>복잡한 이미지 데이터에 대한 학습 성능이 떨어짐</li>
+</ul>
+<h3>CNN의 주요 구성 요소</h3>
+<p><strong>1. Conv(Convolution) Layer (합성곱 층)</strong></p>
+<ul>
+<li>작은 필터로 이미지를 훑으면서 엣지, 선, 모양 같은 특징을 추출</li>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">Conv2D</code> 레이어로 구현</li>
+</ul>
+<p><strong>2. Pooling 층</strong></p>
+<ul>
+<li>중요한 특징만 남기고 크기를 줄임</li>
+<li>연산량 감소 + 노이즈 제거</li>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">MaxPooling2D</code> 레이어로 구현</li>
+</ul>
+<p><strong>3. Dense 층</strong></p>
+<ul>
+<li>Flatten된 특징 벡터를 받아서 최종 분류 수행</li>
+<li>최종 분류(고양이/강아지 등) 수행</li>
+</ul>
+<h3>CNN 모델 구조</h3>
+<p><strong>특성 추출부:</strong></p>
+<ul>
+<li>Conv2D + MaxPooling2D를 반복하여 특징 추출</li>
+<li>여러 층을 쌓을수록 고수준 특징 추출</li>
+</ul>
+<p><strong>분류부:</strong></p>
+<ul>
+<li>Flatten으로 1차원 벡터 변환</li>
+<li>Dense 레이어로 최종 분류</li>
+</ul>
+<p><strong>모델 구조:</strong></p>
+<pre><div style="margin: 20px 0px; text-align: center; overflow: auto;"><svg id="mermaid-ucasq4v0z" width="100%" xmlns="http://www.w3.org/2000/svg" style="max-width: none; width: 355.298px; height: auto; max-height: none; min-width: 355.298px;" viewBox="-8 -8 202.453125 1548" role="graphics-document document" aria-roledescription="flowchart-v2"><style>#mermaid-ucasq4v0z{font-family:inherit;font-size:16px;fill:#333;}#mermaid-ucasq4v0z .error-icon{fill:#552222;}#mermaid-ucasq4v0z .error-text{fill:#552222;stroke:#552222;}#mermaid-ucasq4v0z .edge-thickness-normal{stroke-width:2px;}#mermaid-ucasq4v0z .edge-thickness-thick{stroke-width:3.5px;}#mermaid-ucasq4v0z .edge-pattern-solid{stroke-dasharray:0;}#mermaid-ucasq4v0z .edge-pattern-dashed{stroke-dasharray:3;}#mermaid-ucasq4v0z .edge-pattern-dotted{stroke-dasharray:2;}#mermaid-ucasq4v0z .marker{fill:#333333;stroke:#333333;}#mermaid-ucasq4v0z .marker.cross{stroke:#333333;}#mermaid-ucasq4v0z svg{font-family:inherit;font-size:16px;}#mermaid-ucasq4v0z .label{font-family:inherit;color:#333;}#mermaid-ucasq4v0z .cluster-label text{fill:#333;}#mermaid-ucasq4v0z .cluster-label span,#mermaid-ucasq4v0z p{color:#333;}#mermaid-ucasq4v0z .label text,#mermaid-ucasq4v0z span,#mermaid-ucasq4v0z p{fill:#333;color:#333;}#mermaid-ucasq4v0z .node rect,#mermaid-ucasq4v0z .node circle,#mermaid-ucasq4v0z .node ellipse,#mermaid-ucasq4v0z .node polygon,#mermaid-ucasq4v0z .node path{fill:#ECECFF;stroke:#9370DB;stroke-width:1px;}#mermaid-ucasq4v0z .flowchart-label text{text-anchor:middle;}#mermaid-ucasq4v0z .node .katex path{fill:#000;stroke:#000;stroke-width:1px;}#mermaid-ucasq4v0z .node .label{text-align:center;}#mermaid-ucasq4v0z .node.clickable{cursor:pointer;}#mermaid-ucasq4v0z .arrowheadPath{fill:#333333;}#mermaid-ucasq4v0z .edgePath .path{stroke:#333333;stroke-width:2.0px;}#mermaid-ucasq4v0z .flowchart-link{stroke:#333333;fill:none;}#mermaid-ucasq4v0z .edgeLabel{background-color:#e8e8e8;text-align:center;}#mermaid-ucasq4v0z .edgeLabel rect{opacity:0.5;background-color:#e8e8e8;fill:#e8e8e8;}#mermaid-ucasq4v0z .labelBkg{background-color:rgba(232, 232, 232, 0.5);}#mermaid-ucasq4v0z .cluster rect{fill:#ffffde;stroke:#aaaa33;stroke-width:1px;}#mermaid-ucasq4v0z .cluster text{fill:#333;}#mermaid-ucasq4v0z .cluster span,#mermaid-ucasq4v0z p{color:#333;}#mermaid-ucasq4v0z div.mermaidTooltip{position:absolute;text-align:center;max-width:200px;padding:2px;font-family:inherit;font-size:12px;background:hsl(80, 100%, 96.2745098039%);border:1px solid #aaaa33;border-radius:2px;pointer-events:none;z-index:100;}#mermaid-ucasq4v0z .flowchartTitleText{text-anchor:middle;font-size:18px;fill:#333;}#mermaid-ucasq4v0z :root{--mermaid-font-family:inherit;}</style><g><marker id="mermaid-ucasq4v0z_flowchart-pointEnd" class="marker flowchart" viewBox="0 0 10 10" refX="6" refY="5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowMarkerPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker><marker id="mermaid-ucasq4v0z_flowchart-pointStart" class="marker flowchart" viewBox="0 0 10 10" refX="4.5" refY="5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto"><path d="M 0 5 L 10 10 L 10 0 z" class="arrowMarkerPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker><marker id="mermaid-ucasq4v0z_flowchart-circleEnd" class="marker flowchart" viewBox="0 0 10 10" refX="11" refY="5" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto"><circle cx="5" cy="5" r="5" class="arrowMarkerPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></circle></marker><marker id="mermaid-ucasq4v0z_flowchart-circleStart" class="marker flowchart" viewBox="0 0 10 10" refX="-1" refY="5" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto"><circle cx="5" cy="5" r="5" class="arrowMarkerPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></circle></marker><marker id="mermaid-ucasq4v0z_flowchart-crossEnd" class="marker cross flowchart" viewBox="0 0 11 11" refX="12" refY="5.2" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto"><path d="M 1,1 l 9,9 M 10,1 l -9,9" class="arrowMarkerPath" style="stroke-width: 2; stroke-dasharray: 1, 0;"></path></marker><marker id="mermaid-ucasq4v0z_flowchart-crossStart" class="marker cross flowchart" viewBox="0 0 11 11" refX="-1" refY="5.2" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto"><path d="M 1,1 l 9,9 M 10,1 l -9,9" class="arrowMarkerPath" style="stroke-width: 2; stroke-dasharray: 1, 0;"></path></marker><g class="root"><g class="clusters"></g><g class="edgePaths"><path d="M63.227,66L63.227,70.167C63.227,74.333,63.227,82.667,63.227,90.117C63.227,97.567,63.227,104.133,63.227,107.417L63.227,110.7" id="L-A-B-0" class=" edge-thickness-normal edge-pattern-solid flowchart-link LS-A LE-B" style="fill:none;" marker-end="url(#mermaid-ucasq4v0z_flowchart-pointEnd)"></path><path d="M63.227,206L63.227,210.167C63.227,214.333,63.227,222.667,63.227,230.117C63.227,237.567,63.227,244.133,63.227,247.417L63.227,250.7" id="L-B-C-0" class=" edge-thickness-normal edge-pattern-solid flowchart-link LS-B LE-C" style="fill:none;" marker-end="url(#mermaid-ucasq4v0z_flowchart-pointEnd)"></path><path d="M63.227,321L63.227,325.167C63.227,329.333,63.227,337.667,63.227,345.117C63.227,352.567,63.227,359.133,63.227,362.417L63.227,365.7" id="L-C-D-0" class=" edge-thickness-normal edge-pattern-solid flowchart-link LS-C LE-D" style="fill:none;" marker-end="url(#mermaid-ucasq4v0z_flowchart-pointEnd)"></path><path d="M63.227,461L63.227,465.167C63.227,469.333,63.227,477.667,63.227,485.117C63.227,492.567,63.227,499.133,63.227,502.417L63.227,505.7" id="L-D-E-0" class=" edge-thickness-normal edge-pattern-solid flowchart-link LS-D LE-E" style="fill:none;" marker-end="url(#mermaid-ucasq4v0z_flowchart-pointEnd)"></path><path d="M63.227,576L63.227,580.167C63.227,584.333,63.227,592.667,63.227,600.117C63.227,607.567,63.227,614.133,63.227,617.417L63.227,620.7" id="L-E-F-0" class=" edge-thickness-normal edge-pattern-solid flowchart-link LS-E LE-F" style="fill:none;" marker-end="url(#mermaid-ucasq4v0z_flowchart-pointEnd)"></path><path d="M63.227,716L63.227,720.167C63.227,724.333,63.227,732.667,63.227,740.117C63.227,747.567,63.227,754.133,63.227,757.417L63.227,760.7" id="L-F-G-0" class=" edge-thickness-normal edge-pattern-solid flowchart-link LS-F LE-G" style="fill:none;" marker-end="url(#mermaid-ucasq4v0z_flowchart-pointEnd)"></path><path d="M63.227,831L63.227,835.167C63.227,839.333,63.227,847.667,63.227,855.117C63.227,862.567,63.227,869.133,63.227,872.417L63.227,875.7" id="L-G-H-0" class=" edge-thickness-normal edge-pattern-solid flowchart-link LS-G LE-H" style="fill:none;" marker-end="url(#mermaid-ucasq4v0z_flowchart-pointEnd)"></path><path d="M63.227,921L63.227,925.167C63.227,929.333,63.227,937.667,63.227,945.117C63.227,952.567,63.227,959.133,63.227,962.417L63.227,965.7" id="L-H-I-0" class=" edge-thickness-normal edge-pattern-solid flowchart-link LS-H LE-I" style="fill:none;" marker-end="url(#mermaid-ucasq4v0z_flowchart-pointEnd)"></path><path d="M63.227,1061L63.227,1065.167C63.227,1069.333,63.227,1077.667,63.227,1085.117C63.227,1092.567,63.227,1099.133,63.227,1102.417L63.227,1105.7" id="L-I-J-0" class=" edge-thickness-normal edge-pattern-solid flowchart-link LS-I LE-J" style="fill:none;" marker-end="url(#mermaid-ucasq4v0z_flowchart-pointEnd)"></path><path d="M63.227,1201L63.227,1205.167C63.227,1209.333,63.227,1217.667,63.227,1225.117C63.227,1232.567,63.227,1239.133,63.227,1242.417L63.227,1245.7" id="L-J-K-0" class=" edge-thickness-normal edge-pattern-solid flowchart-link LS-J LE-K" style="fill:none;" marker-end="url(#mermaid-ucasq4v0z_flowchart-pointEnd)"></path><path d="M63.227,1341L63.227,1345.167C63.227,1349.333,63.227,1357.667,63.227,1365.117C63.227,1372.567,63.227,1379.133,63.227,1382.417L63.227,1385.7" id="L-K-L-0" class=" edge-thickness-normal edge-pattern-solid flowchart-link LS-K LE-L" style="fill:none;" marker-end="url(#mermaid-ucasq4v0z_flowchart-pointEnd)"></path></g><g class="edgeLabels"><g class="edgeLabel"><g class="label" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject></g></g></g><g class="nodes"><g class="node default default flowchart-label" id="flowchart-A-188" data-node="true" data-id="A" transform="translate(63.2265625, 33)"><rect class="basic label-container" style="fill:#e1f5ff;" rx="0" ry="0" x="-50.96875" y="-33" width="126.9375" height="66"></rect><g class="label" style="" transform="translate(-43.46875, -25.5)"><rect></rect><foreignObject width="116.9375" height="51" style="overflow: visible;"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap; width: 116.938px; box-sizing: border-box; overflow: visible;"><span class="nodeLabel" style="width: 116.938px; box-sizing: border-box; overflow: visible;">입력층<br style="width: 116.938px; box-sizing: border-box; overflow: visible;">224×224×3</span></div></foreignObject></g></g><g class="node default default flowchart-label" id="flowchart-B-189" data-node="true" data-id="B" transform="translate(63.2265625, 161)"><rect class="basic label-container" style="fill:#e1ffe1;" rx="0" ry="0" x="-40.5546875" y="-45" width="106.109375" height="90"></rect><g class="label" style="" transform="translate(-33.0546875, -37.5)"><rect></rect><foreignObject width="96.109375" height="75" style="overflow: visible;"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap; width: 96.1094px; box-sizing: border-box; overflow: visible;"><span class="nodeLabel" style="width: 96.1094px; box-sizing: border-box; overflow: visible;">Conv2D<br style="width: 96.1094px; box-sizing: border-box; overflow: visible;">32 filters<br style="width: 96.1094px; box-sizing: border-box; overflow: visible;">3×3</span></div></foreignObject></g></g><g class="node default default flowchart-label" id="flowchart-C-191" data-node="true" data-id="C" transform="translate(63.2265625, 288.5)"><rect class="basic label-container" style="fill:#fff4e1;" rx="0" ry="0" x="-63.2265625" y="-32.5" width="151.453125" height="65"></rect><g class="label" style="" transform="translate(-55.7265625, -25)"><rect></rect><foreignObject width="141.453125" height="50" style="overflow: visible;"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap; width: 141.453px; box-sizing: border-box; overflow: visible;"><span class="nodeLabel" style="width: 141.453px; box-sizing: border-box; overflow: visible;">MaxPooling2D<br style="width: 141.453px; box-sizing: border-box; overflow: visible;">2×2</span></div></foreignObject></g></g><g class="node default default flowchart-label" id="flowchart-D-193" data-node="true" data-id="D" transform="translate(63.2265625, 416)"><rect class="basic label-container" style="fill:#e1ffe1;" rx="0" ry="0" x="-41.3515625" y="-45" width="107.703125" height="90"></rect><g class="label" style="" transform="translate(-33.8515625, -37.5)"><rect></rect><foreignObject width="97.703125" height="75" style="overflow: visible;"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap; width: 97.7031px; box-sizing: border-box; overflow: visible;"><span class="nodeLabel" style="width: 97.7031px; box-sizing: border-box; overflow: visible;">Conv2D<br style="width: 97.7031px; box-sizing: border-box; overflow: visible;">64 filters<br style="width: 97.7031px; box-sizing: border-box; overflow: visible;">3×3</span></div></foreignObject></g></g><g class="node default default flowchart-label" id="flowchart-E-195" data-node="true" data-id="E" transform="translate(63.2265625, 543.5)"><rect class="basic label-container" style="fill:#fff4e1;" rx="0" ry="0" x="-63.2265625" y="-32.5" width="151.453125" height="65"></rect><g class="label" style="" transform="translate(-55.7265625, -25)"><rect></rect><foreignObject width="141.453125" height="50" style="overflow: visible;"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap; width: 141.453px; box-sizing: border-box; overflow: visible;"><span class="nodeLabel" style="width: 141.453px; box-sizing: border-box; overflow: visible;">MaxPooling2D<br style="width: 141.453px; box-sizing: border-box; overflow: visible;">2×2</span></div></foreignObject></g></g><g class="node default default flowchart-label" id="flowchart-F-197" data-node="true" data-id="F" transform="translate(63.2265625, 671)"><rect class="basic label-container" style="fill:#e1ffe1;" rx="0" ry="0" x="-40.5546875" y="-45" width="106.109375" height="90"></rect><g class="label" style="" transform="translate(-33.0546875, -37.5)"><rect></rect><foreignObject width="96.109375" height="75" style="overflow: visible;"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap; width: 96.1094px; box-sizing: border-box; overflow: visible;"><span class="nodeLabel" style="width: 96.1094px; box-sizing: border-box; overflow: visible;">Conv2D<br style="width: 96.1094px; box-sizing: border-box; overflow: visible;">32 filters<br style="width: 96.1094px; box-sizing: border-box; overflow: visible;">3×3</span></div></foreignObject></g></g><g class="node default default flowchart-label" id="flowchart-G-199" data-node="true" data-id="G" transform="translate(63.2265625, 798.5)"><rect class="basic label-container" style="fill:#fff4e1;" rx="0" ry="0" x="-63.2265625" y="-32.5" width="151.453125" height="65"></rect><g class="label" style="" transform="translate(-55.7265625, -25)"><rect></rect><foreignObject width="141.453125" height="50" style="overflow: visible;"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap; width: 141.453px; box-sizing: border-box; overflow: visible;"><span class="nodeLabel" style="width: 141.453px; box-sizing: border-box; overflow: visible;">MaxPooling2D<br style="width: 141.453px; box-sizing: border-box; overflow: visible;">2×2</span></div></foreignObject></g></g><g class="node default default flowchart-label" id="flowchart-H-201" data-node="true" data-id="H" transform="translate(63.2265625, 901)"><rect class="basic label-container" style="fill:#e1d5ff;" rx="0" ry="0" x="-34.8125" y="-20" width="94.625" height="40"></rect><g class="label" style="" transform="translate(-27.3125, -12.5)"><rect></rect><foreignObject width="84.625" height="25" style="overflow: visible;"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap; width: 84.625px; box-sizing: border-box; overflow: visible;"><span class="nodeLabel" style="width: 84.625px; box-sizing: border-box; overflow: visible;">Flatten</span></div></foreignObject></g></g><g class="node default default flowchart-label" id="flowchart-I-203" data-node="true" data-id="I" transform="translate(63.2265625, 1016)"><rect class="basic label-container" style="fill:#ffe1f5;" rx="0" ry="0" x="-32.375" y="-45" width="89.75" height="90"></rect><g class="label" style="" transform="translate(-24.875, -37.5)"><rect></rect><foreignObject width="79.75" height="75" style="overflow: visible;"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap; width: 79.75px; box-sizing: border-box; overflow: visible;"><span class="nodeLabel" style="width: 79.75px; box-sizing: border-box; overflow: visible;">Dense<br style="width: 79.75px; box-sizing: border-box; overflow: visible;">256<br style="width: 79.75px; box-sizing: border-box; overflow: visible;">ReLU</span></div></foreignObject></g></g><g class="node default default flowchart-label" id="flowchart-J-205" data-node="true" data-id="J" transform="translate(63.2265625, 1156)"><rect class="basic label-container" style="fill:#ffe1f5;" rx="0" ry="0" x="-32.375" y="-45" width="89.75" height="90"></rect><g class="label" style="" transform="translate(-24.875, -37.5)"><rect></rect><foreignObject width="79.75" height="75" style="overflow: visible;"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap; width: 79.75px; box-sizing: border-box; overflow: visible;"><span class="nodeLabel" style="width: 79.75px; box-sizing: border-box; overflow: visible;">Dense<br style="width: 79.75px; box-sizing: border-box; overflow: visible;">128<br style="width: 79.75px; box-sizing: border-box; overflow: visible;">ReLU</span></div></foreignObject></g></g><g class="node default default flowchart-label" id="flowchart-K-207" data-node="true" data-id="K" transform="translate(63.2265625, 1296)"><rect class="basic label-container" style="fill:#ffe1f5;" rx="0" ry="0" x="-32.375" y="-45" width="89.75" height="90"></rect><g class="label" style="" transform="translate(-24.875, -37.5)"><rect></rect><foreignObject width="79.75" height="75" style="overflow: visible;"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap; width: 79.75px; box-sizing: border-box; overflow: visible;"><span class="nodeLabel" style="width: 79.75px; box-sizing: border-box; overflow: visible;">Dense<br style="width: 79.75px; box-sizing: border-box; overflow: visible;">64<br style="width: 79.75px; box-sizing: border-box; overflow: visible;">ReLU</span></div></foreignObject></g></g><g class="node default default flowchart-label" id="flowchart-L-209" data-node="true" data-id="L" transform="translate(63.2265625, 1436.5)"><rect class="basic label-container" style="fill:#ffcccc;" rx="0" ry="0" x="-40.3125" y="-45.5" width="105.625" height="91"></rect><g class="label" style="" transform="translate(-32.8125, -38)"><rect></rect><foreignObject width="95.625" height="76" style="overflow: visible;"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap; width: 95.625px; box-sizing: border-box; overflow: visible;"><span class="nodeLabel" style="width: 95.625px; box-sizing: border-box; overflow: visible;">출력층<br style="width: 95.625px; box-sizing: border-box; overflow: visible;">1<br style="width: 95.625px; box-sizing: border-box; overflow: visible;">Sigmoid</span></div></foreignObject></g></g></g></g></g></svg></div></pre>
+<h3>Conv2D 레이어의 주요 파라미터</h3>
+<p><strong>filters:</strong></p>
+<ul>
+<li>특징을 잡아내는 '눈'의 개수</li>
+<li>예: <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">filters=32</code> → 32개의 서로 다른 특징을 감지</li>
+</ul>
+<p><strong>kernel_size:</strong></p>
+<ul>
+<li>각 '눈'이 한 번에 보는 영역의 크기</li>
+<li>예: <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">kernel_size=(3, 3)</code> → 3×3 픽셀 영역</li>
+</ul>
+<p><strong>padding:</strong></p>
+<ul>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">'same'</code>: 입출력의 크기를 동일하게 하기 위해 이미지 주변에 0을 추가
+<ul>
+<li>출력 크기 = 입력 크기 (224×224 → 224×224)</li>
+<li>모든 픽셀을 동일하게 처리할 수 있어 정보 손실 최소화</li>
+</ul>
+</li>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">'valid'</code>: 패딩을 추가하지 않음
+<ul>
+<li>출력 크기 = 입력 크기 - (kernel_size - 1) (224×224 → 222×222)</li>
+<li>가장자리 픽셀의 정보가 손실됨</li>
+</ul>
+</li>
+</ul>
+<p><strong>strides:</strong></p>
+<ul>
+<li>커널이 이동하는 간격 (보폭)</li>
+<li>예: <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">strides=(2, 2)</code> → 2×2 픽셀씩 이동</li>
+<li>첫 번째 Conv2D에만 적용하여 초기 단계에서 연산량 빠르게 감소</li>
+</ul>
+<p><strong>왜 첫 번째 Conv2D에만 strides를 사용하나?</strong></p>
+<ul>
+<li>초기 단계에서 연산량 빠르게 감소: 224×224 → 112×112로 줄이면 연산량이 1/4로 감소</li>
+<li>MaxPooling과의 역할 분담: 이후 층들은 MaxPooling만으로도 충분히 크기를 줄일 수 있음</li>
+<li>정보 손실 최소화: 첫 번째 층은 저수준 특징(엣지, 선 등)을 추출 → strides로 크기를 줄여도 정보 손실 적음</li>
+</ul>
+<h3>MaxPooling2D 레이어</h3>
+<p><strong>pool_size:</strong></p>
+<ul>
+<li>풀링 윈도우 크기: 2×2 영역을 하나의 픽셀로 압축</li>
+</ul>
+<p><strong>작동 방식:</strong></p>
+<ul>
+<li>2×2 영역(4개 픽셀)에서 최대값(max)만 선택</li>
+<li>나머지 3개 픽셀은 버림</li>
+<li>이미지 크기를 절반으로 줄임 (224×224 → 112×112)</li>
+</ul>
+<p><strong>목적:</strong></p>
+<ul>
+<li>Conv2D가 찾은 특징들 중 가장 중요한 것만 남김</li>
+<li>이미지 크기 감소로 연산량 감소</li>
+<li>노이즈 제거 및 과대적합 방지</li>
+<li>위치에 대한 불변성 증가 (약간의 이동에도 같은 특징 인식)</li>
+</ul>
+<h3>CNN 모델의 학습 결과</h3>
+<p><strong>특징:</strong></p>
+<ul>
+<li>MLP 모델보다 성능 향상</li>
+<li>하지만 여전히 과대적합 문제 발생
+<ul>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">accuracy</code>는 높지만 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">val_accuracy</code>는 낮음</li>
+<li>학습 데이터에 과도하게 맞춰져서 일반화 성능 저하</li>
+</ul>
+</li>
+</ul>
+<p><strong>과대적합 발생 이유:</strong></p>
+<ul>
+<li>훈련 데이터가 부족함</li>
+<li>모델이 학습 데이터의 노이즈까지 학습</li>
+</ul>
+<hr>
+<h2>2️⃣ 데이터 증강 (Data Augmentation)</h2>
+<h3>데이터 증강의 개념</h3>
+<p><strong>데이터 증강이란?</strong></p>
+<ul>
+<li>이미지 회전, 이동, 확대, 축소 등을 통해 데이터를 늘리는 작업</li>
+<li>훈련 데이터를 다양하게 변형하여 변형된 새로운 훈련 데이터처럼 사용</li>
+<li>마치 훈련 데이터 수가 늘어난 효과를 얻는 것</li>
+</ul>
+<p><strong>과대적합이 일어나는 이유:</strong></p>
+<ul>
+<li>훈련 데이터가 부족하기 때문</li>
+<li>훈련 데이터가 충분히 많다면 과대적합을 줄일 수 있음</li>
+</ul>
+<p><strong>주의사항:</strong></p>
+<ul>
+<li>증강은 <strong>'훈련 데이터'에서만</strong> 진행해야 함</li>
+<li>테스트 데이터에는 증강을 적용하면 안됨 (단, rescale은 예외)</li>
+</ul>
+<h3>ImageDataGenerator</h3>
+<p><strong>역할:</strong></p>
+<ul>
+<li>이미지 크기 조절, 픽셀값 변경, 라벨링, 이미지 데이터 증강을 위한 라이브러리</li>
+</ul>
+<p><strong>주요 옵션:</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>옵션</th><th>설명</th></tr></thead><tbody><tr><td><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">rescale</code></td><td>입력 이미지의 픽셀 값 재조정 (ex. rescale=1./255 → 모든 픽셀값을 0~1 사이로 정규화)</td></tr><tr><td><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">rotation_range</code></td><td>이미지의 회전 범위를 설정 (ex. rotation_range=20 → -20~20도 사이에서 무작위로 회전)</td></tr><tr><td><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">width_shift_range</code></td><td>이미지의 수평 이동 범위를 설정 (ex. 0.1은 전체 너비의 10%만큼 좌우로 무작위로 이동)</td></tr><tr><td><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">height_shift_range</code></td><td>이미지의 수직 이동 범위를 설정 (ex. 0.1은 전체 높이의 10%만큼 위아래로 무작위로 이동)</td></tr><tr><td><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">shear_range</code></td><td>시계 반대 방향으로 지정된 각도만큼 변형</td></tr><tr><td><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">zoom_range</code></td><td>이미지의 확대 및 축소 범위를 설정 (ex. 0.1 → 0.9배~1.1배 사이에서 무작위로 확대하거나 축소)</td></tr><tr><td><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">horizontal_flip</code></td><td>이미지를 수평 방향으로 뒤집을지 여부를 설정</td></tr><tr><td><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">fill_mode</code></td><td>이미지를 변형할 때 생기는 빈 공간을 채우는 방식을 설정 (ex. 'nearest' → 가장 가까운 픽셀값을 사용하여 빈공간 채우기)</td></tr></tbody></table>
+<h3>정규화 (rescale)의 의미</h3>
+<p><strong>정규화란?</strong></p>
+<ul>
+<li>픽셀값 0<del>255 → 0</del>1 사이로 변환 (스케일)</li>
+<li>수치 자체는 변함: 0<del>255(색상 범위) → 0</del>1(정규화된 값)</li>
+<li>하지만 상대적 관계는 유지됨: 밝은 픽셀은 여전히 밝고, 어두운 픽셀은 여전히 어둡다</li>
+<li>이미지의 패턴, 구조, 정보는 그대로 (단지 스케일만 바뀜)</li>
+<li>시각적으로는 동일한 이미지 (사람 눈으로 보면 차이 없음)</li>
+</ul>
+<p><strong>왜 필요한가?</strong></p>
+<ul>
+<li>딥러닝 모델은 0~1 범위의 작은 값에서 더 안정적으로 학습</li>
+<li>0~255 범위는 너무 커서 gradient 계산 시 불안정할 수 있음</li>
+<li>활성화 함수(Sigmoid, ReLU 등)가 작은 값에서 더 잘 작동</li>
+<li>학습 속도와 수렴 안정성 향상</li>
+</ul>
+<h3>zoom_range의 작동 방식</h3>
+<p><strong>확대/축소 범위:</strong></p>
+<ul>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">zoom_range=0.2</code> → 0.8배 ~ 1.2배 사이에서 무작위로 확대 또는 축소</li>
+<li>확대: 1.0 ~ 1.2배 (이미지를 1.0배~1.2배로 확대)</li>
+<li>축소: 0.8 ~ 1.0배 (이미지를 0.8배~1.0배로 축소)</li>
+</ul>
+<p><strong>기전:</strong></p>
+<ol>
+<li>원본 이미지(224×224)를 무작위 배율(0.8~1.2)로 확대/축소</li>
+<li>확대 시: 이미지가 커지므로 가장자리 일부가 잘림 (crop)</li>
+<li>축소 시: 이미지가 작아지므로 빈 공간이 생김 → fill_mode로 채움</li>
+<li>최종적으로 항상 224×224 크기로 반환</li>
+</ol>
+<p><strong>왜 필요한가?</strong></p>
+<ul>
+<li>과대적합 방지: 같은 이미지를 다양한 크기로 학습하여 일반화 성능 향상</li>
+<li>다양한 크기의 객체 학습: 실제 환경에서는 객체 크기가 다양함</li>
+<li>데이터 증강: 하나의 이미지로 여러 변형 생성 (데이터 수 증가 효과)</li>
+<li>모델의 강건성 향상: 크기 변화에 덜 민감한 모델 학습</li>
+</ul>
+<h3>flow_from_directory</h3>
+<p><strong>역할:</strong></p>
+<ul>
+<li>지정된 디렉토리에서 이미지를 불러오고, 실시간으로 배치로 데이터를 생성하는 기능</li>
+</ul>
+<p><strong>train_gen과 flow_from_directory의 관계:</strong></p>
+<p><strong>1. train_gen (ImageDataGenerator 객체)</strong></p>
+<ul>
+<li>역할: "설정 객체" (레시피)</li>
+<li>기능: 데이터 증강 방법을 정의 (rescale, zoom_range, horizontal_flip 등)</li>
+<li>상태: 설정만 저장하고 있음, 아직 이미지를 처리하지 않음</li>
+</ul>
+<p><strong>2. flow_from_directory (train_gen의 메서드)</strong></p>
+<ul>
+<li>역할: "실행 객체" (실제 요리)</li>
+<li>기능: train_gen에 정의된 설정대로 디렉토리에서 이미지를 불러와서 증강 적용</li>
+<li>반환: 실제로 배치 단위로 이미지를 생성하는 제너레이터 객체</li>
+</ul>
+<p><strong>작동 흐름:</strong></p>
+<ol>
+<li>train_gen 생성 → "이렇게 증강하겠다" 설정만 저장</li>
+<li>flow_from_directory 호출 → 실제로 디렉토리에서 이미지 불러오기 시작</li>
+<li>train_generator 사용 → 모델 학습 시 배치 단위로 증강된 이미지 제공</li>
+</ol>
+<p><strong>왜 분리되어 있나?</strong></p>
+<ul>
+<li>같은 설정(train_gen)으로 여러 디렉토리(train_dir, val_dir 등)에 적용 가능</li>
+<li>설정과 실행을 분리하여 코드 재사용성 향상</li>
+<li>메모리 효율: 필요한 시점에만 이미지를 불러와서 처리 (lazy loading)</li>
+</ul>
+<p><strong>주요 파라미터:</strong></p>
+<ul>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">target_size=(224, 224)</code>: 이미지들의 크기 조정</li>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">batch_size=32</code>: 한번에 변환할 이미지 개수</li>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">class_mode='binary'</code>: 이진 분류 모델 사용</li>
+</ul>
+<p><strong>주의사항:</strong></p>
+<ul>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">validation_split</code>은 generator 객체와 함께 사용할 수 없음</li>
+<li>대신 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">validation_data</code> 파라미터로 별도의 test_generator를 사용해야 함</li>
+</ul>
+<h3>데이터 증강의 효과</h3>
+<p><strong>결과:</strong></p>
+<ul>
+<li>과대적합이 어느 정도 해소됨</li>
+<li>모델의 일반화 성능 향상</li>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">val_accuracy</code>가 개선됨</li>
+</ul>
+<p><strong>단점:</strong></p>
+<ul>
+<li>학습 시간이 오래 걸림</li>
+<li>자체적으로 설계한 모델은 여러 번 진행하고 수정하는 작업이 필요 → 시간이 오래 걸림</li>
+</ul>
+<hr>
+<h2>3️⃣ Dropout</h2>
+<h3>Dropout의 개념</h3>
+<p><strong>Dropout이란?</strong></p>
+<ul>
+<li>과대적합을 개선하기 위한 기법</li>
+<li>학습하는 동안에만 적용 → 예측 시에는 적용하지 않음</li>
+<li>신경망을 비율에 따라 일부러 활성화되지 않도록 꺼둠</li>
+</ul>
+<p><strong>예:</strong></p>
+<ul>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">Dropout(0.3)</code> → 30%의 뉴런을 무작위로 꺼서 70%만 사용</li>
+<li>결과적으로 모델이 더 단순해져서 과대적합을 방지</li>
+</ul>
+<h3>Dropout의 작동 원리</h3>
+<p><strong>학습 시 (training):</strong></p>
+<ol>
+<li>각 배치마다 랜덤하게 일정 비율의 뉴런을 선택하여 비활성화 (출력을 0으로 설정)</li>
+<li>활성화된 뉴런만으로 forward pass와 backpropagation 수행</li>
+<li>다음 배치에서는 다른 뉴런들이 랜덤하게 비활성화됨</li>
+<li>결과적으로 모든 뉴런이 다양한 조합으로 학습됨</li>
+</ol>
+<p><strong>예측 시 (inference):</strong></p>
+<ol>
+<li>모든 뉴런을 활성화 상태로 사용 (Dropout 비활성화)</li>
+<li>학습된 모든 뉴런의 지식을 종합하여 예측</li>
+<li>더 정확한 예측 가능</li>
+</ol>
+<p><strong>시각적 예시:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">[학습 시 - Dropout(0.3)]
+입력 → [뉴런1: 활성화] → [뉴런2: 비활성화(0)] → [뉴런3: 활성화] → [뉴런4: 활성화] → 출력
+         (70% 사용)         (30% 꺼짐)          (70% 사용)         (70% 사용)
+
+[예측 시 - Dropout 비활성화]
+입력 → [뉴런1: 활성화] → [뉴런2: 활성화] → [뉴런3: 활성화] → [뉴런4: 활성화] → 출력
+         (100% 사용)         (100% 사용)         (100% 사용)         (100% 사용)
+</code></pre>
+<h3>왜 과대적합을 방지하나?</h3>
+<p><strong>의존성 감소:</strong></p>
+<ul>
+<li>특정 뉴런에 과도하게 의존하지 않게 됨</li>
+<li>예: "뉴런 A가 꺼져도 다른 뉴런들로 예측 가능해야 함"</li>
+</ul>
+<p><strong>앙상블 효과:</strong></p>
+<ul>
+<li>매 배치마다 다른 서브네트워크를 학습하는 것과 같음</li>
+<li>여러 개의 작은 모델을 학습하고 예측 시 모두 사용하는 효과</li>
+<li>예: 100개의 서브네트워크를 학습 → 예측 시 100개 모두 사용</li>
+</ul>
+<p><strong>일반화 능력 향상:</strong></p>
+<ul>
+<li>모델이 더 robust해짐 (일부 정보가 없어도 작동)</li>
+<li>노이즈에 덜 민감해짐</li>
+<li>새로운 데이터에 대한 일반화 성능 향상</li>
+</ul>
+<h3>Dropout 사용 위치</h3>
+<p><strong>특성 추출부:</strong></p>
+<ul>
+<li>MaxPooling2D 이후에 Dropout 추가</li>
+<li>예: <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">cnn_model.add(Dropout(0.3))</code> → pool 층에 의해 나온 feature map 중 30% 무작위로 0으로 만든 후 다음 층으로 넘김</li>
+</ul>
+<p><strong>분류부:</strong></p>
+<ul>
+<li>Dense 레이어 사이에 Dropout 추가</li>
+<li>예: Dense(256) → Dropout(0.3) → Dense(128)</li>
+</ul>
+<p><strong>주의사항:</strong></p>
+<ul>
+<li>Dropout은 학습 시에만 적용되므로, 예측 시에는 자동으로 비활성화됨</li>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">model.evaluate()</code> 또는 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">model.predict()</code> 호출 시 Dropout이 자동으로 꺼짐</li>
+<li>학습 시에는 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">model.fit()</code> 내부에서 자동으로 활성화됨</li>
+</ul>
+<hr>
+<h2>4️⃣ 전이학습 (Transfer Learning)</h2>
+<h3>전이학습의 개념</h3>
+<p><strong>전이학습이란?</strong></p>
+<ul>
+<li>다른 사람이 만들어놓은 모델을 사용하는 기법</li>
+<li>대규모 데이터셋(예: ImageNet)으로 사전 학습된 모델의 가중치를 활용</li>
+<li>새로운 작업에 맞게 모델의 일부만 재학습</li>
+</ul>
+<p><strong>왜 필요한가?</strong></p>
+<ul>
+<li>딥러닝 모델의 학습용으로는 절대적으로 데이터가 부족한 경우가 많음</li>
+<li>이미지 증강으로도 한계가 있음</li>
+<li>자체적으로 설계한 모델은 여러 번 진행하고 수정하는 작업이 필요 → 시간이 오래 걸림</li>
+<li>사전 학습된 모델을 활용하면 적은 데이터로도 좋은 성능을 얻을 수 있음</li>
+</ul>
+<h3>VGG16 모델</h3>
+<p><strong>VGG16이란?</strong></p>
+<ul>
+<li>ImageNet 데이터셋으로 사전 학습된 CNN 모델</li>
+<li>100만 장 정도의 사진으로 학습되어 있음</li>
+<li>16개의 층으로 구성된 깊은 신경망</li>
+</ul>
+<p><strong>VGG16 사용 방법:</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python">from tensorflow.keras.applications import VGG16
+
+vgg16 = VGG16(
+    include_top=False,  # 전결합 분류층 제외 (VGG16은 다중분류 1000개 → 지금은 이진분류)
+    weights='imagenet',  # 기존에 학습한 가중치를 불러온다
+    input_shape=(224, 224, 3)
+)
+</code></pre></pre>
+<p><strong>파라미터 설명:</strong></p>
+<ul>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">include_top=False</code>: 전결합 분류층을 제외 (우리가 직접 분류층을 만들 예정)</li>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">weights='imagenet'</code>: ImageNet으로 사전 학습된 가중치 사용</li>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">input_shape=(224, 224, 3)</code>: 입력 이미지 크기</li>
+</ul>
+<h3>가중치 동결 (Freeze)</h3>
+<p><strong>가중치 동결이란?</strong></p>
+<ul>
+<li>모든 Conv 레이어는 동결하고 가중치 갱신을 막는 것</li>
+<li>학습 불가능하게 설정</li>
+</ul>
+<p><strong>왜 필요한가?</strong></p>
+<ul>
+<li>VGG16은 100만 장 정도의 사진으로 학습되어 있음</li>
+<li>학습 시 가중치가 갱신되도록 설정해두면, 기존 학습된 내용이 훼손 → 성능이 떨어짐</li>
+<li>특성 추출부는 고정하고, 분류부만 학습</li>
+</ul>
+<p><strong>구현:</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python"># 모든 conv 레이어는 동결하고 가중치 갱신을 막는다 &gt; 학습 불가능하게 설정
+for layer in vgg16.layers:
+    layer.trainable = False
+</code></pre></pre>
+<h3>전이학습 모델 구조</h3>
+<p><strong>모델 구성:</strong></p>
+<ol>
+<li>VGG16 (특성 추출부) - 가중치 동결</li>
+<li>Flatten</li>
+<li>Dense 레이어 (분류부) - 새로 학습</li>
+</ol>
+<p><strong>모델 구조:</strong></p>
+<pre><div style="margin: 20px 0px; text-align: center; overflow: auto;"><svg id="mermaid-6fj3avuv6" width="100%" xmlns="http://www.w3.org/2000/svg" style="max-width: none; width: 377.186px; height: auto; max-height: none; min-width: 377.186px;" viewBox="-8 -8 177.9375 645" role="graphics-document document" aria-roledescription="flowchart-v2"><style>#mermaid-6fj3avuv6{font-family:inherit;font-size:16px;fill:#333;}#mermaid-6fj3avuv6 .error-icon{fill:#552222;}#mermaid-6fj3avuv6 .error-text{fill:#552222;stroke:#552222;}#mermaid-6fj3avuv6 .edge-thickness-normal{stroke-width:2px;}#mermaid-6fj3avuv6 .edge-thickness-thick{stroke-width:3.5px;}#mermaid-6fj3avuv6 .edge-pattern-solid{stroke-dasharray:0;}#mermaid-6fj3avuv6 .edge-pattern-dashed{stroke-dasharray:3;}#mermaid-6fj3avuv6 .edge-pattern-dotted{stroke-dasharray:2;}#mermaid-6fj3avuv6 .marker{fill:#333333;stroke:#333333;}#mermaid-6fj3avuv6 .marker.cross{stroke:#333333;}#mermaid-6fj3avuv6 svg{font-family:inherit;font-size:16px;}#mermaid-6fj3avuv6 .label{font-family:inherit;color:#333;}#mermaid-6fj3avuv6 .cluster-label text{fill:#333;}#mermaid-6fj3avuv6 .cluster-label span,#mermaid-6fj3avuv6 p{color:#333;}#mermaid-6fj3avuv6 .label text,#mermaid-6fj3avuv6 span,#mermaid-6fj3avuv6 p{fill:#333;color:#333;}#mermaid-6fj3avuv6 .node rect,#mermaid-6fj3avuv6 .node circle,#mermaid-6fj3avuv6 .node ellipse,#mermaid-6fj3avuv6 .node polygon,#mermaid-6fj3avuv6 .node path{fill:#ECECFF;stroke:#9370DB;stroke-width:1px;}#mermaid-6fj3avuv6 .flowchart-label text{text-anchor:middle;}#mermaid-6fj3avuv6 .node .katex path{fill:#000;stroke:#000;stroke-width:1px;}#mermaid-6fj3avuv6 .node .label{text-align:center;}#mermaid-6fj3avuv6 .node.clickable{cursor:pointer;}#mermaid-6fj3avuv6 .arrowheadPath{fill:#333333;}#mermaid-6fj3avuv6 .edgePath .path{stroke:#333333;stroke-width:2.0px;}#mermaid-6fj3avuv6 .flowchart-link{stroke:#333333;fill:none;}#mermaid-6fj3avuv6 .edgeLabel{background-color:#e8e8e8;text-align:center;}#mermaid-6fj3avuv6 .edgeLabel rect{opacity:0.5;background-color:#e8e8e8;fill:#e8e8e8;}#mermaid-6fj3avuv6 .labelBkg{background-color:rgba(232, 232, 232, 0.5);}#mermaid-6fj3avuv6 .cluster rect{fill:#ffffde;stroke:#aaaa33;stroke-width:1px;}#mermaid-6fj3avuv6 .cluster text{fill:#333;}#mermaid-6fj3avuv6 .cluster span,#mermaid-6fj3avuv6 p{color:#333;}#mermaid-6fj3avuv6 div.mermaidTooltip{position:absolute;text-align:center;max-width:200px;padding:2px;font-family:inherit;font-size:12px;background:hsl(80, 100%, 96.2745098039%);border:1px solid #aaaa33;border-radius:2px;pointer-events:none;z-index:100;}#mermaid-6fj3avuv6 .flowchartTitleText{text-anchor:middle;font-size:18px;fill:#333;}#mermaid-6fj3avuv6 :root{--mermaid-font-family:inherit;}</style><g><marker id="mermaid-6fj3avuv6_flowchart-pointEnd" class="marker flowchart" viewBox="0 0 10 10" refX="6" refY="5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowMarkerPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker><marker id="mermaid-6fj3avuv6_flowchart-pointStart" class="marker flowchart" viewBox="0 0 10 10" refX="4.5" refY="5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto"><path d="M 0 5 L 10 10 L 10 0 z" class="arrowMarkerPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></path></marker><marker id="mermaid-6fj3avuv6_flowchart-circleEnd" class="marker flowchart" viewBox="0 0 10 10" refX="11" refY="5" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto"><circle cx="5" cy="5" r="5" class="arrowMarkerPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></circle></marker><marker id="mermaid-6fj3avuv6_flowchart-circleStart" class="marker flowchart" viewBox="0 0 10 10" refX="-1" refY="5" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto"><circle cx="5" cy="5" r="5" class="arrowMarkerPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"></circle></marker><marker id="mermaid-6fj3avuv6_flowchart-crossEnd" class="marker cross flowchart" viewBox="0 0 11 11" refX="12" refY="5.2" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto"><path d="M 1,1 l 9,9 M 10,1 l -9,9" class="arrowMarkerPath" style="stroke-width: 2; stroke-dasharray: 1, 0;"></path></marker><marker id="mermaid-6fj3avuv6_flowchart-crossStart" class="marker cross flowchart" viewBox="0 0 11 11" refX="-1" refY="5.2" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto"><path d="M 1,1 l 9,9 M 10,1 l -9,9" class="arrowMarkerPath" style="stroke-width: 2; stroke-dasharray: 1, 0;"></path></marker><g class="root"><g class="clusters"></g><g class="edgePaths"><path d="M50.969,66L50.969,70.167C50.969,74.333,50.969,82.667,50.969,90.117C50.969,97.567,50.969,104.133,50.969,107.417L50.969,110.7" id="L-A-B-0" class=" edge-thickness-normal edge-pattern-solid flowchart-link LS-A LE-B" style="fill:none;" marker-end="url(#mermaid-6fj3avuv6_flowchart-pointEnd)"></path><path d="M50.969,208L50.969,212.167C50.969,216.333,50.969,224.667,50.969,232.117C50.969,239.567,50.969,246.133,50.969,249.417L50.969,252.7" id="L-B-C-0" class=" edge-thickness-normal edge-pattern-solid flowchart-link LS-B LE-C" style="fill:none;" marker-end="url(#mermaid-6fj3avuv6_flowchart-pointEnd)"></path><path d="M50.969,298L50.969,302.167C50.969,306.333,50.969,314.667,50.969,322.117C50.969,329.567,50.969,336.133,50.969,339.417L50.969,342.7" id="L-C-D-0" class=" edge-thickness-normal edge-pattern-solid flowchart-link LS-C LE-D" style="fill:none;" marker-end="url(#mermaid-6fj3avuv6_flowchart-pointEnd)"></path><path d="M50.969,438L50.969,442.167C50.969,446.333,50.969,454.667,50.969,462.117C50.969,469.567,50.969,476.133,50.969,479.417L50.969,482.7" id="L-D-E-0" class=" edge-thickness-normal edge-pattern-solid flowchart-link LS-D LE-E" style="fill:none;" marker-end="url(#mermaid-6fj3avuv6_flowchart-pointEnd)"></path></g><g class="edgeLabels"><g class="edgeLabel"><g class="label" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap;"><span class="edgeLabel"></span></div></foreignObject></g></g></g><g class="nodes"><g class="node default default flowchart-label" id="flowchart-A-222" data-node="true" data-id="A" transform="translate(50.96875, 33)"><rect class="basic label-container" style="fill:#e1f5ff;" rx="0" ry="0" x="-50.96875" y="-33" width="126.9375" height="66"></rect><g class="label" style="" transform="translate(-43.46875, -25.5)"><rect></rect><foreignObject width="116.9375" height="51" style="overflow: visible;"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap; width: 116.938px; box-sizing: border-box; overflow: visible;"><span class="nodeLabel" style="width: 116.938px; box-sizing: border-box; overflow: visible;">입력<br style="width: 116.938px; box-sizing: border-box; overflow: visible;">224×224×3</span></div></foreignObject></g></g><g class="node default default flowchart-label" id="flowchart-B-223" data-node="true" data-id="B" transform="translate(50.96875, 162)"><rect class="basic label-container" style="fill:#ccffcc;" rx="0" ry="0" x="-46.4375" y="-46" width="117.875" height="92"></rect><g class="label" style="" transform="translate(-38.9375, -38.5)"><rect></rect><foreignObject width="107.875" height="77" style="overflow: visible;"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap; width: 107.875px; box-sizing: border-box; overflow: visible;"><span class="nodeLabel" style="width: 107.875px; box-sizing: border-box; overflow: visible;">VGG16<br style="width: 107.875px; box-sizing: border-box; overflow: visible;">특성 추출부<br style="width: 107.875px; box-sizing: border-box; overflow: visible;">가중치 동결</span></div></foreignObject></g></g><g class="node default default flowchart-label" id="flowchart-C-225" data-node="true" data-id="C" transform="translate(50.96875, 278)"><rect class="basic label-container" style="fill:#fff4e1;" rx="0" ry="0" x="-34.8125" y="-20" width="94.625" height="40"></rect><g class="label" style="" transform="translate(-27.3125, -12.5)"><rect></rect><foreignObject width="84.625" height="25" style="overflow: visible;"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap; width: 84.625px; box-sizing: border-box; overflow: visible;"><span class="nodeLabel" style="width: 84.625px; box-sizing: border-box; overflow: visible;">Flatten</span></div></foreignObject></g></g><g class="node default default flowchart-label" id="flowchart-D-227" data-node="true" data-id="D" transform="translate(50.96875, 393)"><rect class="basic label-container" style="fill:#ffe1f5;" rx="0" ry="0" x="-32.375" y="-45" width="89.75" height="90"></rect><g class="label" style="" transform="translate(-24.875, -37.5)"><rect></rect><foreignObject width="79.75" height="75" style="overflow: visible;"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap; width: 79.75px; box-sizing: border-box; overflow: visible;"><span class="nodeLabel" style="width: 79.75px; box-sizing: border-box; overflow: visible;">Dense<br style="width: 79.75px; box-sizing: border-box; overflow: visible;">64<br style="width: 79.75px; box-sizing: border-box; overflow: visible;">ReLU</span></div></foreignObject></g></g><g class="node default default flowchart-label" id="flowchart-E-229" data-node="true" data-id="E" transform="translate(50.96875, 533.5)"><rect class="basic label-container" style="fill:#ffcccc;" rx="0" ry="0" x="-40.3125" y="-45.5" width="105.625" height="91"></rect><g class="label" style="" transform="translate(-32.8125, -38)"><rect></rect><foreignObject width="95.625" height="76" style="overflow: visible;"><div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block; white-space: nowrap; width: 95.625px; box-sizing: border-box; overflow: visible;"><span class="nodeLabel" style="width: 95.625px; box-sizing: border-box; overflow: visible;">출력층<br style="width: 95.625px; box-sizing: border-box; overflow: visible;">1<br style="width: 95.625px; box-sizing: border-box; overflow: visible;">Sigmoid</span></div></foreignObject></g></g></g></g></g></svg></div></pre>
+<p><strong>특징:</strong></p>
+<ul>
+<li>VGG16의 특성 추출부는 그대로 사용</li>
+<li>분류부만 우리의 작업(이진 분류)에 맞게 새로 설계</li>
+<li>적은 데이터로도 우수한 성능 기대</li>
+</ul>
+<h3>전이학습의 장점</h3>
+<p><strong>성능:</strong></p>
+<ul>
+<li>사전 학습된 모델의 강력한 특징 추출 능력 활용</li>
+<li>적은 데이터로도 좋은 성능</li>
+</ul>
+<p><strong>시간:</strong></p>
+<ul>
+<li>처음부터 모델을 학습하는 것보다 훨씬 빠름</li>
+<li>특성 추출부는 학습하지 않으므로 학습 시간 단축</li>
+</ul>
+<p><strong>효율성:</strong></p>
+<ul>
+<li>대규모 데이터셋으로 학습된 지식 활용</li>
+<li>우리의 작은 데이터셋으로는 학습하기 어려운 고수준 특징을 활용</li>
+</ul>
+<hr>
+<h2>💡 핵심 정리</h2>
+<h3>배운 것</h3>
+<ol>
+<li>
+<p><strong>CNN 모델</strong></p>
+<ul>
+<li>공간적 구조가 중요한 데이터에 적합</li>
+<li>Conv2D + MaxPooling2D로 특징 추출</li>
+<li>MLP보다 이미지 분류에 우수한 성능</li>
+</ul>
+</li>
+<li>
+<p><strong>데이터 증강</strong></p>
+<ul>
+<li>ImageDataGenerator를 활용한 이미지 변형</li>
+<li>훈련 데이터 수를 늘리는 효과</li>
+<li>과대적합 방지에 도움</li>
+</ul>
+</li>
+<li>
+<p><strong>Dropout</strong></p>
+<ul>
+<li>학습 시 일부 뉴런을 무작위로 비활성화</li>
+<li>모델의 복잡도 감소로 과대적합 방지</li>
+<li>앙상블 효과로 일반화 성능 향상</li>
+</ul>
+</li>
+<li>
+<p><strong>전이학습</strong></p>
+<ul>
+<li>사전 학습된 모델(VGG16) 활용</li>
+<li>적은 데이터로도 우수한 성능</li>
+<li>학습 시간 단축</li>
+</ul>
+</li>
+</ol>
+<h3>인사이트</h3>
+<ol>
+<li>
+<p><strong>CNN의 중요성</strong></p>
+<ul>
+<li>이미지 데이터는 공간적 정보가 중요</li>
+<li>MLP는 Flatten으로 인해 공간 정보 손실</li>
+<li>CNN은 공간적 패턴을 효과적으로 학습</li>
+</ul>
+</li>
+<li>
+<p><strong>과대적합 해결 전략</strong></p>
+<ul>
+<li>데이터 증강: 데이터 수 증가 효과</li>
+<li>Dropout: 모델 복잡도 감소</li>
+<li>전이학습: 사전 학습된 모델 활용</li>
+</ul>
+</li>
+<li>
+<p><strong>전이학습의 효율성</strong></p>
+<ul>
+<li>처음부터 학습하는 것보다 훨씬 효율적</li>
+<li>대규모 데이터셋으로 학습된 지식 활용</li>
+<li>실무에서 널리 사용되는 기법</li>
+</ul>
+</li>
+</ol>
+<h3>주의사항</h3>
+<ol>
+<li>
+<p><strong>데이터 증강</strong></p>
+<ul>
+<li>훈련 데이터에만 적용</li>
+<li>테스트 데이터에는 적용하지 않음 (단, rescale은 예외)</li>
+</ul>
+</li>
+<li>
+<p><strong>Dropout</strong></p>
+<ul>
+<li>학습 시에만 적용, 예측 시에는 자동으로 비활성화</li>
+<li>적절한 비율 선택 (보통 0.3~0.5)</li>
+</ul>
+</li>
+<li>
+<p><strong>전이학습</strong></p>
+<ul>
+<li>사전 학습된 모델의 가중치는 동결</li>
+<li>분류부만 새로 학습</li>
+<li>입력 이미지 크기는 사전 학습 모델과 동일하게 맞춰야 함</li>
+</ul>
+</li>
+</ol>
+<hr></div></div><div class="MuiBox-root css-1cpq4zq"><hr class="MuiDivider-root MuiDivider-fullWidth css-7jtdmc"><h5 class="MuiTypography-root MuiTypography-h5 css-85yo2n">같은 카테고리의 다른 글</h5><div class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-2 css-1eikg3m"><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] Serializable 깊이 파기 — Part 2: 바이트에서 다시 객체로, 그리고 함정들</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">직렬화된 바이트를 ObjectInputStream이 어떤 순서로 읽어 객체로 복원하는지, 그때 생성자가 호출되지 않는다는 점을 확인합니다. | serialVersionUID, transient, 커스텀 readObject·writeObject, 역직렬화 취약점, Java 직렬화의 현재로 마무리합니다.</p><div class="MuiBox-root css-107ld1r"></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 4월 5일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] Serializable 깊이 파기 — Part 1: 객체가 바이트가 되는 과정</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">Python이나 JavaScript와 달리 Java는 왜 Serializable을 선언해야 하는지, 메서드가 하나도 없는 이 인터페이스가 무슨 일을 하는지 묻는 글입니다. | ObjectOutputStream이 만든 실제 바이트를 열어 보고, 참조 객체가 들어 있을 때는 어떻게 되는지 확인합니다.</p><div class="MuiBox-root css-107ld1r"></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 4월 5일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] 주식 거래 엔진 직접 만들기 - Part 3: 오더북을 어떻게 구현할 것인가</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">주식 거래 엔진의 오더북을 TreeMap과 ArrayDeque 조합으로 만든 이유를, PriorityQueue, LinkedList, Skip List와 비교하며 설명합니다. | 주문 취소를 Lazy Removal로 처리한 방법과 Kafka를 연결하며 만난 멱등성 문제를 마지막에 둡니다.</p><div class="MuiBox-root css-107ld1r"></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 27일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] 주식 거래 엔진 직접 만들기 - Part 2: Phase 1 — 모놀리식으로 시작하기</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">단일 JAR 모놀리식 구조인 Phase 1에서 만난 문제를 차례로 다룹니다. | SELECT FOR UPDATE로 동시성을 해결했고, 락 보유 시간을 줄이고, 락 획득 순서를 통일해 데드락 위험을 없앴습니다. @Transactional 원칙과 Lazy Loading 함정도 짚습니다.</p><div class="MuiBox-root css-107ld1r"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Java</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Spring Boot</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">JPA</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">+2</span></div></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 27일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] 주식 거래 엔진 직접 만들기 - Part 1: 왜 주식 거래 엔진인가</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">F-lab 멘토링 프로젝트로 주식 거래 엔진을 직접 설계하고 구현한 과정을 기록하는 시리즈의 첫 글입니다. | 프로젝트를 고른 기준과 멀티모듈 구조, Phase 로드맵, 시리즈 전체에서 답할 질문들을 먼저 밝힙니다.</p><div class="MuiBox-root css-107ld1r"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Java</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Spring Boot</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Kafka</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">+5</span></div></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 27일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[개발자가 직접 써봤어요] Claude Code 완전 가이드: 설치부터 멀티에이전트까지</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">Claude Code를 Spring Boot와 Kafka 기반 주식 매매 엔진 프로젝트에 적용해 본 경험을 바탕으로, 설치부터 멀티에이전트까지 소개합니다. | CLAUDE.md, Skills, Subagents, Hooks, MCP, Agent Teams의 여섯 레이어와 Cursor AI와의 비교, 주의사항이 나옵니다.</p><div class="MuiBox-root css-107ld1r"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Claude Code</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">AI</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Developer Tools</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">+4</span></div></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 9일</span></div></div></div></div><div class="MuiBox-root css-1b94f21"><a class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways css-104ms0" href="/blog/posts" data-discover="true"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowBackIcon"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z"></path></svg>게시글 목록으로 돌아가기</a></div><button class="MuiButtonBase-root MuiFab-root MuiFab-circular MuiFab-sizeMedium MuiFab-primary MuiFab-root MuiFab-circular MuiFab-sizeMedium MuiFab-primary css-1nl6bps" tabindex="0" type="button" aria-label="scroll to top" style="opacity: 0; visibility: hidden;"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="KeyboardArrowUpIcon"><path d="M7.41 15.41 12 10.83l4.59 4.58L18 14l-6-6-6 6z"></path></svg></button></div></div></div></div><footer style="text-align: center; padding: 2rem 0px; color: rgb(0, 0, 0); font-size: 0.9rem; border-top: 1px solid rgb(0, 0, 0); margin-top: auto; background-color: rgb(255, 255, 255);"><p>© 2025 DevTaco Blog. All rights reserved.</p></footer><div class="MuiBox-root css-1hyfx7x"><div class="visitor-counter MuiBox-root css-19midj6"><h6 class="MuiTypography-root MuiTypography-h6 MuiTypography-gutterBottom css-izz7ci">방문자 수</h6><div class="MuiBox-root css-zwd3xv"><h4 class="MuiTypography-root MuiTypography-h4 css-1dg27va">64</h4><p class="MuiTypography-root MuiTypography-body2 css-l6pb42">오늘</p><h6 class="MuiTypography-root MuiTypography-h6 css-kh42wg">총 64명</h6></div></div></div><div class="MuiBox-root css-1y95mt5" data-testid="terminal-navigation"><div class="MuiBox-root css-1kw3y0a"><p class="MuiTypography-root MuiTypography-body2 css-1fktdtb">devtaco@portfolio:~$ navigation</p><div class="MuiBox-root css-j0ozid"><p class="MuiTypography-root MuiTypography-body2 css-1cn40rb">⌘M to close</p><button class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-470314" tabindex="0" type="button" id=":r1:"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeSmall css-vh810p" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="CloseIcon"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg></button></div></div><div class="MuiBox-root css-13t3iqc"><div class="MuiBox-root css-0"><p class="MuiTypography-root MuiTypography-body2 css-cbhj4f">Navigation:</p><div class="MuiBox-root css-1kkt86i"><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">1 → home</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">2 → about</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">3 → posts</p></div></div><div class="MuiBox-root css-0"><p class="MuiTypography-root MuiTypography-body2 css-cbhj4f">External:</p><div class="MuiBox-root css-1kkt86i"><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">g → github</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">e → email</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">l → linkedin</p></div></div></div><p class="MuiTypography-root MuiTypography-body2 css-1e7vt2">Press number keys (1,2,3) or letter keys (g,e,l) to navigate. Use ⌘+M to close.</p></div></div></div></body></html>

@@ -1,0 +1,359 @@
+<!DOCTYPE html><html lang="en"><head><script type="text/javascript">!function(n){if("/"===n.search[1]){var a=n.search.slice(1).split("&").map((function(n){return n.replace(/~and~/g,"&")})).join("?");window.history.replaceState(null,null,n.pathname.slice(0,-1)+a+n.hash)}}(window.location)</script><meta charset="utf-8"><link rel="icon" href="/blog/favicon.ico"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#000000"><meta name="keywords" content="Java, Kotlin, Spring Boot, MSA, 개발, 백엔드, coroutine"><meta name="author" content="DevTaco"><meta property="og:image" content="https://devtaco30.github.io/blog/og-image.png"><meta property="twitter:image" content="https://devtaco30.github.io/blog/og-image.png"><meta property="twitter:url" content="https://devtaco30.github.io/blog/"><link rel="apple-touch-icon" href="/blog/apple-touch-icon.png"><link rel="manifest" href="/blog/manifest.json"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&amp;family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet"><script defer="defer" src="/blog/static/js/main.404b9165.js"></script><link href="/blog/static/css/main.5b86466f.css" rel="stylesheet"><style data-emotion="css" data-s=""></style><title>EST AI - Python(matplotlib) | DevTaco Blog</title><meta name="description" content="Matplotlib으로 선 그래프와 막대 그래프를 그립니다. 스타일, 그리드, 축 눈금, 제목과 레이블 설정, 여러 그래프를 한 화면에 그리는 방법이 있고 교통사고 데이터 분석으로 마무리합니다."><meta property="og:title" content="EST AI - Python(matplotlib)"><meta property="og:description" content="Matplotlib으로 선 그래프와 막대 그래프를 그립니다. 스타일, 그리드, 축 눈금, 제목과 레이블 설정, 여러 그래프를 한 화면에 그리는 방법이 있고 교통사고 데이터 분석으로 마무리합니다."><meta property="og:type" content="article"><meta property="og:url" content="https://devtaco30.github.io/blog/posts/24"><meta name="twitter:card" content="summary"></head><body><noscript>You need to enable JavaScript to run this app.</noscript><div id="root"><div class="App"><div class="MuiBox-root css-kurlqb"><div class="MuiBox-root css-171onha"><button class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-1f6w95t" tabindex="0" type="button" id=":r0:"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="MenuIcon"><path d="M3 18h18v-2H3zm0-5h18v-2H3zm0-7v2h18V6z"></path></svg></button><div class="MuiBox-root css-1szb58x"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-218waq" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowBackIcon"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z"></path></svg><div class="MuiBox-root css-wq4jw1"><span>⌘+M</span></div></div></div></div><div class="MuiContainer-root css-15jb5o1" data-testid="page-container"><div class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-2 MuiGrid-spacing-md-3 css-1ht06td"><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-md-12 css-15j76c0"><div class="MuiBox-root css-15rigdj"><nav class="MuiTypography-root MuiTypography-body1 MuiBreadcrumbs-root css-1v2kxik"><ol class="MuiBreadcrumbs-ol css-51eq8m"><li class="MuiBreadcrumbs-li"><a class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways css-gj78h6" href="/blog/posts" data-discover="true">게시글 목록</a></li><li aria-hidden="true" class="MuiBreadcrumbs-separator css-1nd5pgh">/</li><li class="MuiBreadcrumbs-li"><p class="MuiTypography-root MuiTypography-body1 css-1cr0rz6">EST AI - Python(matplotlib)</p></li></ol></nav><div class="MuiBox-root css-15djlns"><button class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-1y18wdw" tabindex="0" type="button" id=":r7:"><span class="MuiButton-icon MuiButton-startIcon MuiButton-iconSizeMedium css-1ygddt1"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowBackIcon"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z"></path></svg></span><div class="MuiBox-root css-0"><span class="MuiTypography-root MuiTypography-caption css-115rlu8">이전글</span><p class="MuiTypography-root MuiTypography-body2 css-10qk5g4">EST AI - Python(apply,lambda)</p></div></button><button class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-1k0z50p" tabindex="0" type="button" id=":r8:"><div class="MuiBox-root css-0"><span class="MuiTypography-root MuiTypography-caption css-115rlu8">다음글</span><p class="MuiTypography-root MuiTypography-body2 css-10qk5g4">EST AI - Python(pandas-advenced)</p></div><span class="MuiButton-icon MuiButton-endIcon MuiButton-iconSizeMedium css-6bt4d2"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowForwardIcon"><path d="m12 4-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"></path></svg></span></button></div><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-10t0qv5" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h4 class="MuiTypography-root MuiTypography-h4 css-k5jvd2">EST AI - Python(matplotlib)</h4><p class="MuiTypography-root MuiTypography-body1 css-104xg3">Matplotlib으로 선 그래프와 막대 그래프를 그립니다. | 스타일, 그리드, 축 눈금, 제목과 레이블 설정, 여러 그래프를 한 화면에 그리는 방법이 있고 교통사고 데이터 분석으로 마무리합니다.</p><div class="MuiBox-root css-1prrn6n"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Python</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Programming</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Matplotlib</span></div></div><p class="MuiTypography-root MuiTypography-body2 css-l6pb42">2025년 12월 3일 오후 12:51</p></div><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-1i779yj" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><div class="MuiBox-root css-13lazol"><h2>📚 오늘의 학습 내용</h2>
+<h3>📋 Matplotlib 소개</h3>
+<p><strong>Mathematical Plotting Library</strong> (MATLAB-style plotting library for Python)</p>
+<ul>
+<li>메타데이터를 도표나 그래프(시각화)로 출력시키는 라이브러리</li>
+<li>메타데이터: 일정한 규칙에 따라 구조화, 표준화된 데이터</li>
+<li>분석 결과를 수치만으로 설명하는 것보다 더 직관적으로 이해할 수 있다</li>
+<li>타인에게 분석 결과를 전달할 때 효과적이다</li>
+</ul>
+<hr>
+<h3>📋 Line Graph (선 그래프)</h3>
+<p><strong>기본 사용법:</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python">import matplotlib.pyplot as plt
+import numpy as np
+
+# y값만 지정 (x는 자동으로 0, 1, 2, ...)
+y_data = [2, 4, 5]
+plt.plot(y_data)
+plt.show()
+
+# x, y값 모두 지정
+x = [1, 2, 3, 4, 5]
+y = [1, 5, 7, 8, 6]
+plt.plot(x, y)
+plt.show()
+</code></pre></pre>
+<img alt="이미지" src="https://bimuiyejfcapaxqlgkre.supabase.co/storage/v1/object/public/blog-images/posts/24/1764733333889.png" style="max-width: 60%; height: auto; display: block; margin: 20px auto; cursor: pointer; transition: opacity 0.2s ease-in-out;">
+<p><strong>주의사항:</strong></p>
+<ul>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">plt.plot(y)</code> - y값(데이터)은 필수, x값은 선택적 (자동으로 0부터 시작)</li>
+<li>Jupyter Notebook에서는 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">plt.show()</code> 없이도 자동으로 표시됨</li>
+</ul>
+<blockquote>
+<p>💡 <strong>궁금해서 찾아본 내용: 한글 폰트 설정</strong></p>
+<p>matplotlib에서 한글을 표시하려면 한글 폰트를 설정해야 합니다.</p>
+<p><strong>방법 1: rc() 함수 사용 (권장)</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python">from matplotlib import rc
+import platform
+
+os_name = platform.system()
+if os_name == 'Darwin':  # macOS
+    rc('font', family='AppleGothic')
+elif os_name == 'Windows':  # Windows
+    rc('font', family='Malgun Gothic')  # 맑은 고딕
+elif os_name == 'Linux':  # Linux
+    rc('font', family='NanumGothic')  # 설치 필요
+
+rc('axes', unicode_minus=False)  # 마이너스 기호 깨짐 방지
+</code></pre></pre>
+<p><strong>방법 2: rcParams 직접 사용</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python">plt.rcParams['font.family'] = 'AppleGothic'  # macOS
+plt.rcParams['axes.unicode_minus'] = False
+</code></pre></pre>
+</blockquote>
+<hr>
+<h3>📋 스타일 옵션</h3>
+<p><strong>스타일 옵션 종류:</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>스타일 옵션 종류</th><th>마커 종류 정의</th><th>약자</th></tr></thead><tbody><tr><td><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">color</code></td><td>선 색깔</td><td><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">c</code></td></tr><tr><td><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">linewidth</code></td><td>선 굵기</td><td><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">lw</code></td></tr><tr><td><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">linestyle</code></td><td>선 스타일</td><td><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">ls</code></td></tr><tr><td><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">marker</code></td><td>마커 종류</td><td><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">marker</code></td></tr><tr><td><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">markersize</code></td><td>마커 크기</td><td><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">ms</code></td></tr><tr><td><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">markeredgecolor</code></td><td>마커 선 색깔</td><td><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">mec</code></td></tr><tr><td><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">markeredgewidth</code></td><td>마커 선 굵기</td><td><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">mew</code></td></tr><tr><td><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">markerfacecolor</code></td><td>마커 내부 색깔</td><td><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">mfc</code></td></tr></tbody></table>
+<p><strong>Line Style 옵션:</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Character</th><th>Description</th></tr></thead><tbody><tr><td><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">'-'</code></td><td>Solid line style (실선)</td></tr><tr><td><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">'--'</code></td><td>Dashed line style (점선)</td></tr><tr><td><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">'-.'</code></td><td>Dash-dot line style (점선-실선 혼합)</td></tr><tr><td><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">'.'</code></td><td>Dotted line style (점선)</td></tr></tbody></table>
+<p><strong>Marker 옵션 (주요):</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Character</th><th>Description</th></tr></thead><tbody><tr><td><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">'.'</code></td><td>Point marker</td></tr><tr><td><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">'o'</code></td><td>Circle marker</td></tr><tr><td><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">'v'</code></td><td>Triangle down marker</td></tr><tr><td><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">'^'</code></td><td>Triangle up marker</td></tr><tr><td><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">'s'</code></td><td>Square marker</td></tr><tr><td><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">'*'</code></td><td>Star marker</td></tr><tr><td><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">'+'</code></td><td>Plus marker</td></tr><tr><td><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">'D'</code></td><td>Diamond marker</td></tr></tbody></table>
+<p><strong>사용 예시:</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python">plt.plot(x, y, ls='--', lw=3, c='#3498db', marker='o', 
+         mfc='#2980b9', mec='#1f618d', ms=12, mew=2)
+</code></pre></pre>
+<hr>
+<h3>📋 Grid (그리드)</h3>
+<p>차트의 선 위치를 잘 보여주기 위해 차트 중간에 선을 그어줍니다.</p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python">plt.plot(x, y)
+plt.grid()  # 기본 그리드
+plt.grid(axis='y', alpha=0.3, linestyle='--', linewidth=0.8)  # 세밀한 설정
+plt.show()
+</code></pre></pre>
+<p><strong>옵션:</strong></p>
+<ul>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">axis</code>: <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">'x'</code>, <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">'y'</code>, <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">'both'</code> (기본값)</li>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">alpha</code>: 투명도 (0.0 ~ 1.0)</li>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">linestyle</code>: 선 스타일</li>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">linewidth</code>: 선 두께</li>
+</ul>
+<hr>
+<h3>📋 Tick (축 눈금)</h3>
+<p>플롯이나 차트에서 축 상의 위치 표시 지점입니다. 자동/수동 설정이 가능합니다.</p>
+<p><strong>수동 지정:</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python">plt.xticks([0, 3, 6])
+plt.yticks([1, 4, 7])
+</code></pre></pre>
+<p><strong>수식으로 자동 생성 (권장):</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python"># 방법 1: np.arange() 사용 - 시작값부터 끝값까지 일정 간격으로
+plt.xticks(np.arange(0, 7, 3))  # 0부터 6까지 3씩 증가: [0, 3, 6]
+
+# 방법 2: np.linspace() 사용 - 시작값부터 끝값까지 균등하게 분할
+# 주의: np.linspace()는 기본적으로 실수(float)를 반환합니다!
+plt.xticks(np.linspace(0, 6, 3, dtype=int))  # 정수로 변환: [0, 3, 6]
+
+# 방법 3: 데이터 범위에 맞춰 자동 생성
+x_min, x_max = min(x), max(x)
+plt.xticks(np.arange(x_min, x_max+1, 3))
+</code></pre></pre>
+<blockquote>
+<p>💡 <strong>np.linspace() 주의사항:</strong></p>
+<ul>
+<li>기본적으로 실수(float)를 반환합니다</li>
+<li>정수로 만들려면 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">dtype=int</code> 지정 필요</li>
+<li>나누어떨어지지 않으면 실수 포인트가 생길 수 있음</li>
+</ul>
+</blockquote>
+<hr>
+<h3>📋 제목 및 레이블 설정</h3>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python">plt.xlabel('X axis')  # x축 레이블
+plt.ylabel('Y axis')  # y축 레이블
+plt.title('X-Y graph')  # 차트 제목
+</code></pre></pre>
+<img alt="이미지" src="https://bimuiyejfcapaxqlgkre.supabase.co/storage/v1/object/public/blog-images/posts/24/1764733508542.png" style="max-width: 60%; height: auto; display: block; margin: 20px auto; cursor: pointer; transition: opacity 0.2s ease-in-out;">
+<hr>
+<h3>📋 여러 Plot 한 번에 그리기</h3>
+<p>여러 개의 선 그래프를 하나의 차트에 그릴 수 있습니다.</p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python">x = np.arange(4)
+y1 = np.arange(4)
+y2 = [1, 4, 6, 8]
+y3 = np.arange(3, 13, 3)
+
+plt.plot(x, y1, label='y1', color='indianred')
+plt.plot(x, y2, label='y2', color='mediumturquoise')
+plt.plot(x, y3, label='y3', color='chartreuse')
+plt.legend(loc='best')
+plt.show()
+</code></pre></pre>
+<p><strong>Legend (범례) 설정:</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python">plt.legend(loc='best', prop={'size': 13, 'weight': 'bold', 'family': 'serif'})
+</code></pre></pre>
+<ul>
+<li>
+<p><strong>loc 옵션:</strong></p>
+<ul>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">'best'</code>: 자동으로 최적의 위치 찾기 (권장)</li>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">'upper left'</code>, <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">'upper right'</code>, <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">'lower left'</code>, <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">'lower right'</code></li>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">'center left'</code>, <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">'center right'</code>, <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">'lower center'</code>, <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">'upper center'</code>, <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">'center'</code></li>
+</ul>
+</li>
+<li>
+<p><strong>prop 옵션:</strong></p>
+<ul>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">size</code>: 폰트 크기</li>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">weight</code>: 폰트 굵기 (<code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">'bold'</code>, <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">'normal'</code>)</li>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">family</code>: 폰트 패밀리 (여러 폰트를 나열해서 지정 가능)</li>
+</ul>
+</li>
+</ul>
+<img alt="이미지" src="https://bimuiyejfcapaxqlgkre.supabase.co/storage/v1/object/public/blog-images/posts/24/1764733542627.png" style="max-width: 60%; height: auto; display: block; margin: 20px auto; cursor: pointer; transition: opacity 0.2s ease-in-out;">
+<hr>
+<h3>📋 Bar Chart (막대 그래프)</h3>
+<p><strong>기본 사용법:</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python">x = np.arange(6)
+y = [80, 85, 70, 60, 50, 90]
+
+plt.bar(x, y)
+plt.show()
+</code></pre></pre>
+<p><strong>스타일 옵션:</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python">plt.bar(x, y, 
+        color=['orange', 'pink', 'skyblue'],  # 막대 색깔
+        edgecolor='crimson',  # 막대 테두리 색깔
+        linewidth=4,  # 막대 테두리 두께
+        alpha=0.5,  # 막대 투명도
+        width=0.5)  # 막대 너비
+</code></pre></pre>
+<img alt="이미지" src="https://bimuiyejfcapaxqlgkre.supabase.co/storage/v1/object/public/blog-images/posts/24/1764733672065.png" style="max-width: 60%; height: auto; display: block; margin: 20px auto; cursor: pointer; transition: opacity 0.2s ease-in-out;">
+<h3>📋 실습: 교통사고 데이터 분석</h3>
+<p><strong>데이터 탐색:</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python"># 기본 정보 확인
+data.shape  # (4065, 27)
+data.info()
+
+# 주요 컬럼 확인
+data['사고유형_대분류'].value_counts()
+data['주야'].value_counts()  # 주간/야간
+</code></pre></pre>
+<p><strong>요일별 주간 차대차 교통사고 건수 시각화:</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python"># 차대차 사고 필터링
+car_car = data[data['사고유형_대분류'] == '차대차']
+daytime_collision = car_car[car_car['주야'] == '주간']
+
+# 요일별 사건 발생 횟수
+date = daytime_collision.value_counts('요일')
+date = date[['월', '화', '수', '목', '금', '토', '일']]  # 요일 순서 정렬
+
+# 막대 그래프 그리기
+x = date.index
+y = date.values
+
+plt.bar(x, y)
+plt.title('요일별 주간 차대차 교통사고 건수')
+plt.xlabel('요일')
+plt.ylabel('사고 건수')
+plt.show()
+</code></pre></pre>
+<img alt="이미지" src="https://bimuiyejfcapaxqlgkre.supabase.co/storage/v1/object/public/blog-images/posts/24/1764733867429.png" style="max-width: 60%; height: auto; display: block; margin: 20px auto; cursor: pointer; transition: opacity 0.2s ease-in-out;">
+<hr>
+<h2>💡 핵심 정리</h2>
+<h3>배운 것</h3>
+<ul>
+<li><strong>Matplotlib</strong>: 데이터 시각화를 위한 Python 라이브러리</li>
+<li><strong>한글 폰트 설정</strong>: OS별로 적절한 폰트 설정 필요 (macOS: AppleGothic, Windows: Malgun Gothic)</li>
+<li><strong>Line Graph</strong>: <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">plt.plot()</code> - 선 그래프 그리기</li>
+<li><strong>Bar Chart</strong>: <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">plt.bar()</code> - 막대 그래프 그리기</li>
+<li><strong>스타일 옵션</strong>: color, linewidth, linestyle, marker 등 다양한 옵션으로 차트 꾸미기</li>
+<li><strong>그룹 막대 그래프</strong>: x축을 공유하여 여러 데이터를 나란히 비교</li>
+<li><strong>Tick 설정</strong>: <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">np.arange()</code> 또는 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">np.linspace()</code>로 자동 생성 가능</li>
+<li><strong>Legend</strong>: <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">loc='best'</code>로 자동 최적 위치 설정</li>
+</ul>
+<h3>인사이트</h3>
+<ul>
+<li>데이터 분석 결과를 시각화하면 훨씬 직관적으로 이해할 수 있다</li>
+<li>한글 폰트 설정을 잊으면 경고가 발생하고 한글이 깨질 수 있다</li>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">np.linspace()</code>는 기본적으로 실수를 반환하므로 정수가 필요하면 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">dtype=int</code> 지정 필요</li>
+<li>그룹 막대 그래프는 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">x - width/2</code>, <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">x + width/2</code>로 위치를 조정하여 나란히 배치</li>
+</ul>
+<h3>주의사항</h3>
+<ul>
+<li>⚠️ <strong>한글 폰트 설정 필수</strong>: matplotlib에서 한글을 사용하려면 반드시 폰트 설정 필요</li>
+<li>⚠️ <strong>np.linspace() 실수 반환</strong>: 기본적으로 float를 반환하므로 정수가 필요하면 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">dtype=int</code> 지정</li>
+<li>⚠️ <strong>y값은 필수</strong>: <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">plt.plot(y)</code> - y값(데이터)은 필수, x값은 선택적</li>
+<li>✅ <strong>Tick 자동 생성 권장</strong>: 데이터가 많아지면 수동 지정보다 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">np.arange()</code> 사용 권장</li>
+<li>✅ <strong>Legend 자동 위치</strong>: <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">loc='best'</code>로 자동으로 최적의 위치 찾기</li>
+</ul>
+<hr>
+<h2>🔍 추가 학습 필요 사항</h2>
+<ul class="contains-task-list">
+<li class="task-list-item"><input disabled="" type="checkbox"> 다른 차트 타입 (scatter, histogram, pie chart 등)</li>
+<li class="task-list-item"><input disabled="" type="checkbox"> 서브플롯 (subplot) 사용법</li>
+<li class="task-list-item"><input disabled="" type="checkbox"> 차트 저장 방법 (<code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">plt.savefig()</code>)</li>
+<li class="task-list-item"><input disabled="" type="checkbox"> 더 다양한 스타일 옵션</li>
+</ul>
+<hr>
+<h2>📝 실습/과제</h2>
+<h3>완료한 것</h3>
+<ul>
+<li>교통사고 데이터 로드 및 탐색</li>
+<li>요일별 주간 차대차 교통사고 건수 시각화</li>
+<li>주간/야간별 사고유형 비교 (그룹 막대 그래프)</li>
+</ul></div></div><div class="MuiBox-root css-1cpq4zq"><hr class="MuiDivider-root MuiDivider-fullWidth css-7jtdmc"><h5 class="MuiTypography-root MuiTypography-h5 css-85yo2n">같은 카테고리의 다른 글</h5><div class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-2 css-1eikg3m"><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] Serializable 깊이 파기 — Part 2: 바이트에서 다시 객체로, 그리고 함정들</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">직렬화된 바이트를 ObjectInputStream이 어떤 순서로 읽어 객체로 복원하는지, 그때 생성자가 호출되지 않는다는 점을 확인합니다. | serialVersionUID, transient, 커스텀 readObject·writeObject, 역직렬화 취약점, Java 직렬화의 현재로 마무리합니다.</p><div class="MuiBox-root css-107ld1r"></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 4월 5일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] Serializable 깊이 파기 — Part 1: 객체가 바이트가 되는 과정</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">Python이나 JavaScript와 달리 Java는 왜 Serializable을 선언해야 하는지, 메서드가 하나도 없는 이 인터페이스가 무슨 일을 하는지 묻는 글입니다. | ObjectOutputStream이 만든 실제 바이트를 열어 보고, 참조 객체가 들어 있을 때는 어떻게 되는지 확인합니다.</p><div class="MuiBox-root css-107ld1r"></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 4월 5일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] 주식 거래 엔진 직접 만들기 - Part 3: 오더북을 어떻게 구현할 것인가</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">주식 거래 엔진의 오더북을 TreeMap과 ArrayDeque 조합으로 만든 이유를, PriorityQueue, LinkedList, Skip List와 비교하며 설명합니다. | 주문 취소를 Lazy Removal로 처리한 방법과 Kafka를 연결하며 만난 멱등성 문제를 마지막에 둡니다.</p><div class="MuiBox-root css-107ld1r"></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 27일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] 주식 거래 엔진 직접 만들기 - Part 2: Phase 1 — 모놀리식으로 시작하기</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">단일 JAR 모놀리식 구조인 Phase 1에서 만난 문제를 차례로 다룹니다. | SELECT FOR UPDATE로 동시성을 해결했고, 락 보유 시간을 줄이고, 락 획득 순서를 통일해 데드락 위험을 없앴습니다. @Transactional 원칙과 Lazy Loading 함정도 짚습니다.</p><div class="MuiBox-root css-107ld1r"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Java</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Spring Boot</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">JPA</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">+2</span></div></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 27일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] 주식 거래 엔진 직접 만들기 - Part 1: 왜 주식 거래 엔진인가</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">F-lab 멘토링 프로젝트로 주식 거래 엔진을 직접 설계하고 구현한 과정을 기록하는 시리즈의 첫 글입니다. | 프로젝트를 고른 기준과 멀티모듈 구조, Phase 로드맵, 시리즈 전체에서 답할 질문들을 먼저 밝힙니다.</p><div class="MuiBox-root css-107ld1r"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Java</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Spring Boot</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Kafka</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">+5</span></div></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 27일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[개발자가 직접 써봤어요] Claude Code 완전 가이드: 설치부터 멀티에이전트까지</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">Claude Code를 Spring Boot와 Kafka 기반 주식 매매 엔진 프로젝트에 적용해 본 경험을 바탕으로, 설치부터 멀티에이전트까지 소개합니다. | CLAUDE.md, Skills, Subagents, Hooks, MCP, Agent Teams의 여섯 레이어와 Cursor AI와의 비교, 주의사항이 나옵니다.</p><div class="MuiBox-root css-107ld1r"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Claude Code</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">AI</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Developer Tools</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">+4</span></div></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 9일</span></div></div></div></div><div class="MuiBox-root css-1b94f21"><a class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways css-104ms0" href="/blog/posts" data-discover="true"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowBackIcon"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z"></path></svg>게시글 목록으로 돌아가기</a></div><button class="MuiButtonBase-root MuiFab-root MuiFab-circular MuiFab-sizeMedium MuiFab-primary MuiFab-root MuiFab-circular MuiFab-sizeMedium MuiFab-primary css-1nl6bps" tabindex="0" type="button" aria-label="scroll to top" style="opacity: 0; visibility: hidden;"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="KeyboardArrowUpIcon"><path d="M7.41 15.41 12 10.83l4.59 4.58L18 14l-6-6-6 6z"></path></svg></button></div></div></div></div><footer style="text-align: center; padding: 2rem 0px; color: rgb(0, 0, 0); font-size: 0.9rem; border-top: 1px solid rgb(0, 0, 0); margin-top: auto; background-color: rgb(255, 255, 255);"><p>© 2025 DevTaco Blog. All rights reserved.</p></footer><div class="MuiBox-root css-1hyfx7x"><div class="visitor-counter MuiBox-root css-19midj6"><h6 class="MuiTypography-root MuiTypography-h6 MuiTypography-gutterBottom css-izz7ci">방문자 수</h6><div class="MuiBox-root css-zwd3xv"><h4 class="MuiTypography-root MuiTypography-h4 css-1dg27va">91</h4><p class="MuiTypography-root MuiTypography-body2 css-l6pb42">오늘</p><h6 class="MuiTypography-root MuiTypography-h6 css-kh42wg">총 91명</h6></div></div></div><div class="MuiBox-root css-1y95mt5" data-testid="terminal-navigation"><div class="MuiBox-root css-1kw3y0a"><p class="MuiTypography-root MuiTypography-body2 css-1fktdtb">devtaco@portfolio:~$ navigation</p><div class="MuiBox-root css-j0ozid"><p class="MuiTypography-root MuiTypography-body2 css-1cn40rb">⌘M to close</p><button class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-470314" tabindex="0" type="button" id=":r1:"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeSmall css-vh810p" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="CloseIcon"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg></button></div></div><div class="MuiBox-root css-13t3iqc"><div class="MuiBox-root css-0"><p class="MuiTypography-root MuiTypography-body2 css-cbhj4f">Navigation:</p><div class="MuiBox-root css-1kkt86i"><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">1 → home</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">2 → about</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">3 → posts</p></div></div><div class="MuiBox-root css-0"><p class="MuiTypography-root MuiTypography-body2 css-cbhj4f">External:</p><div class="MuiBox-root css-1kkt86i"><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">g → github</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">e → email</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">l → linkedin</p></div></div></div><p class="MuiTypography-root MuiTypography-body2 css-1e7vt2">Press number keys (1,2,3) or letter keys (g,e,l) to navigate. Use ⌘+M to close.</p></div></div></div></body></html>

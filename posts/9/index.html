@@ -1,0 +1,221 @@
+<!DOCTYPE html><html lang="en"><head><script type="text/javascript">!function(n){if("/"===n.search[1]){var a=n.search.slice(1).split("&").map((function(n){return n.replace(/~and~/g,"&")})).join("?");window.history.replaceState(null,null,n.pathname.slice(0,-1)+a+n.hash)}}(window.location)</script><meta charset="utf-8"><link rel="icon" href="/blog/favicon.ico"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#000000"><meta name="keywords" content="Java, Kotlin, Spring Boot, MSA, 개발, 백엔드, coroutine"><meta name="author" content="DevTaco"><meta property="og:image" content="https://devtaco30.github.io/blog/og-image.png"><meta property="twitter:image" content="https://devtaco30.github.io/blog/og-image.png"><meta property="twitter:url" content="https://devtaco30.github.io/blog/"><link rel="apple-touch-icon" href="/blog/apple-touch-icon.png"><link rel="manifest" href="/blog/manifest.json"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&amp;family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet"><script defer="defer" src="/blog/static/js/main.404b9165.js"></script><link href="/blog/static/css/main.5b86466f.css" rel="stylesheet"><style data-emotion="css" data-s=""></style><title>정적 블로그에서 동적 블로그로: Supabase를 선택한 이유 | DevTaco Blog</title><meta name="description" content="정적 마크다운 블로그의 한계와 Supabase 도입 과정을 공유합니다. Backend 개발자 관점에서 PostgreSQL 기반 서버리스 아키텍처의 장점을 알아봅니다."><meta property="og:title" content="정적 블로그에서 동적 블로그로: Supabase를 선택한 이유"><meta property="og:description" content="정적 마크다운 블로그의 한계와 Supabase 도입 과정을 공유합니다. Backend 개발자 관점에서 PostgreSQL 기반 서버리스 아키텍처의 장점을 알아봅니다."><meta property="og:type" content="article"><meta property="og:url" content="https://devtaco30.github.io/blog/posts/9"><meta name="twitter:card" content="summary"></head><body><noscript>You need to enable JavaScript to run this app.</noscript><div id="root"><div class="App"><div class="MuiBox-root css-kurlqb"><div class="MuiBox-root css-171onha"><button class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-1f6w95t" tabindex="0" type="button" id=":r0:"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="MenuIcon"><path d="M3 18h18v-2H3zm0-5h18v-2H3zm0-7v2h18V6z"></path></svg></button><div class="MuiBox-root css-1szb58x"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-218waq" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowBackIcon"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z"></path></svg><div class="MuiBox-root css-wq4jw1"><span>⌘+M</span></div></div></div></div><div class="MuiContainer-root css-15jb5o1" data-testid="page-container"><div class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-2 MuiGrid-spacing-md-3 css-1ht06td"><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-md-12 css-15j76c0"><div class="MuiBox-root css-15rigdj"><nav class="MuiTypography-root MuiTypography-body1 MuiBreadcrumbs-root css-1v2kxik"><ol class="MuiBreadcrumbs-ol css-51eq8m"><li class="MuiBreadcrumbs-li"><a class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways css-gj78h6" href="/blog/posts" data-discover="true">게시글 목록</a></li><li aria-hidden="true" class="MuiBreadcrumbs-separator css-1nd5pgh">/</li><li class="MuiBreadcrumbs-li"><p class="MuiTypography-root MuiTypography-body1 css-1cr0rz6">정적 블로그에서 동적 블로그로: Supabase를 선택한 이유</p></li></ol></nav><div class="MuiBox-root css-15djlns"><button class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-1y18wdw" tabindex="0" type="button" id=":r9:"><span class="MuiButton-icon MuiButton-startIcon MuiButton-iconSizeMedium css-1ygddt1"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowBackIcon"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z"></path></svg></span><div class="MuiBox-root css-0"><span class="MuiTypography-root MuiTypography-caption css-115rlu8">이전글</span><p class="MuiTypography-root MuiTypography-body2 css-10qk5g4">EST AI - Orientation(AI)</p></div></button><button class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-1k0z50p" tabindex="0" type="button" id=":ra:"><div class="MuiBox-root css-0"><span class="MuiTypography-root MuiTypography-caption css-115rlu8">다음글</span><p class="MuiTypography-root MuiTypography-body2 css-10qk5g4">Web3.0: 탈중앙화로 개인이 주권을 갖는 참여형 웹의 미래</p></div><span class="MuiButton-icon MuiButton-endIcon MuiButton-iconSizeMedium css-6bt4d2"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowForwardIcon"><path d="m12 4-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"></path></svg></span></button></div><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-10t0qv5" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h4 class="MuiTypography-root MuiTypography-h4 css-k5jvd2">정적 블로그에서 동적 블로그로: Supabase를 선택한 이유</h4><p class="MuiTypography-root MuiTypography-body1 css-104xg3">정적 마크다운 블로그의 한계와 Supabase 도입 과정을 공유합니다. | Backend 개발자 관점에서 PostgreSQL 기반 서버리스 아키텍처의 장점을 알아봅니다.</p><div class="MuiBox-root css-1prrn6n"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Supabase</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">PostgreSQL</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Backend</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Migration</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Database</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Serverless</span></div></div><p class="MuiTypography-root MuiTypography-body2 css-l6pb42">2025년 9월 1일 오후 09:22</p></div><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-1i779yj" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><div class="MuiBox-root css-13lazol"><p>안녕하세요! 오늘은 개발자 블로그를 만들면서 겪은 문제점과 그 해결책으로 Supabase를 선택한 이유에 대해 이야기해보려고 합니다.</p>
+<div style="text-align: center; margin: 100px 0px;">
+<img alt="supabase logo" class="custom-size" src="https://bimuiyejfcapaxqlgkre.supabase.co/storage/v1/object/public/blog-images/posts/9/1756792954207.png" style="cursor: pointer; transition: opacity 0.2s ease-in-out;">
+<div style="font-size: 18px; font-weight: bold; color: rgb(51, 51, 51);">Supabase</div>
+  </div>
+
+<p>이 개발 블로그를 시작한 이유는 이력 소개용이었어요. 그런데 하는 김에, 그동안 개발하면서 또 개발해나가면서 알게 되는 것들을 기록해도 좋을 것 같아서, 포스팅 페이지도 만들게 되었습니다.</p>
+<p>처음엔 정적 마크다운 파일로 포스트를 작성하고 Git에 직접 커밋하는 방식을 사용했어요. 방문자가 그렇게 많을 것 같지도 않았고, 저의 사적 공간이 될 거라 생각했었거든요. 그런데 게시물을 4개쯤 써나가니까 이미지를 넣는 방식이나, 게시글을 수정할 때마다 배포를 새로해야 한다거나 하는 불편함이 계속 발생하더라구요.</p>
+<p>하지만 그렇다고 해서 백엔드 서버를 별도로 만들고 database instance까지 새로 띄워 진행하는 건 시간과 비용을 모두 낭비하는 거라고 생각됐어요. 방법이 없을까 하고 찾아보니 Supabase를 이용해서 PostgreSQL 엔진과 storage를 사용하면 될 것 같았어요. 그래서 마이그레이션을 진행해보았습니다.</p>
+<p>이 글에서는 그 과정과 선택 이유, 그리고 Backend 개발자 관점에서의 장점들을 정리해보려고 합니다.</p>
+<h2>🚨 <strong>기존 정적 블로그의 불편함</strong></h2>
+<h3>1. Firebase vs Supabase 비교</h3>
+<p>초기엔 저장용 서드파티를 따로 쓸 일이 없을 거라 판단해서 Firebase에 방문자 수 정도만 기록하는 용도로 연동했었어요. 이미 Firebase가 연동되어 있어서, 이걸 이용하면 어떨까 하고도 생각이 들어서 두 서비스를 비교해보았어요.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>구분</th><th>Firebase Firestore</th><th>Supabase (PostgreSQL)</th></tr></thead><tbody><tr><td><strong>🗄️ 데이터베이스</strong></td><td>NoSQL 문서 기반</td><td>관계형 데이터베이스</td></tr><tr><td><strong>🔍 쿼리 기능</strong></td><td>제한적 쿼리, JOIN 없음</td><td>JOIN, 서브쿼리, 윈도우 함수 등 강력한 쿼리</td></tr><tr><td><strong>⚡ 트랜잭션</strong></td><td>제한적 ACID 지원</td><td>완전한 ACID 트랜잭션</td></tr><tr><td><strong>🏗️ 스키마</strong></td><td>유연하지만 검증 어려움</td><td>엄격한 스키마, 제약 조건 설정</td></tr><tr><td><strong>💰 비용 구조</strong></td><td>읽기/쓰기 횟수 기반 과금</td><td>저장 용량 기반 과금</td></tr><tr><td><strong>🔒 보안</strong></td><td>기본 보안 규칙</td><td>Row Level Security (RLS)</td></tr><tr><td><strong>📊 인덱싱</strong></td><td>자동 인덱싱, 제한적</td><td>복합 인덱스, 부분 인덱스 등 고급 인덱싱</td></tr><tr><td><strong>🔄 실시간</strong></td><td>실시간 리스너 지원</td><td>실시간 기능 지원 (현재 미사용)</td></tr><tr><td><strong>🌐 API</strong></td><td>자동 생성, 제한적 커스터마이징</td><td>REST API + GraphQL, 완전한 커스터마이징</td></tr></tbody></table>
+<p>아무래도 게시물과 그 게시물에 들어갈 이미지들을 별도로 적재하고 관리하려면 Supabase가 좀 더 좋을 것 같았고, 비용 구조는 좀 애매했어요. 블로그가 뭔가 폭발적으로 잘 될 거라는 예상은 안되서, 회수 기반 과금이 오히려 나을 것 같았는데, 어차피 Supabase에 프리티어가 있으니 오히려 당장은 프리티어로 충분할 거라 생각이 됐어요. 게시글이 늘어나면 인덱싱도 당연히 필요할테니 PostgreSQL이 좀 더 우위를 점했었습니다.</p>
+<h3>2. 정적 파일 관리의 한계</h3>
+<ul>
+<li><strong>에디터 없음</strong>: 마크다운 에디터가 없어서 포스트 작성이 불편</li>
+<li><strong>관리자 모드 없음</strong>: 포스트 관리, 수정, 삭제가 어려움 -&gt; 매번 수정 이후 배포 필요</li>
+<li><strong>이미지 파일 관리</strong>: 포스트에 들어가는 이미지를 항상 Git에 함께 올려야 함</li>
+</ul>
+<p>아마 저처럼 블로그를 간단하게 사용하기 위해 이런 방식으로 운영해보신 분들이라면 이런 불편함을 많이 느끼셨을 거예요. 특히 이미지 하나 추가하려고 해도 Git에 커밋하고 푸시해야 하는 번거로움이 있었죠.</p>
+<h2>🔍 <strong>해결책 탐색 과정</strong></h2>
+<p>그런데 이런 문제들을 해결하려면 에디터도 만들어야하고, 또 게시글을 작성하면서 들어가는 이미지 관리 (붙여넣기, 드래그앤드랍, 작성 중 삭제 등등) 도 복잡한데다, 그걸 관리할 백엔드 로직, database 를 다 설정해야하는 등 머리가 복잡해져 왔었어요.</p>
+<h3>백엔드 서버 도입 고려</h3>
+<p>처음에는 별도의 백엔드 서버를 구축하고 데이터베이스도 별도로 도입하는 것을 고려했어요. "그냥 Spring Boot로 API 서버 하나 만들고, PostgreSQL 연결해서 하면 되겠다" 이런 생각이 들었거든요.</p>
+<p>하지만 이는 다음과 같은 문제를 야기했어요:</p>
+<ul>
+<li><strong>비용 증가</strong>: 서버 호스팅 비용, 데이터베이스 비용</li>
+<li><strong>유지보수 복잡성</strong>: 서버 관리, 보안 설정, 백업 등</li>
+<li><strong>개발 시간 증가</strong>: API 설계, 배포 파이프라인 구축 등</li>
+</ul>
+<p>위에도 언급했지만, 개인 블로그 하나 운영하려고 서버 비용까지 내는 건 좀 과한 것 같았어요. "이거 뭔가 더 나은 방법이 없을까?" 이런 고민을 하게 되었죠.</p>
+<h3>Supabase 발견</h3>
+<p><strong>Cursor AI</strong> 에게 상황을 설명하고 괜찮은 플랫폼이 없는지 물어봤죠. Supabase에 를 추천하더군요! 그래서 좀 더 알아보니 꽤 쓸만하다는 생각이 들었어요.</p>
+<p>Supabase는 다음과 같은 장점을 제공했어요:</p>
+<ul>
+<li><strong>PostgreSQL 기반</strong>: 강력한 관계형 데이터베이스 기능</li>
+<li><strong>백엔드 서버 불필요</strong>: 서버리스 아키텍처로 서버 관리 불필요</li>
+<li><strong>MCP 지원</strong>: 개발 편의성 향상</li>
+<li><strong>무료 티어</strong>: 어느 정도 용량까지 무료로 제공</li>
+</ul>
+<p>특히 MCP까지 지원한다는 점이 현재 저에게 정말 매력적이었어요. 만드는 속도가 정말 빨라질 것 같았거든요.</p>
+<h2>✅ <strong>Supabase 선택 이유</strong></h2>
+<p>솔직히 말하면, 이 정도 기능을 제공하는데 서버 관리할 필요가 없다는 게 정말 놀라웠어요. "이거 진짜 맞나?" 싶을 정도로 좋은 조건이었죠.</p>
+<h3>1. 기술적 장점</h3>
+<ul>
+<li><strong>PostgreSQL</strong>: ACID 트랜잭션, 복잡한 쿼리, 인덱싱 등 강력한 DB 기능</li>
+<li><strong>Row Level Security (RLS)</strong>: 데이터 접근 제어 및 보안</li>
+<li><strong>실시간 기능</strong>: WebSocket 기반 실시간 업데이트</li>
+<li><strong>인증 시스템</strong>: OAuth, JWT 등 다양한 인증 방식 지원</li>
+</ul>
+<h3>2. 비용 효율성</h3>
+<ul>
+<li><strong>무료 티어</strong>: 개발 및 소규모 프로젝트에 충분한 용량</li>
+<li><strong>서버 비용 없음</strong>: 백엔드 서버 구축 및 유지보수 비용 절약</li>
+<li><strong>확장성</strong>: 필요에 따라 유료 플랜으로 업그레이드 가능</li>
+</ul>
+<h3>3. 개발 편의성</h3>
+<ul>
+<li><strong>MCP 지원</strong>: 개발 도구와의 연동성 향상</li>
+<li><strong>자동 API 생성</strong>: 데이터베이스 스키마 기반 자동 API 생성</li>
+<li><strong>관리 대시보드</strong>: 직관적인 데이터베이스 관리 인터페이스</li>
+</ul>
+<h2>🛠️ <strong>마이그레이션 과정</strong></h2>
+<h3>1. 데이터베이스 설계</h3>
+<img alt="테이블 구조 및 RLS 정책" src="https://bimuiyejfcapaxqlgkre.supabase.co/storage/v1/object/public/blog-images/posts/9/1756728171709.png" style="max-width: 60%; height: auto; display: block; margin: 20px auto; cursor: pointer; transition: opacity 0.2s ease-in-out;">
+<div align="center">
+<strong>Supabase Dashboard에서 posts , visitor_stats 테이블 구조와 RLS 정책 확인</strong>
+</div>
+<img alt="RLS 정책 상태" src="https://bimuiyejfcapaxqlgkre.supabase.co/storage/v1/object/public/blog-images/posts/9/1756728279373.png" style="max-width: 60%; height: auto; display: block; margin: 20px auto; cursor: pointer; transition: opacity 0.2s ease-in-out;">
+<div align="center">
+<strong>각 테이블의 RLS 정책 상태 (Unrestricted)</strong>
+</div>
+<p>게시글과 방문자 통계를 위한 기본적인 테이블 구조를 설계했어요. PostgreSQL의 배열 타입을 활용해서 태그를 효율적으로 관리할 수 있도록 했고, 조회수 추적과 이미지 관리 기능도 포함시켰어요.</p>
+<h3>2. 환경 설정</h3>
+<img alt="Github OAuth 설정" src="https://bimuiyejfcapaxqlgkre.supabase.co/storage/v1/object/public/blog-images/posts/9/1756728193883.png" style="max-width: 60%; height: auto; display: block; margin: 20px auto; cursor: pointer; transition: opacity 0.2s ease-in-out;">
+<div align="center">
+<strong>GitHub OAuth App 설정</strong>
+</div>
+<img alt="Supabase OAuth Provider" src="https://bimuiyejfcapaxqlgkre.supabase.co/storage/v1/object/public/blog-images/posts/9/1756728213635.png" style="max-width: 60%; height: auto; display: block; margin: 20px auto; cursor: pointer; transition: opacity 0.2s ease-in-out;">
+<div align="center">
+<strong>Supabase 에 연동할 Provider 세팅</strong>
+</div>
+<ul>
+<li><strong>환경변수 관리</strong>: GitHub Secrets를 통한 안전한 설정</li>
+<li><strong>GitHub Actions</strong>: 자동 빌드 및 배포 파이프라인</li>
+<li><strong>CORS 설정</strong>: GitHub Pages와 Supabase 연동</li>
+</ul>
+<h3>3. 기능 구현</h3>
+<img alt="관리자 대시보드" src="https://bimuiyejfcapaxqlgkre.supabase.co/storage/v1/object/public/blog-images/posts/9/1756728358424.png" style="max-width: 60%; height: auto; display: block; margin: 20px auto; cursor: pointer; transition: opacity 0.2s ease-in-out;">
+<div align="center">
+<strong>관리자 대시보드에서 게시글 관리 및 이미지 업로드</strong>
+</div>
+<ul>
+<li><strong>마크다운 에디터</strong>: 포스트 작성 및 편집을 위한 에디터 구현</li>
+<li><strong>관리자 모드</strong>: 인증된 사용자만 접근 가능한 관리자 페이지</li>
+<li><strong>GitHub 계정 연동</strong>: OAuth를 통한 사용자 인증</li>
+<li><strong>Supabase 테이블 접근 권한</strong>: RLS를 통한 보안 설정</li>
+<li><strong>게시글 CRUD</strong>: 관리자 페이지를 통한 포스트 관리</li>
+<li><strong>이미지 업로드</strong>: Supabase Storage를 통한 이미지 관리</li>
+<li><strong>방문자 카운팅</strong>: 실시간 방문자 통계</li>
+<li><strong>조회수 추적</strong>: 게시글별 조회수 관리</li>
+</ul>
+<p>이제는 정적 블로그에서 느꼈던 모든 불편함들이 해결됐습니다. 관리자인 제 계정으로만 접근 가능한 에디터와 미리보기, 드래그앤드롭으로 붙이는 이미지, 게시글의 CRUD 모두 구현돼서 게시글 관리가 편해졌어요!</p>
+<h2>🎯 <strong>결과 및 개선점</strong></h2>
+<h3>1. 관리 편의성 향상</h3>
+<ul>
+<li><strong>포스트 작성</strong>: 마크다운 에디터를 통한 직관적인 작성</li>
+<li><strong>이미지 관리</strong>: 드래그 앤 드롭으로 간편한 이미지 업로드</li>
+</ul>
+<h3>2. 기능 개선</h3>
+<ul>
+<li><strong>데이터베이스 쿼리</strong>: 인덱싱을 통한 빠른 검색</li>
+<li><strong>확장성</strong>: 향후 기능 추가 시 유연한 확장 가능</li>
+</ul>
+<h3>3. 비용 절약</h3>
+<ul>
+<li><strong>서버 비용</strong>: 백엔드 서버 구축 비용 절약</li>
+<li><strong>유지보수</strong>: 서버 관리 시간 및 인력 절약</li>
+<li><strong>개발 시간</strong>: 기존 인프라 활용으로 개발 시간 단축</li>
+</ul>
+<h2>📋 <strong>결론</strong></h2>
+<p>정적 블로그에서 동적 블로그로의 전환은 개발하면서 느낀 불편함을 해결하기 위한 개선 작업이었어요. Supabase를 선택한 이유는 강력한 데이터베이스 기능과 백엔드 서버 없이도 구현 가능한 서버리스 아키텍처, 그리고 합리적인 비용 때문이었습니다.</p>
+<p>특히 Backend 개발자로서 PostgreSQL의 강력한 기능을 활용할 수 있다는 점이 매력적이었어요. RLS, 트랜잭션, 복잡한 쿼리 등 기존에 별도 서버에서 구현해야 했던 기능들을 Supabase에서 제공하는 API로 간단하게 사용할 수 있다는 점이 큰 장점이었습니다.</p>
+<h2>🚀 <strong>개발자로서 정말 편한 점: MCP 지원</strong></h2>
+<p>이번 Supabase와의 연동 작업을 할 때 Supabase가 제공하는 MCP와 Cursor AI 연동을 통해 정말 편하게 작업을 했습니다.</p>
+<img alt="MPC 연동" src="https://bimuiyejfcapaxqlgkre.supabase.co/storage/v1/object/public/blog-images/posts/9/1756796232192.png" style="max-width: 60%; height: auto; display: block; margin: 20px auto; cursor: pointer; transition: opacity 0.2s ease-in-out;">
+<div align="center">
+<strong>Cursor AI 에 Supabse MCP가 연동된 상태</strong>
+</div>
+<img alt="MCP 활용" src="https://bimuiyejfcapaxqlgkre.supabase.co/storage/v1/object/public/blog-images/posts/9/1756796277929.png" style="max-width: 60%; height: auto; display: block; margin: 20px auto; cursor: pointer; transition: opacity 0.2s ease-in-out;">
+<div align="center">
+<strong>Cursor AI 에 연동된 기능을 통해 테이블 인덱스 상태를 조회</strong>
+</div>
+<p><strong>MCP(Multi-modal Context Protocol)가 제공하는 개발 편의성:</strong></p>
+<ul>
+<li><strong>데이터베이스 작업 자동화</strong>: 복잡한 SQL 쿼리나 DDL 작업을 AI와 함께 구현</li>
+<li><strong>실시간 데이터베이스 모니터링</strong>: 로그, 성능 어드바이저, 보안 취약점 등 즉시 확인</li>
+<li><strong>스키마 설계 및 구현</strong>: 테이블 구조 설계, 인덱스 생성, RLS 정책 설정 등을 AI와 함께 진행</li>
+</ul>
+<p><strong>실제 경험:</strong>
+새로운 블로그 시스템을 구축할 때, MCP를 통해 데이터베이스 스키마 설계부터 RLS 정책 설정까지 모든 과정을 AI와 함께 진행할 수 있었어요. 복잡한 보안 정책도 자연어로 설명하고 즉시 구현할 수 있어서 개발 속도가 정말 빨라졌습니다.</p>
+<p><strong>결론:</strong>
+MCP 지원은 단순한 기능이 아니라, 개발자의 생산성을 혁신적으로 향상시키는 핵심 요소였어요.</p>
+<hr>
+<h2>🚀 <strong>실무 적용 가이드</strong></h2>
+<p><strong>Backend 개발자라면:</strong></p>
+<ul>
+<li>✅ 정적 블로그에서 동적 블로그로 전환 시 Supabase 고려</li>
+<li>✅ PostgreSQL 기반 서버리스 아키텍처 활용</li>
+<li>✅ RLS를 통한 보안 설정</li>
+<li>✅ GitHub OAuth 연동으로 사용자 인증 구현</li>
+</ul>
+<p><strong>블로그 전환 시 체크리스트:</strong></p>
+<ul>
+<li>✅ <strong>데이터베이스 설계</strong>: 테이블 구조 및 관계 설계</li>
+<li>✅ <strong>인증 시스템</strong>: OAuth 연동 및 권한 관리</li>
+<li>✅ <strong>관리자 기능</strong>: 포스트 CRUD 및 이미지 관리</li>
+<li>✅ <strong>배포 파이프라인</strong>: GitHub Actions 연동</li>
+<li>✅ <strong>환경변수 관리</strong>: GitHub Secrets 활용</li>
+</ul>
+<p>정적 블로그의 한계를 느끼고 있다면, Supabase를 활용한 동적 시스템 전환을 고려해봐도 좋을 것 같습니다.</p>
+<p>솔직히 말하면, 처음에는 "이거 뭔가 복잡할 것 같은데?" 이런 생각이 들었어요. 하지만 실제로 해보니 생각보다 훨씬 간단했고, 오히려 더 편리해졌어요.</p>
+<hr>
+<p><em>이 포스트는 정적 블로그에서 동적 블로그로 전환한 경험을 바탕으로 작성되었습니다. Supabase 도입을 고려하고 있는 개발자들에게 도움이 되길 바랍니다.</em></p></div></div><div class="MuiBox-root css-1cpq4zq"><hr class="MuiDivider-root MuiDivider-fullWidth css-7jtdmc"><h5 class="MuiTypography-root MuiTypography-h5 css-85yo2n">같은 카테고리의 다른 글</h5><div class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-2 css-1eikg3m"><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] Serializable 깊이 파기 — Part 2: 바이트에서 다시 객체로, 그리고 함정들</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">직렬화된 바이트를 ObjectInputStream이 어떤 순서로 읽어 객체로 복원하는지, 그때 생성자가 호출되지 않는다는 점을 확인합니다. | serialVersionUID, transient, 커스텀 readObject·writeObject, 역직렬화 취약점, Java 직렬화의 현재로 마무리합니다.</p><div class="MuiBox-root css-107ld1r"></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 4월 5일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] Serializable 깊이 파기 — Part 1: 객체가 바이트가 되는 과정</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">Python이나 JavaScript와 달리 Java는 왜 Serializable을 선언해야 하는지, 메서드가 하나도 없는 이 인터페이스가 무슨 일을 하는지 묻는 글입니다. | ObjectOutputStream이 만든 실제 바이트를 열어 보고, 참조 객체가 들어 있을 때는 어떻게 되는지 확인합니다.</p><div class="MuiBox-root css-107ld1r"></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 4월 5일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] 주식 거래 엔진 직접 만들기 - Part 3: 오더북을 어떻게 구현할 것인가</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">주식 거래 엔진의 오더북을 TreeMap과 ArrayDeque 조합으로 만든 이유를, PriorityQueue, LinkedList, Skip List와 비교하며 설명합니다. | 주문 취소를 Lazy Removal로 처리한 방법과 Kafka를 연결하며 만난 멱등성 문제를 마지막에 둡니다.</p><div class="MuiBox-root css-107ld1r"></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 27일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] 주식 거래 엔진 직접 만들기 - Part 2: Phase 1 — 모놀리식으로 시작하기</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">단일 JAR 모놀리식 구조인 Phase 1에서 만난 문제를 차례로 다룹니다. | SELECT FOR UPDATE로 동시성을 해결했고, 락 보유 시간을 줄이고, 락 획득 순서를 통일해 데드락 위험을 없앴습니다. @Transactional 원칙과 Lazy Loading 함정도 짚습니다.</p><div class="MuiBox-root css-107ld1r"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Java</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Spring Boot</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">JPA</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">+2</span></div></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 27일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] 주식 거래 엔진 직접 만들기 - Part 1: 왜 주식 거래 엔진인가</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">F-lab 멘토링 프로젝트로 주식 거래 엔진을 직접 설계하고 구현한 과정을 기록하는 시리즈의 첫 글입니다. | 프로젝트를 고른 기준과 멀티모듈 구조, Phase 로드맵, 시리즈 전체에서 답할 질문들을 먼저 밝힙니다.</p><div class="MuiBox-root css-107ld1r"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Java</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Spring Boot</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Kafka</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">+5</span></div></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 27일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[개발자가 직접 써봤어요] Claude Code 완전 가이드: 설치부터 멀티에이전트까지</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">Claude Code를 Spring Boot와 Kafka 기반 주식 매매 엔진 프로젝트에 적용해 본 경험을 바탕으로, 설치부터 멀티에이전트까지 소개합니다. | CLAUDE.md, Skills, Subagents, Hooks, MCP, Agent Teams의 여섯 레이어와 Cursor AI와의 비교, 주의사항이 나옵니다.</p><div class="MuiBox-root css-107ld1r"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Claude Code</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">AI</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Developer Tools</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">+4</span></div></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 9일</span></div></div></div></div><div class="MuiBox-root css-1b94f21"><a class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways css-104ms0" href="/blog/posts" data-discover="true"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowBackIcon"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z"></path></svg>게시글 목록으로 돌아가기</a></div><button class="MuiButtonBase-root MuiFab-root MuiFab-circular MuiFab-sizeMedium MuiFab-primary MuiFab-root MuiFab-circular MuiFab-sizeMedium MuiFab-primary css-1nl6bps" tabindex="0" type="button" aria-label="scroll to top" style="opacity: 0; visibility: hidden;"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="KeyboardArrowUpIcon"><path d="M7.41 15.41 12 10.83l4.59 4.58L18 14l-6-6-6 6z"></path></svg></button></div></div></div></div><footer style="text-align: center; padding: 2rem 0px; color: rgb(0, 0, 0); font-size: 0.9rem; border-top: 1px solid rgb(0, 0, 0); margin-top: auto; background-color: rgb(255, 255, 255);"><p>© 2025 DevTaco Blog. All rights reserved.</p></footer><div class="MuiBox-root css-1hyfx7x"><div class="visitor-counter MuiBox-root css-19midj6"><h6 class="MuiTypography-root MuiTypography-h6 MuiTypography-gutterBottom css-izz7ci">방문자 수</h6><div class="MuiBox-root css-zwd3xv"><h4 class="MuiTypography-root MuiTypography-h4 css-1dg27va">105</h4><p class="MuiTypography-root MuiTypography-body2 css-l6pb42">오늘</p><h6 class="MuiTypography-root MuiTypography-h6 css-kh42wg">총 105명</h6></div></div></div><div class="MuiBox-root css-1y95mt5" data-testid="terminal-navigation"><div class="MuiBox-root css-1kw3y0a"><p class="MuiTypography-root MuiTypography-body2 css-1fktdtb">devtaco@portfolio:~$ navigation</p><div class="MuiBox-root css-j0ozid"><p class="MuiTypography-root MuiTypography-body2 css-1cn40rb">⌘M to close</p><button class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-470314" tabindex="0" type="button" id=":r1:"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeSmall css-vh810p" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="CloseIcon"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg></button></div></div><div class="MuiBox-root css-13t3iqc"><div class="MuiBox-root css-0"><p class="MuiTypography-root MuiTypography-body2 css-cbhj4f">Navigation:</p><div class="MuiBox-root css-1kkt86i"><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">1 → home</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">2 → about</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">3 → posts</p></div></div><div class="MuiBox-root css-0"><p class="MuiTypography-root MuiTypography-body2 css-cbhj4f">External:</p><div class="MuiBox-root css-1kkt86i"><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">g → github</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">e → email</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">l → linkedin</p></div></div></div><p class="MuiTypography-root MuiTypography-body2 css-1e7vt2">Press number keys (1,2,3) or letter keys (g,e,l) to navigate. Use ⌘+M to close.</p></div></div></div></body></html>

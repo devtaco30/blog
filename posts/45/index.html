@@ -1,0 +1,146 @@
+<!DOCTYPE html><html lang="en"><head><script type="text/javascript">!function(n){if("/"===n.search[1]){var a=n.search.slice(1).split("&").map((function(n){return n.replace(/~and~/g,"&")})).join("?");window.history.replaceState(null,null,n.pathname.slice(0,-1)+a+n.hash)}}(window.location)</script><meta charset="utf-8"><link rel="icon" href="/blog/favicon.ico"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#000000"><meta name="keywords" content="Java, Kotlin, Spring Boot, MSA, 개발, 백엔드, coroutine"><meta name="author" content="DevTaco"><meta property="og:image" content="https://devtaco30.github.io/blog/og-image.png"><meta property="twitter:image" content="https://devtaco30.github.io/blog/og-image.png"><meta property="twitter:url" content="https://devtaco30.github.io/blog/"><link rel="apple-touch-icon" href="/blog/apple-touch-icon.png"><link rel="manifest" href="/blog/manifest.json"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&amp;family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet"><script defer="defer" src="/blog/static/js/main.404b9165.js"></script><link href="/blog/static/css/main.5b86466f.css" rel="stylesheet"><style data-emotion="css" data-s=""></style><title>EST AI - 딥러닝 기초 (TensorFlow, Keras) | DevTaco Blog</title><meta name="description" content="딥러닝이 무엇인지, 머신러닝과 어디서 갈리는지 설명하고 TensorFlow와 Keras로 신경망을 구성합니다. 학생의 공부 시간으로 수학 성적을 예측하는 회귀 모델을 선형 회귀와 신경망 두 방식으로 만들어 비교합니다."><meta property="og:title" content="EST AI - 딥러닝 기초 (TensorFlow, Keras)"><meta property="og:description" content="딥러닝이 무엇인지, 머신러닝과 어디서 갈리는지 설명하고 TensorFlow와 Keras로 신경망을 구성합니다. 학생의 공부 시간으로 수학 성적을 예측하는 회귀 모델을 선형 회귀와 신경망 두 방식으로 만들어 비교합니다."><meta property="og:type" content="article"><meta property="og:url" content="https://devtaco30.github.io/blog/posts/45"><meta name="twitter:card" content="summary"></head><body><noscript>You need to enable JavaScript to run this app.</noscript><div id="root"><div class="App"><div class="MuiBox-root css-kurlqb"><div class="MuiBox-root css-171onha"><button class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-1f6w95t" tabindex="0" type="button" id=":r0:"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="MenuIcon"><path d="M3 18h18v-2H3zm0-5h18v-2H3zm0-7v2h18V6z"></path></svg></button><div class="MuiBox-root css-1szb58x"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-218waq" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowBackIcon"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z"></path></svg><div class="MuiBox-root css-wq4jw1"><span>⌘+M</span></div></div></div></div><div class="MuiContainer-root css-15jb5o1" data-testid="page-container"><div class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-2 MuiGrid-spacing-md-3 css-1ht06td"><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-md-12 css-15j76c0"><div class="MuiBox-root css-15rigdj"><nav class="MuiTypography-root MuiTypography-body1 MuiBreadcrumbs-root css-1v2kxik"><ol class="MuiBreadcrumbs-ol css-51eq8m"><li class="MuiBreadcrumbs-li"><a class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways css-gj78h6" href="/blog/posts" data-discover="true">게시글 목록</a></li><li aria-hidden="true" class="MuiBreadcrumbs-separator css-1nd5pgh">/</li><li class="MuiBreadcrumbs-li"><p class="MuiTypography-root MuiTypography-body1 css-1cr0rz6">EST AI - 딥러닝 기초 (TensorFlow, Keras)</p></li></ol></nav><div class="MuiBox-root css-15djlns"><button class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-1y18wdw" tabindex="0" type="button" id=":r9:"><span class="MuiButton-icon MuiButton-startIcon MuiButton-iconSizeMedium css-1ygddt1"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowBackIcon"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z"></path></svg></span><div class="MuiBox-root css-0"><span class="MuiTypography-root MuiTypography-caption css-115rlu8">이전글</span><p class="MuiTypography-root MuiTypography-body2 css-10qk5g4">EST AI - 딥러닝 : 신경망 구조와 작동 원리</p></div></button><button class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-1k0z50p" tabindex="0" type="button" id=":ra:"><div class="MuiBox-root css-0"><span class="MuiTypography-root MuiTypography-caption css-115rlu8">다음글</span><p class="MuiTypography-root MuiTypography-body2 css-10qk5g4">[6년차 쯤 되면 좀 알자] thread 알고 쓰는거니? - 2부 -</p></div><span class="MuiButton-icon MuiButton-endIcon MuiButton-iconSizeMedium css-6bt4d2"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowForwardIcon"><path d="m12 4-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"></path></svg></span></button></div><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-10t0qv5" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h4 class="MuiTypography-root MuiTypography-h4 css-k5jvd2">EST AI - 딥러닝 기초 (TensorFlow, Keras)</h4><p class="MuiTypography-root MuiTypography-body1 css-104xg3">딥러닝이 무엇인지, 머신러닝과 어디서 갈리는지 설명하고 TensorFlow와 Keras로 신경망을 구성합니다. | 학생의 공부 시간으로 수학 성적을 예측하는 회귀 모델을 선형 회귀와 신경망 두 방식으로 만들어 비교합니다.</p><div class="MuiBox-root css-1prrn6n"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Deep Learning</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">TensorFlow</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Keras</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Neural Networ</span></div></div><p class="MuiTypography-root MuiTypography-body2 css-l6pb42">2026년 1월 9일 오후 12:41</p></div><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-1i779yj" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><div class="MuiBox-root css-13lazol"><h2>📚 오늘의 학습 내용</h2>
+<p>오늘은 <strong>딥러닝의 기본 개념</strong>을 학습하고, TensorFlow와 Keras를 활용하여 신경망 모델을 구성하는 방법을 실습했습니다. 학생의 공부시간(studytime)을 입력으로 받아 수학 성적(G3)을 예측하는 회귀 모델을 머신러닝과 딥러닝 방식으로 각각 구현하여 비교했습니다.</p>
+<hr>
+<h2>1️⃣ 딥러닝 개요</h2>
+<h3>딥러닝이란?</h3>
+<ul>
+<li>인간의 신경망을 모방하여, 학습 및 예측하고 판단하는 기술</li>
+<li>영상처리, 음성처리, 이미지 분야, 텍스트, 자연어 처리 등 다양한 분야에 활용</li>
+<li><strong>인간의 뇌 구조</strong>를 수학적으로 모델링한 인공신경망을 깊게 쌓아 올린 구조</li>
+</ul>
+<h3>주요 도구</h3>
+<ul>
+<li><strong>TensorFlow</strong>: 구글이 만든 딥러닝 프레임워크 (저수준 API 제공)</li>
+<li><strong>Keras</strong>: TensorFlow 위에서 동작하는 사용자 친화적 고수준 API
+<ul>
+<li>TensorFlow 2.x부터는 Keras가 내장되어 별도 설치 불필요</li>
+<li>직관적이고 간단한 API로 신경망 모델을 빠르게 구성 가능</li>
+</ul>
+</li>
+</ul>
+<h3>딥러닝의 핵심 특징</h3>
+<ul>
+<li><strong>모델 구조를 직접 설계</strong>할 수 있어 유연성이 매우 높음</li>
+<li>단순한 다층 퍼셉트론(MLP)부터 복잡한 컨볼루션 신경망(CNN), 순환 신경망(RNN)까지 다양한 모델 설계 가능</li>
+<li>데이터로부터 <strong>계층적인 특징(feature)을 자동으로 학습</strong>하는 능력</li>
+</ul>
+<hr>
+<h2>2️⃣ 머신러닝 vs 딥러닝: 근본적인 차이</h2>
+<h3>머신러닝 (Scikit-learn) - 완성품 활용</h3>
+<ul>
+<li><strong>모델 생성</strong> → <strong>모델 학습</strong> → <strong>모델 예측</strong> → <strong>모델 평가</strong></li>
+<li>이미 구현된 알고리즘 클래스를 선택하여 사용</li>
+<li><strong>비유</strong>: 완제품 피규어를 색칠하는 느낌
+<ul>
+<li>피규어의 기본 형태는 이미 정해져 있고, 색상(하이퍼 파라미터)만 조절</li>
+</ul>
+</li>
+<li>특정 알고리즘을 선택하고 그 알고리즘의 하이퍼 파라미터를 조정하는 과정에 집중</li>
+<li><strong>장점</strong>: 빠르고 간단하게 모델 구축 가능</li>
+<li><strong>단점</strong>: 모델 구조의 유연성이 제한적</li>
+</ul>
+<h3>딥러닝 (TensorFlow, Keras) - 직접 설계</h3>
+<ul>
+<li><strong>모델 생성 (모델 구조 직접 구성)</strong> → <strong>모델 학습</strong> → <strong>예측</strong> → <strong>평가</strong></li>
+<li>신경망의 각 층(layer)을 직접 정의하고 조합하여 모델 설계</li>
+<li><strong>비유</strong>: 레고 블록을 하나하나 쌓아 올려 구조물을 만드는 느낌
+<ul>
+<li>어떤 블록을 몇 개 쌓을지, 어떻게 연결할지 모두 직접 결정</li>
+</ul>
+</li>
+<li>모델 학습, 예측, 평가 과정은 머신러닝과 유사하지만, <strong>모델 구조 설계의 자유도가 매우 높음</strong></li>
+<li><strong>장점</strong>: 문제에 맞는 맞춤형 모델 구조 설계 가능</li>
+<li><strong>단점</strong>: 구조 설계에 대한 이해와 경험이 필요, 과대적합 위험</li>
+</ul>
+<h3>왜 딥러닝을 사용하는가?</h3>
+<ul>
+<li><strong>복잡한 비선형 관계</strong>를 학습할 수 있음</li>
+<li><strong>특징 추출을 자동화</strong> (전처리 단계에서 수동으로 특징을 만들 필요가 적음)</li>
+<li><strong>대용량 데이터</strong>에서 강력한 성능 발휘</li>
+<li><strong>이미지, 텍스트, 음성</strong> 등 비정형 데이터 처리에 특화</li>
+</ul>
+<hr>
+<h2>3️⃣ 신경망 구조의 핵심 요소</h2>
+<h3>Sequential 모델</h3>
+<ul>
+<li><strong>역할</strong>: 층을 순차적으로 쌓아 올리는 구조를 만드는 뼈대</li>
+<li><strong>특징</strong>: 입력 → 은닉층1 → 은닉층2 → ... → 출력층 형태로 단방향 흐름</li>
+<li><strong>사용 시점</strong>: 대부분의 기본적인 신경망 모델에 적합</li>
+</ul>
+<h3>Dense (완전연결층)</h3>
+<ul>
+<li><strong>역할</strong>: 모든 입력 뉴런이 모든 출력 뉴런과 연결되는 층</li>
+<li><strong>특징</strong>:
+<ul>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">units</code>: 출력 뉴런의 개수 (층의 크기 결정)</li>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">activation</code>: 활성화 함수 (비선형성 추가)</li>
+</ul>
+</li>
+<li><strong>왜 완전연결인가?</strong>: 입력의 모든 정보를 다음 층으로 전달하여 복잡한 패턴 학습 가능</li>
+</ul>
+<h3>InputLayer (입력층)</h3>
+<ul>
+<li><strong>역할</strong>: 모델의 입력 형태를 명시적으로 정의</li>
+<li><strong>특징</strong>: <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">input_shape</code> 파라미터로 입력 데이터의 차원 지정</li>
+<li><strong>왜 필요한가?</strong>: 모델이 첫 번째 데이터를 받을 때 입력 형태를 알 수 있도록 함</li>
+</ul>
+<h3>활성화 함수 (Activation Function)</h3>
+<ul>
+<li><strong>sigmoid</strong>: 0~1 사이의 값을 출력 (이진 분류, 과거에 많이 사용)</li>
+<li><strong>relu</strong>: 음수는 0으로, 양수는 그대로 (현재 가장 많이 사용, 학습 속도 빠름)</li>
+<li><strong>왜 필요한가?</strong>: 선형 변환만으로는 복잡한 비선형 관계를 학습할 수 없음</li>
+</ul>
+<hr>
+<h2>4️⃣ 실습: 학생 성적 예측 모델</h2>
+<h3>데이터 개요</h3>
+<ul>
+<li><strong>입력 특성</strong>: <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">studytime</code> (주간 공부 시간, 1~4 범위)</li>
+<li><strong>정답 레이블</strong>: <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">G3</code> (최종 수학 성적, 0~20 범위)</li>
+<li><strong>데이터 크기</strong>: 395명, train: 276명, test: 119명</li>
+</ul>
+<h3>머신러닝 방식 (Linear Regression)</h3>
+<ul>
+<li><strong>결과</strong>: MSE = 21.78</li>
+<li><strong>특징</strong>: 단순한 선형 관계만 학습 가능</li>
+<li><strong>한계</strong>: 공부시간과 성적의 복잡한 비선형 관계를 포착하기 어려움</li>
+</ul>
+<h3>딥러닝 방식 (신경망)</h3>
+<ul>
+<li><strong>구조</strong>: 입력층(1) → 은닉층1(32) → 은닉층2(64) → 은닉층3(32) → 출력층(1)</li>
+<li><strong>설계 의도</strong>:
+<ul>
+<li>은닉층을 여러 개 쌓아 복잡한 패턴 학습</li>
+<li>중간에 64개 뉴런으로 확장했다가 다시 32개로 축소 (정보 압축 및 추상화)</li>
+</ul>
+</li>
+<li><strong>주의사항</strong>: 과대적합 위험 (데이터가 적은 경우)</li>
+</ul>
+<h3>신경망 구조 설계 시 고려사항</h3>
+<ol>
+<li><strong>층의 개수</strong>: 너무 많으면 과대적합, 너무 적으면 학습 부족</li>
+<li><strong>뉴런의 개수</strong>: 입력 특성 수와 데이터 크기를 고려</li>
+<li><strong>활성화 함수</strong>: 문제 유형에 따라 선택 (회귀는 출력층에 활성화 함수 없음)</li>
+<li><strong>과대적합 방지</strong>: 드롭아웃, 정규화, 조기 종료 등 필요</li>
+</ol>
+<hr>
+<h2>💡 핵심 정리</h2>
+<h3>배운 것</h3>
+<ul>
+<li>딥러닝은 모델 구조를 직접 설계할 수 있어 유연성이 매우 높음</li>
+<li>Sequential 모델을 통해 층을 순차적으로 쌓아 올리는 기본 구조</li>
+<li>Dense, InputLayer를 활용한 신경망 구성 방법</li>
+<li>머신러닝과 딥러닝의 근본적인 차이 (완성품 활용 vs 직접 설계)</li>
+</ul>
+<h3>인사이트</h3>
+<ul>
+<li><strong>왜 딥러닝인가?</strong>: 복잡한 비선형 관계를 학습하고, 특징 추출을 자동화할 수 있음</li>
+<li><strong>구조 설계의 중요성</strong>: 문제와 데이터에 맞는 신경망 구조 설계가 성능에 큰 영향</li>
+<li><strong>과대적합 주의</strong>: 특히 데이터가 적을 때는 모델 구조를 단순하게 유지하는 것이 중요</li>
+</ul>
+<h3>주의사항</h3>
+<ul>
+<li>⚠️ 입력 데이터는 2차원 배열 형태로 입력해야 함 (scikit-learn과 동일)</li>
+<li>⚠️ 신경망 구조 설계 시 과대적합에 주의 (데이터 크기 대비 모델이 너무 복잡하면 안 됨)</li>
+<li>⚠️ <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">InputLayer</code>의 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">input_shape</code>는 키워드 인자로 전달해야 함 (<code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">input_shape=(1,)</code> 형태)</li>
+</ul>
+<hr></div></div><div class="MuiBox-root css-1cpq4zq"><hr class="MuiDivider-root MuiDivider-fullWidth css-7jtdmc"><h5 class="MuiTypography-root MuiTypography-h5 css-85yo2n">같은 카테고리의 다른 글</h5><div class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-2 css-1eikg3m"><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] Serializable 깊이 파기 — Part 2: 바이트에서 다시 객체로, 그리고 함정들</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">직렬화된 바이트를 ObjectInputStream이 어떤 순서로 읽어 객체로 복원하는지, 그때 생성자가 호출되지 않는다는 점을 확인합니다. | serialVersionUID, transient, 커스텀 readObject·writeObject, 역직렬화 취약점, Java 직렬화의 현재로 마무리합니다.</p><div class="MuiBox-root css-107ld1r"></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 4월 5일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] Serializable 깊이 파기 — Part 1: 객체가 바이트가 되는 과정</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">Python이나 JavaScript와 달리 Java는 왜 Serializable을 선언해야 하는지, 메서드가 하나도 없는 이 인터페이스가 무슨 일을 하는지 묻는 글입니다. | ObjectOutputStream이 만든 실제 바이트를 열어 보고, 참조 객체가 들어 있을 때는 어떻게 되는지 확인합니다.</p><div class="MuiBox-root css-107ld1r"></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 4월 5일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] 주식 거래 엔진 직접 만들기 - Part 3: 오더북을 어떻게 구현할 것인가</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">주식 거래 엔진의 오더북을 TreeMap과 ArrayDeque 조합으로 만든 이유를, PriorityQueue, LinkedList, Skip List와 비교하며 설명합니다. | 주문 취소를 Lazy Removal로 처리한 방법과 Kafka를 연결하며 만난 멱등성 문제를 마지막에 둡니다.</p><div class="MuiBox-root css-107ld1r"></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 27일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] 주식 거래 엔진 직접 만들기 - Part 2: Phase 1 — 모놀리식으로 시작하기</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">단일 JAR 모놀리식 구조인 Phase 1에서 만난 문제를 차례로 다룹니다. | SELECT FOR UPDATE로 동시성을 해결했고, 락 보유 시간을 줄이고, 락 획득 순서를 통일해 데드락 위험을 없앴습니다. @Transactional 원칙과 Lazy Loading 함정도 짚습니다.</p><div class="MuiBox-root css-107ld1r"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Java</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Spring Boot</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">JPA</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">+2</span></div></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 27일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] 주식 거래 엔진 직접 만들기 - Part 1: 왜 주식 거래 엔진인가</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">F-lab 멘토링 프로젝트로 주식 거래 엔진을 직접 설계하고 구현한 과정을 기록하는 시리즈의 첫 글입니다. | 프로젝트를 고른 기준과 멀티모듈 구조, Phase 로드맵, 시리즈 전체에서 답할 질문들을 먼저 밝힙니다.</p><div class="MuiBox-root css-107ld1r"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Java</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Spring Boot</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Kafka</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">+5</span></div></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 27일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[개발자가 직접 써봤어요] Claude Code 완전 가이드: 설치부터 멀티에이전트까지</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">Claude Code를 Spring Boot와 Kafka 기반 주식 매매 엔진 프로젝트에 적용해 본 경험을 바탕으로, 설치부터 멀티에이전트까지 소개합니다. | CLAUDE.md, Skills, Subagents, Hooks, MCP, Agent Teams의 여섯 레이어와 Cursor AI와의 비교, 주의사항이 나옵니다.</p><div class="MuiBox-root css-107ld1r"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Claude Code</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">AI</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Developer Tools</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">+4</span></div></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 9일</span></div></div></div></div><div class="MuiBox-root css-1b94f21"><a class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways css-104ms0" href="/blog/posts" data-discover="true"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowBackIcon"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z"></path></svg>게시글 목록으로 돌아가기</a></div><button class="MuiButtonBase-root MuiFab-root MuiFab-circular MuiFab-sizeMedium MuiFab-primary MuiFab-root MuiFab-circular MuiFab-sizeMedium MuiFab-primary css-1nl6bps" tabindex="0" type="button" aria-label="scroll to top" style="opacity: 0; visibility: hidden;"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="KeyboardArrowUpIcon"><path d="M7.41 15.41 12 10.83l4.59 4.58L18 14l-6-6-6 6z"></path></svg></button></div></div></div></div><footer style="text-align: center; padding: 2rem 0px; color: rgb(0, 0, 0); font-size: 0.9rem; border-top: 1px solid rgb(0, 0, 0); margin-top: auto; background-color: rgb(255, 255, 255);"><p>© 2025 DevTaco Blog. All rights reserved.</p></footer><div class="MuiBox-root css-1hyfx7x"><div class="visitor-counter MuiBox-root css-19midj6"><h6 class="MuiTypography-root MuiTypography-h6 MuiTypography-gutterBottom css-izz7ci">방문자 수</h6><div class="MuiBox-root css-zwd3xv"><h4 class="MuiTypography-root MuiTypography-h4 css-1dg27va">71</h4><p class="MuiTypography-root MuiTypography-body2 css-l6pb42">오늘</p><h6 class="MuiTypography-root MuiTypography-h6 css-kh42wg">총 71명</h6></div></div></div><div class="MuiBox-root css-1y95mt5" data-testid="terminal-navigation"><div class="MuiBox-root css-1kw3y0a"><p class="MuiTypography-root MuiTypography-body2 css-1fktdtb">devtaco@portfolio:~$ navigation</p><div class="MuiBox-root css-j0ozid"><p class="MuiTypography-root MuiTypography-body2 css-1cn40rb">⌘M to close</p><button class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-470314" tabindex="0" type="button" id=":r1:"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeSmall css-vh810p" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="CloseIcon"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg></button></div></div><div class="MuiBox-root css-13t3iqc"><div class="MuiBox-root css-0"><p class="MuiTypography-root MuiTypography-body2 css-cbhj4f">Navigation:</p><div class="MuiBox-root css-1kkt86i"><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">1 → home</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">2 → about</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">3 → posts</p></div></div><div class="MuiBox-root css-0"><p class="MuiTypography-root MuiTypography-body2 css-cbhj4f">External:</p><div class="MuiBox-root css-1kkt86i"><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">g → github</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">e → email</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">l → linkedin</p></div></div></div><p class="MuiTypography-root MuiTypography-body2 css-1e7vt2">Press number keys (1,2,3) or letter keys (g,e,l) to navigate. Use ⌘+M to close.</p></div></div></div></body></html>

@@ -1,0 +1,781 @@
+<!DOCTYPE html><html lang="en"><head><script type="text/javascript">!function(n){if("/"===n.search[1]){var a=n.search.slice(1).split("&").map((function(n){return n.replace(/~and~/g,"&")})).join("?");window.history.replaceState(null,null,n.pathname.slice(0,-1)+a+n.hash)}}(window.location)</script><meta charset="utf-8"><link rel="icon" href="/blog/favicon.ico"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#000000"><meta name="keywords" content="Java, Kotlin, Spring Boot, MSA, 개발, 백엔드, coroutine"><meta name="author" content="DevTaco"><meta property="og:image" content="https://devtaco30.github.io/blog/og-image.png"><meta property="twitter:image" content="https://devtaco30.github.io/blog/og-image.png"><meta property="twitter:url" content="https://devtaco30.github.io/blog/"><link rel="apple-touch-icon" href="/blog/apple-touch-icon.png"><link rel="manifest" href="/blog/manifest.json"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&amp;family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet"><script defer="defer" src="/blog/static/js/main.404b9165.js"></script><link href="/blog/static/css/main.5b86466f.css" rel="stylesheet"><style data-emotion="css" data-s=""></style><title>[6년차 쯤 되면 좀 알자] Application 이 실행될 때 JVM 에선 어떤일이 일어날까? | DevTaco Blog</title><meta name="description" content="예제 코드를 한 줄씩 따라가며 JVM이 클래스를 언제 로드하고 static 변수와 인스턴스 변수를 어디에 두는지 확인합니다. 상속 관계에서 객체가 만들어질 때의 초기화 순서와 String Constant Pool도 이어집니다."><meta property="og:title" content="[6년차 쯤 되면 좀 알자] Application 이 실행될 때 JVM 에선 어떤일이 일어날까?"><meta property="og:description" content="예제 코드를 한 줄씩 따라가며 JVM이 클래스를 언제 로드하고 static 변수와 인스턴스 변수를 어디에 두는지 확인합니다. 상속 관계에서 객체가 만들어질 때의 초기화 순서와 String Constant Pool도 이어집니다."><meta property="og:type" content="article"><meta property="og:url" content="https://devtaco30.github.io/blog/posts/39"><meta name="twitter:card" content="summary"></head><body><noscript>You need to enable JavaScript to run this app.</noscript><div id="root"><div class="App"><div class="MuiBox-root css-kurlqb"><div class="MuiBox-root css-171onha"><button class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-1f6w95t" tabindex="0" type="button" id=":r0:"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="MenuIcon"><path d="M3 18h18v-2H3zm0-5h18v-2H3zm0-7v2h18V6z"></path></svg></button><div class="MuiBox-root css-1szb58x"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-218waq" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowBackIcon"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z"></path></svg><div class="MuiBox-root css-wq4jw1"><span>⌘+M</span></div></div></div></div><div class="MuiContainer-root css-15jb5o1" data-testid="page-container"><div class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-2 MuiGrid-spacing-md-3 css-1ht06td"><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-md-12 css-15j76c0"><div class="MuiBox-root css-15rigdj"><nav class="MuiTypography-root MuiTypography-body1 MuiBreadcrumbs-root css-1v2kxik"><ol class="MuiBreadcrumbs-ol css-51eq8m"><li class="MuiBreadcrumbs-li"><a class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways css-gj78h6" href="/blog/posts" data-discover="true">게시글 목록</a></li><li aria-hidden="true" class="MuiBreadcrumbs-separator css-1nd5pgh">/</li><li class="MuiBreadcrumbs-li"><p class="MuiTypography-root MuiTypography-body1 css-1cr0rz6">[6년차 쯤 되면 좀 알자] Application 이 실행될 때 JVM 에선 어떤일이 일어날까?</p></li></ol></nav><div class="MuiBox-root css-15djlns"><button class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-1y18wdw" tabindex="0" type="button" id=":r7:"><span class="MuiButton-icon MuiButton-startIcon MuiButton-iconSizeMedium css-1ygddt1"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowBackIcon"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z"></path></svg></span><div class="MuiBox-root css-0"><span class="MuiTypography-root MuiTypography-caption css-115rlu8">이전글</span><p class="MuiTypography-root MuiTypography-body2 css-10qk5g4">[6년차 쯤 되면 좀 알자] 그럼 GC 는 뭔데? - 1부 -</p></div></button><button class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-1k0z50p" tabindex="0" type="button" id=":r8:"><div class="MuiBox-root css-0"><span class="MuiTypography-root MuiTypography-caption css-115rlu8">다음글</span><p class="MuiTypography-root MuiTypography-body2 css-10qk5g4">EST AI - 비지도 학습 (Unsupervised Learning)</p></div><span class="MuiButton-icon MuiButton-endIcon MuiButton-iconSizeMedium css-6bt4d2"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowForwardIcon"><path d="m12 4-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"></path></svg></span></button></div><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-10t0qv5" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h4 class="MuiTypography-root MuiTypography-h4 css-k5jvd2">[6년차 쯤 되면 좀 알자] Application 이 실행될 때 JVM 에선 어떤일이 일어날까?</h4><p class="MuiTypography-root MuiTypography-body1 css-104xg3">예제 코드를 한 줄씩 따라가며 JVM이 클래스를 언제 로드하고 static 변수와 인스턴스 변수를 어디에 두는지 확인합니다. | 상속 관계에서 객체가 만들어질 때의 초기화 순서와 String Constant Pool도 이어집니다.</p><div class="MuiBox-root css-1prrn6n"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">JVM</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">ClassLoader</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Memory</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Java</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Kotlin</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Backend</span></div></div><p class="MuiTypography-root MuiTypography-body2 css-l6pb42">2025년 12월 21일 오후 03:10</p></div><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-1i779yj" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><div class="MuiBox-root css-13lazol"><p>안녕하세요. Java/Kotlin 백엔드 개발자로서 JVM의 클래스 로딩 과정과 메모리 구조를 이해하는 것은 성능 최적화와 문제 해결에 필수적입니다.</p>
+<p>본 포스팅에서는 실제 Java 코드 예제를 바탕으로, JVM이 클래스를 어떻게 로드하고, 메모리를 어떻게 할당하며, 객체가 생성되는 과정에서 어떤 일이 일어나는지 단계별로 상세하게 분석해보겠습니다.</p>
+<hr>
+<h2>📝 <strong>예제 코드</strong></h2>
+<p>분석할 코드는 다음과 같습니다:</p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-java">class A {
+    private static final String STR = "ABC";
+    private static Long l = Long.valueOf(-1L);
+    private static int i = -1;
+    private static C c = new C();
+  
+    private final String a = "ABC";
+    private final int ii = 1;
+    private C cc = new C();
+  
+    public static void main(String[] args) {
+      // JVM Memory에서 무슨 일이 일어나는지 설명해 봅시다.
+      A a = new A();
+      B b = new B();
+    }
+  }
+  
+  class B extends A {
+    // ...
+  }
+  
+  class C {
+    // ...
+  }
+</code></pre></pre>
+<p>이 코드를 실행하면 JVM 내부에서 어떤 일이 일어날까요? 단계별로 살펴보겠습니다.</p>
+<hr>
+<h2>🚀 <strong>1단계: 프로그램 실행 시작 (<code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">java A.java</code>)</strong></h2>
+<h3>JVM 시작 및 Class Loader 초기화</h3>
+<p>프로그램이 시작되면 JVM이 초기화되고, 클래스 로더들이 순차적으로 초기화됩니다:</p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">┌─────────────────────────────────────┐
+│  JVM 시작 과정                       │
+├─────────────────────────────────────┤
+│  1. JVM 시작                         │
+│  2. Bootstrap Class Loader 초기화    │
+│  3. Extension Class Loader 초기화    │
+│  4. Application Class Loader 초기화  │
+└─────────────────────────────────────┘
+</code></pre>
+<p><strong>초기 메모리 상태:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">┌─────────────────────────────────────┐
+│  메모리 영역 초기 상태                │
+├─────────────────────────────────────┤
+│  Method Area:  비어있음              │
+│  Heap:         비어있음              │
+│  Stack:        비어있음              │
+└─────────────────────────────────────┘
+</code></pre>
+<hr>
+<h2>📦 <strong>2단계: A 클래스 로드 (Lazy Loading)</strong></h2>
+<h3>⚠️ <strong>핵심 포인트: Lazy Loading</strong></h3>
+<p><strong>JVM의 클래스 로딩은 Lazy Loading 방식입니다!</strong></p>
+<ul>
+<li>프로그램 시작 시 모든 클래스를 로드하지 않음</li>
+<li>클래스가 <strong>처음 사용될 때만</strong> 로드됨</li>
+<li>메모리 효율성과 시작 시간 단축에 유리</li>
+</ul>
+<h3>2-1. main 메서드 발견 → A 클래스 로드 필요</h3>
+<p>JVM은 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">main</code> 메서드를 찾기 위해 A 클래스를 로드해야 합니다. JVM의 클래스 로딩은 <strong>Lazy Loading</strong> 방식으로, 클래스가 처음 사용될 때만 로드됩니다.</p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">JVM이 main 메서드를 찾기 위해 A 클래스 로드 시작
+  ↓
+Application Class Loader가 A.class 파일을 읽음
+  ↓
+A 클래스 정보를 Method Area에 로드
+</code></pre>
+<p><strong>메모리 상태:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">┌─────────────────────────────────────┐
+│  Method Area                        │
+├─────────────────────────────────────┤
+│  A 클래스 메타데이터                 │
+│  - 클래스 이름: A                    │
+│  - 부모 클래스: Object               │
+│  - 메서드 정보: main(String[])       │
+│                                     │
+│  A 클래스의 static 변수 선언 공간    │
+│  - STR: null (아직 초기화 안됨)      │
+│  - l:   null                        │
+│  - i:   0 (기본값)                  │
+│  - c:   null                        │
+└─────────────────────────────────────┘
+</code></pre>
+<h3>2-2. Static 변수 초기화 (선언 순서대로)</h3>
+<p><strong>⚠️ 중요: Static 변수는 선언된 순서대로 초기화됩니다!</strong></p>
+<p>클래스가 로드되면 static 변수들이 선언된 순서대로 초기화됩니다.</p>
+<h4>2-2-1. <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">private static final String STR = "ABC";</code></h4>
+<p><strong>String 리터럴은 String Constant Pool에 저장됩니다!</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">1. "ABC" 리터럴이 String Constant Pool에 있는지 확인
+   ↓
+2. 없으면 String Constant Pool (Heap 내부)에 "ABC" 객체 생성
+   ↓
+3. Method Area의 STR 변수에 주소값 저장
+</code></pre>
+<p><strong>메모리 상태:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">┌─────────────────────────────────────┐
+│  Method Area                        │
+├─────────────────────────────────────┤
+│  A 클래스                            │
+│  - STR: → [주소값]                   │
+└─────────────────────────────────────┘
+         ↓
+┌─────────────────────────────────────┐
+│  Heap (String Constant Pool)         │
+├─────────────────────────────────────┤
+│  "ABC" String 객체                  │
+└─────────────────────────────────────┘
+</code></pre>
+<p><strong>주소 관계:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">Method Area (STR 변수) → Heap (String Constant Pool의 "ABC" 객체)
+</code></pre>
+<h4>2-2-2. <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">private static Long l = Long.valueOf(-1L);</code></h4>
+<p><strong>⚠️ Long 타입은 캐시를 확인합니다!</strong></p>
+<p><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">Long.valueOf()</code> 메서드는 <strong>-128 ~ 127 범위의 값만 캐시</strong>합니다. 이는 String Constant Pool과 비슷하지만 범위가 제한적입니다.</p>
+<p><strong>Wrapper Class 캐시 정책:</strong></p>
+<p>Java의 모든 Wrapper Class들이 캐시를 사용하는 것은 아닙니다:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Wrapper Class</th><th>캐시 범위</th><th>비고</th></tr></thead><tbody><tr><td><strong>Byte</strong></td><td>-128 ~ 127</td><td>모든 값이 캐시 범위 내</td></tr><tr><td><strong>Short</strong></td><td>-128 ~ 127</td><td></td></tr><tr><td><strong>Integer</strong></td><td>-128 ~ 127</td><td>기본값, <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">-XX:AutoBoxCacheMax=&lt;size&gt;</code>로 변경 가능</td></tr><tr><td><strong>Long</strong></td><td>-128 ~ 127</td><td></td></tr><tr><td><strong>Character</strong></td><td>0 ~ 127</td><td>유니코드 기본 영역 (ASCII)</td></tr><tr><td><strong>Boolean</strong></td><td>true, false</td><td>두 개만 캐시</td></tr><tr><td><strong>Float</strong></td><td>❌ 캐시 없음</td><td></td></tr><tr><td><strong>Double</strong></td><td>❌ 캐시 없음</td><td></td></tr></tbody></table>
+<p><strong>Long 캐시 vs String Constant Pool:</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>구분</th><th>String Constant Pool</th><th>Wrapper Class 캐시</th></tr></thead><tbody><tr><td><strong>범위</strong></td><td>모든 String 리터럴</td><td>제한적 범위만</td></tr><tr><td><strong>위치</strong></td><td>Heap 내부</td><td>Heap 내부</td></tr><tr><td><strong>목적</strong></td><td>메모리 효율성 (모든 리터럴 공유)</td><td>메모리 효율성 (자주 쓰는 값만 공유)</td></tr><tr><td><strong>적용 타입</strong></td><td>String만</td><td>Byte, Short, Integer, Long, Character, Boolean</td></tr></tbody></table>
+<p><strong>Long.valueOf() 동작 방식:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">1. Long.valueOf(-1L) 호출
+   ↓
+2. 값이 -128 ~ 127 범위인지 확인
+   ↓
+3-1. 범위 내: 캐시된 Long 객체 반환 (재사용)
+3-2. 범위 밖: 새로운 Long 객체 생성
+   ↓
+4. Method Area의 l 변수에 주소값 저장
+</code></pre>
+<p><strong>예시:</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-java">// Long 캐시
+Long l1 = Long.valueOf(100L);   // 캐시 범위 내 → 캐시된 객체
+Long l2 = Long.valueOf(100L);   // 캐시 범위 내 → 같은 객체
+Long l3 = Long.valueOf(1000L); // 캐시 범위 밖 → 새 객체
+Long l4 = Long.valueOf(1000L); // 캐시 범위 밖 → 또 다른 새 객체
+l1 == l2;  // true (같은 객체)
+l3 == l4;  // false (다른 객체)
+
+// Integer 캐시
+Integer i1 = Integer.valueOf(100);  // 캐시 범위 내
+Integer i2 = Integer.valueOf(100);  // 같은 객체
+Integer i3 = Integer.valueOf(1000); // 캐시 범위 밖
+Integer i4 = Integer.valueOf(1000); // 다른 객체
+i1 == i2;  // true
+i3 == i4;  // false
+
+// Character 캐시
+Character c1 = Character.valueOf('A');  // 0~127 범위 내
+Character c2 = Character.valueOf('A');  // 같은 객체
+Character c3 = Character.valueOf('가'); // 범위 밖
+Character c4 = Character.valueOf('가'); // 다른 객체
+c1 == c2;  // true
+c3 == c4;  // false
+
+// Boolean 캐시
+Boolean b1 = Boolean.valueOf(true);   // 항상 캐시
+Boolean b2 = Boolean.valueOf(true);   // 같은 객체
+Boolean b3 = Boolean.valueOf(false); // 항상 캐시
+Boolean b4 = Boolean.valueOf(false); // 같은 객체
+b1 == b2;  // true
+b3 == b4;  // true
+
+// Float, Double은 캐시 없음
+Float f1 = Float.valueOf(1.0f);
+Float f2 = Float.valueOf(1.0f);
+f1 == f2;  // false (항상 다른 객체)
+</code></pre></pre>
+<p><strong>-1은 캐시 범위 내이므로 캐시된 Long 객체를 반환합니다.</strong></p>
+<p><strong>메모리 상태:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">┌─────────────────────────────────────┐
+│  Method Area                        │
+├─────────────────────────────────────┤
+│  A 클래스                            │
+│  - STR: → "ABC" 주소값               │
+│  - l:   → [주소값]                   │
+└─────────────────────────────────────┘
+         ↓
+┌─────────────────────────────────────┐
+│  Heap                               │
+├─────────────────────────────────────┤
+│  Long(-1L) 객체                      │
+└─────────────────────────────────────┘
+</code></pre>
+<p><strong>주소 관계:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">Method Area (l 변수) → Heap (Long 객체)
+</code></pre>
+<h4>2-2-3. <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">private static int i = -1;</code></h4>
+<p><strong>⚠️ 중요: Primitive 타입은 주소값이 아닌 값 자체를 저장합니다!</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">1. Method Area의 i 변수에 직접 값(-1) 저장
+   (Primitive 타입은 주소값 없이 값 자체 저장)
+</code></pre>
+<p><strong>메모리 상태:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">┌─────────────────────────────────────┐
+│  Method Area                        │
+├─────────────────────────────────────┤
+│  A 클래스                            │
+│  - STR: → "ABC" 주소값               │
+│  - l:   → Long 객체 주소값           │
+│  - i:   -1 (값 직접 저장)            │
+└─────────────────────────────────────┘
+</code></pre>
+<h4>2-2-4. <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">private static C c = new C();</code></h4>
+<p><strong>⚠️ 중요: C 클래스가 아직 로드되지 않았으므로 C 클래스 로드부터 시작!</strong></p>
+<p>이것이 <strong>Lazy Loading</strong>의 핵심입니다. static 변수 초기화 중에 다른 클래스가 필요하면 그 클래스를 먼저 로드합니다.</p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">1. C 클래스 로드 필요
+   ↓
+2. Application Class Loader가 C.class 파일을 읽음
+   ↓
+3. C 클래스 정보를 Method Area에 로드
+   ↓
+4. C 클래스의 static 변수 초기화 (없음)
+   ↓
+5. C 클래스의 static 블록 실행
+   ↓
+6. new C() 실행
+</code></pre>
+<p><strong>C 클래스 로드 과정:</strong></p>
+<p><strong>메모리 상태 (C 클래스 로드 후):</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">┌─────────────────────────────────────┐
+│  Method Area                        │
+├─────────────────────────────────────┤
+│  A 클래스                            │
+│  - STR: → "ABC" 주소값               │
+│  - l:   → Long 객체 주소값           │
+│  - i:   -1                           │
+│  - c:   null (아직 초기화 안됨)      │
+│                                     │
+│  C 클래스 메타데이터                 │
+│  - (static 변수 없음)                │
+└─────────────────────────────────────┘
+</code></pre>
+<p><strong>new C() 실행:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">1. Heap에 C 객체 생성 공간 할당
+   ↓
+2. C 객체의 인스턴스 변수 초기화
+   ↓
+3. C 인스턴스 블록 실행
+   ↓
+4. C 생성자 실행
+   ↓
+5. Method Area의 c 변수에 C 객체 주소값 저장
+</code></pre>
+<p><strong>메모리 상태 (C 객체 생성 후):</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">┌─────────────────────────────────────┐
+│  Method Area                        │
+├─────────────────────────────────────┤
+│  A 클래스                            │
+│  - STR: → "ABC" 주소값               │
+│  - l:   → Long 객체 주소값           │
+│  - i:   -1                           │
+│  - c:   → [주소값]                   │
+└─────────────────────────────────────┘
+         ↓
+┌─────────────────────────────────────┐
+│  Heap                               │
+├─────────────────────────────────────┤
+│  C 객체 (static)                    │
+└─────────────────────────────────────┘
+</code></pre>
+<p><strong>주소 관계:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">Method Area (c 변수) → Heap (C 객체)
+</code></pre>
+<h3>2-3. A 클래스의 Static 블록 실행</h3>
+<p>모든 static 변수 초기화가 완료되면 static 블록이 실행됩니다.</p>
+<p><strong>메모리 상태:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">┌─────────────────────────────────────┐
+│  Method Area (A 클래스)              │
+├─────────────────────────────────────┤
+│  STR: → "ABC" 주소값                 │
+│  l:   → Long 객체 주소값             │
+│  i:   -1 (값 직접 저장)             │
+│  c:   → C 객체 주소값                │
+└─────────────────────────────────────┘
+</code></pre>
+<hr>
+<h2>🎯 <strong>3단계: main 메서드 실행</strong></h2>
+<h3>3-1. main 메서드 호출</h3>
+<p>JVM이 main 메서드를 찾아서 실행합니다:</p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">JVM이 main 메서드를 찾아서 실행
+  ↓
+main 메서드의 지역 변수들이 Stack에 할당됨
+</code></pre>
+<p><strong>메모리 상태:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">┌─────────────────────────────────────┐
+│  Stack                              │
+├─────────────────────────────────────┤
+│  main 메서드 스택 프레임             │
+│  - args: → [String 배열 주소값]      │
+└─────────────────────────────────────┘
+         ↓
+┌─────────────────────────────────────┐
+│  Heap                               │
+├─────────────────────────────────────┤
+│  String[] 배열                      │
+└─────────────────────────────────────┘
+</code></pre>
+<hr>
+<h2>🏗️ <strong>4단계: A 객체 생성 (<code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">A a = new A();</code>)</strong></h2>
+<h3>⚠️ <strong>핵심 포인트: 객체 생성 순서</strong></h3>
+<p>객체 생성은 다음 순서로 진행됩니다:</p>
+<ol>
+<li>Heap에 메모리 할당</li>
+<li>인스턴스 변수 초기화 (선언 순서대로)</li>
+<li>인스턴스 블록 실행</li>
+<li>생성자 실행</li>
+</ol>
+<h3>4-1. new A() 호출</h3>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">1. Heap에 A 객체 생성 공간 할당
+   ↓
+2. A 객체의 인스턴스 변수 초기화 (선언 순서대로)
+</code></pre>
+<h3>4-2. 인스턴스 변수 초기화</h3>
+<h4>4-2-1. <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">private final String a = "ABC";</code></h4>
+<p><strong>⚠️ 중요: String Constant Pool에 이미 존재하므로 재사용!</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">1. "ABC" 리터럴 확인
+   ↓
+2. String Constant Pool에 이미 존재 (2-2-1에서 생성됨)
+   ↓
+3. Heap의 A 객체 내부에 a 변수 공간 생성
+   ↓
+4. a 변수에 String Constant Pool의 "ABC" 주소값 저장
+</code></pre>
+<p><strong>메모리 상태:</strong></p>
+<ul>
+<li><strong>Heap (A 객체 내부):</strong>
+<ul>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">a</code> 변수: String Constant Pool의 "ABC" 주소값 저장</li>
+</ul>
+</li>
+</ul>
+<p><strong>주소 관계:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">┌─────────────────────────────────────┐
+│  Heap                               │
+├─────────────────────────────────────┤
+│  A 객체                              │
+│  - a: → [주소값]                     │
+└─────────────────────────────────────┘
+         ↓
+┌─────────────────────────────────────┐
+│  Heap (String Constant Pool)         │
+├─────────────────────────────────────┤
+│  "ABC" String 객체                  │
+│  ↑                                  │
+│  └─ A.STR과 a.a가 모두 참조!        │
+└─────────────────────────────────────┘
+</code></pre>
+<p><strong>⚠️ 핵심:</strong> <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">A.STR</code>과 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">a.a</code>는 <strong>같은 "ABC" 객체</strong>를 가리킵니다!</p>
+<h4>4-2-2. <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">private final int ii = 1;</code></h4>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">1. Heap의 A 객체 내부에 ii 변수 공간 생성
+   ↓
+2. ii 변수에 값 1 직접 저장
+</code></pre>
+<p><strong>메모리 상태:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">┌─────────────────────────────────────┐
+│  Heap                               │
+├─────────────────────────────────────┤
+│  A 객체                              │
+│  - a:  → "ABC" 주소값                │
+│  - ii: 1 (값 직접 저장)              │
+└─────────────────────────────────────┘
+</code></pre>
+<h4>4-2-3. <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">private C cc = new C("instance");</code></h4>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">1. new C("instance") 실행
+   ↓
+2. Heap에 C 객체 생성 공간 할당
+   ↓
+3. C 객체의 인스턴스 변수 초기화
+   ↓
+4. C 인스턴스 블록 실행
+   ↓
+5. C 생성자 실행
+   ↓
+6. Heap의 A 객체 내부에 cc 변수 공간 생성
+   ↓
+7. cc 변수에 C 객체 주소값 저장
+</code></pre>
+<p><strong>메모리 상태:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">┌─────────────────────────────────────┐
+│  Heap                               │
+├─────────────────────────────────────┤
+│  A 객체                              │
+│  - a:  → "ABC" 주소값                │
+│  - ii: 1                             │
+│  - cc: → [주소값]                    │
+│                                     │
+│  C 객체 (A의 인스턴스)               │
+│  - type: "instance"                  │
+└─────────────────────────────────────┘
+</code></pre>
+<p><strong>주소 관계:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">Heap (A 객체 내부의 cc 변수) → Heap (C 객체)
+</code></pre>
+<h3>4-3. A 인스턴스 블록 실행</h3>
+<p>모든 인스턴스 변수 초기화가 완료되면 인스턴스 블록이 실행됩니다.</p>
+<h3>4-4. A 생성자 실행</h3>
+<p>생성자가 실행되면 인스턴스 변수들을 사용할 수 있습니다.</p>
+<p><strong>메모리 상태:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">┌─────────────────────────────────────┐
+│  Stack                              │
+├─────────────────────────────────────┤
+│  main 메서드 스택 프레임              │
+│  - args: → String 배열 주소값        │
+│  - a:    → [주소값]                  │
+└─────────────────────────────────────┘
+         ↓
+┌─────────────────────────────────────┐
+│  Heap                               │
+├─────────────────────────────────────┤
+│  A 객체                              │
+│  - a:  → "ABC" 주소값                │
+│  - ii: 1                             │
+│  - cc: → C 객체 주소값               │
+└─────────────────────────────────────┘
+</code></pre>
+<p><strong>주소 관계:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">Stack (main의 a 변수) → Heap (A 객체)
+</code></pre>
+<hr>
+<h2>🔄 <strong>5단계: B 객체 생성 (<code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">B b = new B();</code>)</strong></h2>
+<h3>⚠️ <strong>핵심 포인트: 상속 관계에서의 초기화 순서</strong></h3>
+<p>상속 관계에서는 <strong>부모 클래스부터 초기화</strong>됩니다:</p>
+<ol>
+<li>부모 클래스 인스턴스 변수 초기화</li>
+<li>부모 클래스 인스턴스 블록 실행</li>
+<li>부모 클래스 생성자 실행</li>
+<li>자식 클래스 인스턴스 변수 초기화</li>
+<li>자식 클래스 인스턴스 블록 실행</li>
+<li>자식 클래스 생성자 실행</li>
+</ol>
+<h3>5-1. B 클래스 로드 (Lazy Loading)</h3>
+<p>B 클래스가 처음 사용되므로 로드가 필요합니다:</p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">1. B 클래스가 처음 사용됨
+   ↓
+2. Application Class Loader가 B.class 파일을 읽음
+   ↓
+3. B 클래스 정보를 Method Area에 로드
+   ↓
+4. B는 A를 상속받으므로 A 클래스 정보도 확인 (이미 로드됨)
+   ↓
+5. B 클래스의 static 변수 초기화 (없음)
+   ↓
+6. B 클래스의 static 블록 실행
+</code></pre>
+<p><strong>메모리 상태:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">┌─────────────────────────────────────┐
+│  Method Area                        │
+├─────────────────────────────────────┤
+│  A 클래스 메타데이터                 │
+│  B 클래스 메타데이터                 │
+│  - 부모 클래스: A                    │
+│  - (static 변수 없음)                │
+└─────────────────────────────────────┘
+</code></pre>
+<h3>5-2. new B() 호출</h3>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">1. Heap에 B 객체 생성 공간 할당
+   ↓
+2. B는 A를 상속받으므로 A의 인스턴스 변수들도 포함
+   ↓
+3. 인스턴스 변수 초기화 (부모부터)
+</code></pre>
+<h3>5-3. 인스턴스 변수 초기화 (상속받은 A의 변수들)</h3>
+<h4>5-3-1. A의 인스턴스 변수들 초기화</h4>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">1. private final String a = "ABC";
+   - String Constant Pool의 "ABC" 주소값 저장
+   
+2. private final int ii = 1;
+   - 값 1 직접 저장
+   
+3. private C cc = new C("instance");
+   - 새 C 객체 생성
+   - cc 변수에 C 객체 주소값 저장
+</code></pre>
+<p><strong>메모리 상태:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">┌─────────────────────────────────────┐
+│  Heap                               │
+├─────────────────────────────────────┤
+│  B 객체 (A의 변수들 포함)                │
+│  - a:  → "ABC" 주소값                 │
+│  - ii: 1                            │
+│  - cc: → [주소값]                     │
+│                                     │   
+│  C 객체 (B의 인스턴스)                  │
+│  - type: "instance"                 │
+└─────────────────────────────────────┘
+</code></pre>
+<h3>5-4. A 인스턴스 블록 실행 (상속)</h3>
+<p>B 객체이지만 A를 상속받았으므로 A의 인스턴스 블록이 실행됩니다.</p>
+<h3>5-5. A 생성자 실행 (super() 호출)</h3>
+<p>B 생성자에서 암묵적으로 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">super()</code>가 호출되어 A 생성자가 실행됩니다.</p>
+<h3>5-6. B 인스턴스 블록 실행</h3>
+<p>B의 인스턴스 블록이 실행됩니다.</p>
+<h3>5-7. B 생성자 실행</h3>
+<p>B 생성자가 실행됩니다.</p>
+<p><strong>메모리 상태:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">┌─────────────────────────────────────┐
+│  Stack                              │
+├─────────────────────────────────────┤
+│  main 메서드 스택 프레임                 │
+│  - args: → String 배열 주소값          │
+│  - a:    → A 객체 주소값               │
+│  - b:    → [주소값]                   │
+└─────────────────────────────────────┘
+         ↓
+┌─────────────────────────────────────┐
+│  Heap                               │
+├─────────────────────────────────────┤
+│  B 객체 (A 상속)                       │
+│  - a:  → "ABC" 주소값                 │
+│  - ii: 1                            │
+│  - cc: → C 객체 주소값                 │
+└─────────────────────────────────────┘
+</code></pre>
+<p><strong>주소 관계:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">Stack (main의 b 변수) → Heap (B 객체)
+</code></pre>
+<hr>
+<h2>📊 <strong>최종 메모리 구조 요약</strong></h2>
+<h3>전체 메모리 구조 다이어그램</h3>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">┌─────────────────────────────────────────────────────────────┐
+│  Method Area                                                │
+├─────────────────────────────────────────────────────────────┤
+│  A 클래스 메타데이터                                             │
+│  - STR: → "ABC" 주소값                                        │
+│  - l:   → Long 객체 주소값                                     │
+│  - i:   -1 (값)                                              │
+│  - c:   → C 객체 주소값 (static)                               │
+│                                                             │
+│  B 클래스 메타데이터                                             │
+│  - (static 변수 없음)                                         │
+│                                                             │
+│  C 클래스 메타데이터                                             │
+└─────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────┐
+│  Heap                                                       │
+├─────────────────────────────────────────────────────────────┤
+│  String Constant Pool                                       │
+│  └─ "ABC" String 객체                                        │
+│     ↑                                                       │
+│     └─ A.STR, a.a, b.a가 모두 참조                             │
+│                                                             │
+│  일반 Heap 영역                                               │
+│  ├─ A 객체                                                   │
+│  │  - a:  → "ABC" 주소값                                      │
+│  │  - ii: 1                                                 │
+│  │  - cc: → C 객체 주소값                                      │
+│  │                                                          │
+│  ├─ B 객체 (A 상속)                                           │
+│  │  - a:  → "ABC" 주소값                                      │
+│  │  - ii: 1                                                 │
+│  │  - cc: → C 객체 주소값                                      │
+│  │                                                          │
+│  ├─ C 객체 (static)                                          │
+│  │  └─ A 클래스의 static 변수 c가 참조                           │
+│  │                                                          │
+│  ├─ C 객체 (A의 인스턴스)                                       │
+│  │  └─ A 객체의 cc 변수가 참조                                   │
+│  │                                                          │
+│  ├─ C 객체 (B의 인스턴스)                                       │
+│  │  └─ B 객체의 cc 변수가 참조                                   │
+│  │                                                          │
+│  └─ Long 객체 (-1L)                                          │  
+│     └─ A 클래스의 static 변수 l이 참조                           │
+└─────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────┐
+│  Stack                                                      │
+├─────────────────────────────────────────────────────────────┤
+│  main 메서드 스택 프레임                                         │
+│  - args: → String 배열 주소값                                  │
+│  - a:    → A 객체 주소값                                       │
+│  - b:    → B 객체 주소값                                       │
+└─────────────────────────────────────────────────────────────┘
+</code></pre>
+<hr>
+<h2>🎓 <strong>핵심 정리</strong></h2>
+<h3>1. ⚠️ Class Loader는 Lazy Loading</h3>
+<p><strong>클래스는 처음 사용될 때만 로드됩니다!</strong></p>
+<ul>
+<li>프로그램 시작 시 모든 클래스를 로드하지 않음</li>
+<li>필요할 때마다 동적으로 로드</li>
+<li>메모리 효율성과 시작 시간 단축에 유리</li>
+</ul>
+<p><strong>예시:</strong></p>
+<ul>
+<li>A 클래스 로드 시 C 클래스가 필요하면 그때 C 클래스 로드</li>
+<li>B 클래스는 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">new B()</code> 호출 시점에 로드</li>
+</ul>
+<h3>2. ⚠️ Static 변수는 Method Area</h3>
+<p><strong>클래스 로드 시 1번만 초기화되며, 모든 객체가 공유합니다!</strong></p>
+<p><strong>특징:</strong></p>
+<ul>
+<li>클래스 레벨의 변수</li>
+<li>객체 생성과 무관하게 존재</li>
+<li>모든 인스턴스가 같은 값을 공유</li>
+<li>GC가 수집하지 않음 (프로그램 종료 시까지 유지)</li>
+</ul>
+<p><strong>메모리 위치:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">Method Area (클래스당 1개)
+  └─ Static 변수들
+</code></pre>
+<h3>3. ⚠️ 인스턴스 변수는 Heap</h3>
+<p><strong>객체 생성 시마다 초기화되며, 객체마다 별도로 존재합니다!</strong></p>
+<p><strong>특징:</strong></p>
+<ul>
+<li>객체 레벨의 변수</li>
+<li>객체 생성 시마다 새로 할당</li>
+<li>각 객체가 독립적인 값을 가짐</li>
+<li>GC가 수집 가능</li>
+</ul>
+<p><strong>메모리 위치:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">Heap (객체마다 별도)
+  └─ 인스턴스 변수들
+</code></pre>
+<h3>4. ⚠️ 주소값 저장 위치</h3>
+<p><strong>변수가 있는 곳과 같은 위치에 주소값이 저장됩니다!</strong></p>
+<ul>
+<li><strong>Method Area 변수</strong> → Method Area에 주소값 저장</li>
+<li><strong>Heap 변수</strong> → Heap에 주소값 저장</li>
+<li><strong>Stack 변수</strong> → Stack에 주소값 저장</li>
+</ul>
+<p><strong>예시:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">Method Area (A.STR) → Heap ("ABC" 객체)
+Heap (a.cc)         → Heap (C 객체)
+Stack (main.a)      → Heap (A 객체)
+</code></pre>
+<h3>5. ⚠️ 상속 관계에서의 초기화 순서</h3>
+<p><strong>부모 클래스의 초기화 블록과 생성자가 먼저 실행됩니다!</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">부모 클래스 인스턴스 변수 초기화
+  ↓
+부모 클래스 인스턴스 블록 실행
+  ↓
+부모 클래스 생성자 실행
+  ↓
+자식 클래스 인스턴스 변수 초기화
+  ↓
+자식 클래스 인스턴스 블록 실행
+  ↓
+자식 클래스 생성자 실행
+</code></pre>
+<h3>6. ⚠️ String Constant Pool</h3>
+<p><strong>같은 리터럴은 같은 객체를 참조합니다!</strong></p>
+<p>이는 메모리 효율성을 위한 최적화입니다.</p>
+<p><strong>예시:</strong></p>
+<ul>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">A.STR</code>과 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">a.a</code>는 같은 "ABC" 객체를 참조</li>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">b.a</code>도 같은 "ABC" 객체를 참조</li>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">new String("ABC")</code>는 새로운 객체를 생성하므로 다른 주소값</li>
+</ul>
+<hr>
+<h2>💡 <strong>실무에서의 활용</strong></h2>
+<h3>⚠️ 메모리 누수 방지</h3>
+<p><strong>Static 변수에 큰 객체를 저장하면 GC가 수집하지 못해 메모리 누수가 발생할 수 있습니다!</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-java">// ❌ 나쁜 예
+class Cache {
+    private static Map&lt;String, Object&gt; cache = new HashMap&lt;&gt;();
+    // 이 Map은 프로그램 종료 시까지 메모리에 남음
+}
+
+// ✅ 좋은 예
+class Cache {
+    private static final int MAX_SIZE = 1000;
+    private static Map&lt;String, Object&gt; cache = new LinkedHashMap&lt;String, Object&gt;() {
+        @Override
+        protected boolean removeEldestEntry(Map.Entry&lt;String, Object&gt; eldest) {
+            return size() &gt; MAX_SIZE;
+        }
+    };
+}
+</code></pre></pre>
+<h3>클래스 로딩 최적화</h3>
+<p><strong>불필요한 클래스 로딩을 피하면 시작 시간을 단축할 수 있습니다!</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-java">// ❌ 나쁜 예: 모든 클래스를 미리 로드
+static {
+    ClassA.init();
+    ClassB.init();
+    ClassC.init();
+}
+
+// ✅ 좋은 예: 필요할 때만 로드
+public static ClassA getClassA() {
+    if (classA == null) {
+        classA = new ClassA();
+    }
+    return classA;
+}
+</code></pre></pre>
+<h3>String Constant Pool 활용</h3>
+<p><strong>문자열 비교 시 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">equals()</code> 대신 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">==</code>를 사용할 수 있지만, 이는 리터럴에만 해당합니다!</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-java">String s1 = "ABC";  // String Constant Pool
+String s2 = "ABC";  // String Constant Pool
+String s3 = new String("ABC");  // Heap (새 객체)
+
+s1 == s2;  // true (같은 객체)
+s1 == s3;  // false (다른 객체)
+s1.equals(s3);  // true (값은 같음)
+</code></pre></pre>
+<hr></div></div><div class="MuiBox-root css-1cpq4zq"><hr class="MuiDivider-root MuiDivider-fullWidth css-7jtdmc"><h5 class="MuiTypography-root MuiTypography-h5 css-85yo2n">같은 카테고리의 다른 글</h5><div class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-2 css-1eikg3m"><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] Serializable 깊이 파기 — Part 2: 바이트에서 다시 객체로, 그리고 함정들</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">직렬화된 바이트를 ObjectInputStream이 어떤 순서로 읽어 객체로 복원하는지, 그때 생성자가 호출되지 않는다는 점을 확인합니다. | serialVersionUID, transient, 커스텀 readObject·writeObject, 역직렬화 취약점, Java 직렬화의 현재로 마무리합니다.</p><div class="MuiBox-root css-107ld1r"></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 4월 5일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] Serializable 깊이 파기 — Part 1: 객체가 바이트가 되는 과정</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">Python이나 JavaScript와 달리 Java는 왜 Serializable을 선언해야 하는지, 메서드가 하나도 없는 이 인터페이스가 무슨 일을 하는지 묻는 글입니다. | ObjectOutputStream이 만든 실제 바이트를 열어 보고, 참조 객체가 들어 있을 때는 어떻게 되는지 확인합니다.</p><div class="MuiBox-root css-107ld1r"></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 4월 5일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] 주식 거래 엔진 직접 만들기 - Part 3: 오더북을 어떻게 구현할 것인가</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">주식 거래 엔진의 오더북을 TreeMap과 ArrayDeque 조합으로 만든 이유를, PriorityQueue, LinkedList, Skip List와 비교하며 설명합니다. | 주문 취소를 Lazy Removal로 처리한 방법과 Kafka를 연결하며 만난 멱등성 문제를 마지막에 둡니다.</p><div class="MuiBox-root css-107ld1r"></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 27일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] 주식 거래 엔진 직접 만들기 - Part 2: Phase 1 — 모놀리식으로 시작하기</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">단일 JAR 모놀리식 구조인 Phase 1에서 만난 문제를 차례로 다룹니다. | SELECT FOR UPDATE로 동시성을 해결했고, 락 보유 시간을 줄이고, 락 획득 순서를 통일해 데드락 위험을 없앴습니다. @Transactional 원칙과 Lazy Loading 함정도 짚습니다.</p><div class="MuiBox-root css-107ld1r"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Java</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Spring Boot</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">JPA</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">+2</span></div></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 27일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] 주식 거래 엔진 직접 만들기 - Part 1: 왜 주식 거래 엔진인가</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">F-lab 멘토링 프로젝트로 주식 거래 엔진을 직접 설계하고 구현한 과정을 기록하는 시리즈의 첫 글입니다. | 프로젝트를 고른 기준과 멀티모듈 구조, Phase 로드맵, 시리즈 전체에서 답할 질문들을 먼저 밝힙니다.</p><div class="MuiBox-root css-107ld1r"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Java</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Spring Boot</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Kafka</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">+5</span></div></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 27일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[개발자가 직접 써봤어요] Claude Code 완전 가이드: 설치부터 멀티에이전트까지</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">Claude Code를 Spring Boot와 Kafka 기반 주식 매매 엔진 프로젝트에 적용해 본 경험을 바탕으로, 설치부터 멀티에이전트까지 소개합니다. | CLAUDE.md, Skills, Subagents, Hooks, MCP, Agent Teams의 여섯 레이어와 Cursor AI와의 비교, 주의사항이 나옵니다.</p><div class="MuiBox-root css-107ld1r"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Claude Code</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">AI</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Developer Tools</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">+4</span></div></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 9일</span></div></div></div></div><div class="MuiBox-root css-1b94f21"><a class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways css-104ms0" href="/blog/posts" data-discover="true"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowBackIcon"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z"></path></svg>게시글 목록으로 돌아가기</a></div><button class="MuiButtonBase-root MuiFab-root MuiFab-circular MuiFab-sizeMedium MuiFab-primary MuiFab-root MuiFab-circular MuiFab-sizeMedium MuiFab-primary css-1nl6bps" tabindex="0" type="button" aria-label="scroll to top" style="opacity: 0; visibility: hidden;"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="KeyboardArrowUpIcon"><path d="M7.41 15.41 12 10.83l4.59 4.58L18 14l-6-6-6 6z"></path></svg></button></div></div></div></div><footer style="text-align: center; padding: 2rem 0px; color: rgb(0, 0, 0); font-size: 0.9rem; border-top: 1px solid rgb(0, 0, 0); margin-top: auto; background-color: rgb(255, 255, 255);"><p>© 2025 DevTaco Blog. All rights reserved.</p></footer><div class="MuiBox-root css-1hyfx7x"><div class="visitor-counter MuiBox-root css-19midj6"><h6 class="MuiTypography-root MuiTypography-h6 MuiTypography-gutterBottom css-izz7ci">방문자 수</h6><div class="MuiBox-root css-zwd3xv"><h4 class="MuiTypography-root MuiTypography-h4 css-1dg27va">76</h4><p class="MuiTypography-root MuiTypography-body2 css-l6pb42">오늘</p><h6 class="MuiTypography-root MuiTypography-h6 css-kh42wg">총 76명</h6></div></div></div><div class="MuiBox-root css-1y95mt5" data-testid="terminal-navigation"><div class="MuiBox-root css-1kw3y0a"><p class="MuiTypography-root MuiTypography-body2 css-1fktdtb">devtaco@portfolio:~$ navigation</p><div class="MuiBox-root css-j0ozid"><p class="MuiTypography-root MuiTypography-body2 css-1cn40rb">⌘M to close</p><button class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-470314" tabindex="0" type="button" id=":r1:"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeSmall css-vh810p" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="CloseIcon"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg></button></div></div><div class="MuiBox-root css-13t3iqc"><div class="MuiBox-root css-0"><p class="MuiTypography-root MuiTypography-body2 css-cbhj4f">Navigation:</p><div class="MuiBox-root css-1kkt86i"><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">1 → home</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">2 → about</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">3 → posts</p></div></div><div class="MuiBox-root css-0"><p class="MuiTypography-root MuiTypography-body2 css-cbhj4f">External:</p><div class="MuiBox-root css-1kkt86i"><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">g → github</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">e → email</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">l → linkedin</p></div></div></div><p class="MuiTypography-root MuiTypography-body2 css-1e7vt2">Press number keys (1,2,3) or letter keys (g,e,l) to navigate. Use ⌘+M to close.</p></div></div></div></body></html>

@@ -1,0 +1,350 @@
+<!DOCTYPE html><html lang="en"><head><script type="text/javascript">!function(n){if("/"===n.search[1]){var a=n.search.slice(1).split("&").map((function(n){return n.replace(/~and~/g,"&")})).join("?");window.history.replaceState(null,null,n.pathname.slice(0,-1)+a+n.hash)}}(window.location)</script><meta charset="utf-8"><link rel="icon" href="/blog/favicon.ico"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#000000"><meta name="keywords" content="Java, Kotlin, Spring Boot, MSA, 개발, 백엔드, coroutine"><meta name="author" content="DevTaco"><meta property="og:image" content="https://devtaco30.github.io/blog/og-image.png"><meta property="twitter:image" content="https://devtaco30.github.io/blog/og-image.png"><meta property="twitter:url" content="https://devtaco30.github.io/blog/"><link rel="apple-touch-icon" href="/blog/apple-touch-icon.png"><link rel="manifest" href="/blog/manifest.json"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&amp;family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet"><script defer="defer" src="/blog/static/js/main.404b9165.js"></script><link href="/blog/static/css/main.5b86466f.css" rel="stylesheet"><style data-emotion="css" data-s=""></style><title>[6년차 쯤 되면 좀 알자] 시스템 가상머신과 컨테이너: 하이퍼바이저부터 Docker까지 | DevTaco Blog</title><meta name="description" content="가상머신이 시스템 가상머신과 프로세스 가상머신으로 나뉘고, JVM이 왜 프로세스 가상머신인지 따져 봅니다. 하이퍼바이저와 컨테이너(Docker)의 관계, VM과 컨테이너의 리소스 사용량 비교 테스트, 개발 환경 활용법이 있습니다."><meta property="og:title" content="[6년차 쯤 되면 좀 알자] 시스템 가상머신과 컨테이너: 하이퍼바이저부터 Docker까지"><meta property="og:description" content="가상머신이 시스템 가상머신과 프로세스 가상머신으로 나뉘고, JVM이 왜 프로세스 가상머신인지 따져 봅니다. 하이퍼바이저와 컨테이너(Docker)의 관계, VM과 컨테이너의 리소스 사용량 비교 테스트, 개발 환경 활용법이 있습니다."><meta property="og:type" content="article"><meta property="og:url" content="https://devtaco30.github.io/blog/posts/30"><meta name="twitter:card" content="summary"></head><body><noscript>You need to enable JavaScript to run this app.</noscript><div id="root"><div class="App"><div class="MuiBox-root css-kurlqb"><div class="MuiBox-root css-171onha"><button class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-1f6w95t" tabindex="0" type="button" id=":r0:"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="MenuIcon"><path d="M3 18h18v-2H3zm0-5h18v-2H3zm0-7v2h18V6z"></path></svg></button><div class="MuiBox-root css-1szb58x"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-218waq" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowBackIcon"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z"></path></svg><div class="MuiBox-root css-wq4jw1"><span>⌘+M</span></div></div></div></div><div class="MuiContainer-root css-15jb5o1" data-testid="page-container"><div class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-2 MuiGrid-spacing-md-3 css-1ht06td"><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-md-12 css-15j76c0"><div class="MuiBox-root css-15rigdj"><nav class="MuiTypography-root MuiTypography-body1 MuiBreadcrumbs-root css-1v2kxik"><ol class="MuiBreadcrumbs-ol css-51eq8m"><li class="MuiBreadcrumbs-li"><a class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways css-gj78h6" href="/blog/posts" data-discover="true">게시글 목록</a></li><li aria-hidden="true" class="MuiBreadcrumbs-separator css-1nd5pgh">/</li><li class="MuiBreadcrumbs-li"><p class="MuiTypography-root MuiTypography-body1 css-1cr0rz6">[6년차 쯤 되면 좀 알자] 시스템 가상머신과 컨테이너: 하이퍼바이저부터 Docker까지</p></li></ol></nav><div class="MuiBox-root css-15djlns"><button class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-1y18wdw" tabindex="0" type="button" id=":r9:"><span class="MuiButton-icon MuiButton-startIcon MuiButton-iconSizeMedium css-1ygddt1"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowBackIcon"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z"></path></svg></span><div class="MuiBox-root css-0"><span class="MuiTypography-root MuiTypography-caption css-115rlu8">이전글</span><p class="MuiTypography-root MuiTypography-body2 css-10qk5g4">EST AI - KNN Algorithm</p></div></button><button class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-1k0z50p" tabindex="0" type="button" id=":ra:"><div class="MuiBox-root css-0"><span class="MuiTypography-root MuiTypography-caption css-115rlu8">다음글</span><p class="MuiTypography-root MuiTypography-body2 css-10qk5g4">EST AI - Machine Learning 실습 (BMI 데이터 분석)</p></div><span class="MuiButton-icon MuiButton-endIcon MuiButton-iconSizeMedium css-6bt4d2"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowForwardIcon"><path d="m12 4-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"></path></svg></span></button></div><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-10t0qv5" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h4 class="MuiTypography-root MuiTypography-h4 css-k5jvd2">[6년차 쯤 되면 좀 알자] 시스템 가상머신과 컨테이너: 하이퍼바이저부터 Docker까지</h4><p class="MuiTypography-root MuiTypography-body1 css-104xg3">가상머신이 시스템 가상머신과 프로세스 가상머신으로 나뉘고, JVM이 왜 프로세스 가상머신인지 따져 봅니다. | 하이퍼바이저와 컨테이너(Docker)의 관계, VM과 컨테이너의 리소스 사용량 비교 테스트, 개발 환경 활용법이 있습니다.</p><div class="MuiBox-root css-1prrn6n"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">VM</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Container</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Docker</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Hypervisor</span></div></div><p class="MuiTypography-root MuiTypography-body2 css-l6pb42">2025년 12월 8일 오후 11:08</p></div><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-1i779yj" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><div class="MuiBox-root css-13lazol"><p>6년차에 접어들고보니 내가 잘 알고 있는게 맞나 라는 의구심이 들었고, Java 를 다시 한 번 되짚어 보는 시간을 가지고 있습니다. 그 중 JVM에 대해 정리하다 보니, "가상머신"이라는 개념이 무엇인지, 그리고 JVM이 왜 프로세스 가상머신으로 분류되는지 과연 내가 알고 쓰고 있는 것인지 확인하고 싶어졌어요.</p>
+<p>가상머신은 크게 시스템 가상머신과 프로세스 가상머신으로 나뉘는데, 이 둘의 차이와 실제 개발 환경에서의 활용을 정리해봤어요.</p>
+<h2>가상머신이란?</h2>
+<p>가상머신(Virtual Machine, VM)은 물리적 하드웨어를 소프트웨어로 추상화한 실행 환경이에요. 실제 물리적 머신(CPU, 메모리, 디스크)이 아닌 소프트웨어로 구현된 머신으로, 하드웨어를 추상화하여 다른 환경을 제공해요.</p>
+<p>가상머신의 핵심은:</p>
+<ul>
+<li><strong>추상화</strong>: 물리적 하드웨어의 복잡성을 숨기고 일관된 인터페이스 제공</li>
+<li><strong>격리</strong>: 여러 실행 환경을 물리적으로 분리하지 않고 논리적으로 분리</li>
+<li><strong>자원 가상화</strong>: 하나의 물리적 자원을 여러 가상 자원으로 분할</li>
+<li><strong>자원 활용도 향상</strong>: 하나의 물리적 서버에서 여러 VM을 운영하여 하드웨어 자원 활용률을 높임</li>
+</ul>
+<p>가상머신은 구현 방식과 목적에 따라 크게 두 가지로 분류돼요:</p>
+<hr>
+<h2>시스템 가상머신 (System Virtual Machine)</h2>
+<p>시스템 가상머신은 전체 운영체제를 가상화하여 물리적 하드웨어를 완전히 추상화해요. Guest OS가 완전한 운영체제 환경을 제공하며, CPU, 메모리, 디스크, 네트워크 등 모든 하드웨어를 가상화해요. 하나의 물리적 서버에 여러 다른 OS를 동시에 실행할 수 있고, 각 VM은 독립적인 실행 환경을 가져요.</p>
+<p>하이퍼바이저를 통해 물리적 하드웨어를 가상화하여 여러 운영체제를 동시에 실행할 수 있으며, 이를 통해 서버 통합(Server Consolidation)과 자원 효율성을 높일 수 있어요.</p>
+<h3>하이퍼바이저</h3>
+<p>하이퍼바이저는 시스템 가상머신의 핵심 구성 요소로, 물리적 하드웨어와 가상 머신 사이의 중간 계층이에요. VMM (Virtual Machine Monitor)이라고도 불려요. 물리 서버에서 작동하는 소프트웨어로, VM이나 펌웨어, 소프트웨어를 구축하고 운영해줘요.</p>
+<p>하이퍼바이저의 주요 역할은:</p>
+<ul>
+<li><strong>리소스 관리</strong>: 물리적 하드웨어(CPU, 메모리, 디스크, 네트워크)를 여러 VM에 분배</li>
+<li><strong>격리 보장</strong>: 각 VM이 독립적으로 실행되도록 격리</li>
+<li><strong>가상화 제공</strong>: Guest OS가 실제 하드웨어를 직접 접근하지 않고 가상화된 하드웨어를 사용하도록 함</li>
+</ul>
+<p>Windows를 사용하는 분들은 WSL2를 사용하기 위해 이 옵션을 다뤄본 적이 있을 거예요.</p>
+<p>하이퍼바이저는 두 가지 타입으로 나뉘는데요:</p>
+<h4>Type 1: Native/Bare-Metal Hypervisor</h4>
+<p>물리적 하드웨어에 직접 설치되며, Host OS 없이 하이퍼바이저가 직접 하드웨어를 제어해요. 성능 오버헤드가 적어서 엔터프라이즈 환경에서 주로 사용돼요.</p>
+<p><strong>구조</strong>:</p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">┌─────────────────────────────────┐
+│  Guest OS 1 (Windows)           │
+│  Guest OS 2 (Linux)             │
+│  Guest OS 3 (macOS)             │
+├─────────────────────────────────┤
+│  Hypervisor (VMware ESXi, KVM)  │  ← 하드웨어 직접 제어
+├─────────────────────────────────┤
+│  물리적 하드웨어                    │
+└─────────────────────────────────┘
+</code></pre>
+<p>대표적인 예:</p>
+<ul>
+<li>VMware ESXi: 엔터프라이즈 서버 가상화</li>
+<li>Microsoft Hyper-V: Windows Server 가상화 (일반적으로 Type 1로 분류, Windows Server 위에서 실행 시 Type 2 특성도 가짐)</li>
+<li>KVM: Linux 기반 오픈소스</li>
+<li>Xen: 오픈소스 하이퍼바이저</li>
+</ul>
+<p>Type 1 하이퍼바이저는 베어메탈(Bare-Metal) 하이퍼바이저라고도 불리며, 하드웨어에 직접 설치되어 성능과 보안 측면에서 우수해요. 데이터센터 서버 통합, 클라우드 인프라(AWS EC2, Azure VM), 엔터프라이즈 서버 가상화에 주로 사용돼요.</p>
+<h4>Type 2: Hosted Hypervisor</h4>
+<p>Host OS 위에 설치되며, Host OS가 하드웨어를 제어하고 하이퍼바이저가 그 위에서 동작해요. Type 1보다 성능 오버헤드가 크지만 설치와 사용이 간단해요.</p>
+<p><strong>구조</strong>:</p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">┌─────────────────────────────────┐
+│  Guest OS 1 (Linux)             │
+│  Guest OS 2 (Windows)           │
+├─────────────────────────────────┤
+│  Hypervisor (VMware, VirtualBox)│
+├─────────────────────────────────┤
+│  Host OS (Windows/Mac/Linux)    │  ← 호스트 운영체제
+├─────────────────────────────────┤
+│  물리적 하드웨어                    │
+└─────────────────────────────────┘
+</code></pre>
+<p>대표적인 예:</p>
+<ul>
+<li>VMware Workstation: 데스크톱 가상화</li>
+<li>VirtualBox: 오픈소스 데스크톱 가상화</li>
+<li>Parallels Desktop: Mac에서 Windows 실행</li>
+</ul>
+<p>Type 2 하이퍼바이저는 호스팅된(Hosted) 하이퍼바이저라고도 불리며, 개발 환경 구축, 테스트 환경 분리, 데스크톱에서 여러 OS 사용에 적합해요.</p>
+<h3>컨테이너와의 관계</h3>
+<p>컨테이너는 OS 레벨 가상화 기술로, 시스템 가상머신과는 다른 접근 방식을 사용해요. 전통적인 시스템 VM은 하드웨어를 가상화하지만, 컨테이너는 호스트 OS의 커널을 공유하면서 애플리케이션 레벨에서 격리를 제공해요.</p>
+<p><strong>아키텍처 차이: Hypervisor vs Container Engine</strong></p>
+<p>가장 근본적인 차이점은 <strong>가상화를 어느 수준에서, 어떤 방식으로 수행하는가</strong>예요.</p>
+<p><strong>VM 아키텍처: 하드웨어 가상화</strong></p>
+<ul>
+<li>하드웨어 계층을 가상화하는 방식</li>
+<li>하이퍼바이저가 물리적 하드웨어를 소프트웨어적으로 에뮬레이션</li>
+<li>각 VM이 독립된 가상 컴퓨터처럼 동작</li>
+<li>Guest OS가 완전한 운영체제 환경을 가짐</li>
+</ul>
+<p><strong>컨테이너 아키텍처: 운영체제 수준 가상화</strong></p>
+<ul>
+<li>운영체제 계층을 가상화하는 방식</li>
+<li>Container Engine(Docker Engine 등)이 호스트 OS 커널을 공유</li>
+<li>Namespaces와 cgroups를 통해 프로세스 격리</li>
+<li>애플리케이션과 그 종속성만 패키징</li>
+</ul>
+<p><strong>핵심 차이점</strong>:</p>
+<ul>
+<li><strong>VM</strong>: 하드웨어 수준의 가상화로, 각 VM이 자체 운영체제를 실행해요. 하이퍼바이저가 물리적 하드웨어를 가상화하여 여러 Guest OS를 실행할 수 있게 해요.</li>
+<li><strong>컨테이너</strong>: 운영체제 수준의 가상화로, 호스트 OS 커널을 공유하면서 애플리케이션과 그 종속성을 격리된 환경에서 실행해요. Docker Engine이 컨테이너 런타임을 관리해요.</li>
+</ul>
+<p><strong>VM 아키텍처 구조</strong>:</p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">┌─────────────────────────────────┐
+│  Guest OS 1 (완전한 OS)           │
+│  Guest OS 2 (완전한 OS)           │
+├─────────────────────────────────┤
+│  Hypervisor (하드웨어 가상화)       │  ← 하드웨어 에뮬레이션
+├─────────────────────────────────┤
+│  Host OS (Type 2인 경우)          │
+├─────────────────────────────────┤
+│  물리적 하드웨어                    │
+└─────────────────────────────────┘
+</code></pre>
+<p><strong>컨테이너 아키텍처 구조</strong>:</p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">┌─────────────────────────────────┐
+│  Container 1 (App + Libs)       │
+│  Container 2 (App + Libs)       │
+│  Container 3 (App + Libs)       │
+├─────────────────────────────────┤
+│  Container Engine (Docker 등)    │  ← Namespaces, cgroups
+├─────────────────────────────────┤
+│  Host OS (Linux Kernel)         │  ← OS 커널 공유
+├─────────────────────────────────┤
+│  물리적 하드웨어                    │
+└─────────────────────────────────┘
+</code></pre>
+<p>컨테이너는 <strong>Namespaces</strong>와 **cgroups(Control Groups)**를 통해 프로세스를 격리해요. Namespaces는 프로세스가 보는 리소스(파일 시스템, 네트워크, 프로세스 ID 등)를 격리하고, cgroups는 CPU, 메모리, 디스크 I/O 등의 리소스 사용량을 제한해요.</p>
+<p><strong>전통적인 VM vs 컨테이너</strong>:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>구분</th><th>전통적인 VM</th><th>컨테이너</th></tr></thead><tbody><tr><td><strong>가상화 레벨</strong></td><td>하드웨어 수준 가상화</td><td>운영체제 수준 가상화</td></tr><tr><td><strong>아키텍처</strong></td><td>Hypervisor 기반</td><td>Container Engine 기반</td></tr><tr><td><strong>격리 수준</strong></td><td>하드웨어 레벨 격리 (독립된 커널)</td><td>프로세스 레벨 격리 (커널 공유)</td></tr><tr><td><strong>Guest OS</strong></td><td>각 VM마다 완전한 OS</td><td>OS 커널 공유</td></tr><tr><td><strong>리소스 사용</strong></td><td>많음 (OS 전체)</td><td>적음 (라이브러리만)</td></tr><tr><td><strong>시작 시간</strong></td><td>수십 초</td><td>수 초 (실제 측정: 0.15초)</td></tr><tr><td><strong>오버헤드</strong></td><td>높음 (하이퍼바이저)</td><td>낮음 (커널 공유)</td></tr><tr><td><strong>이미지 크기</strong></td><td>GB 단위 (OS 포함)</td><td>MB 단위 (앱 + 종속성만)</td></tr><tr><td><strong>이식성</strong></td><td>VM 이미지 전체 필요</td><td>컨테이너 이미지만 필요</td></tr><tr><td><strong>예시</strong></td><td>VMware, VirtualBox</td><td>Docker, Kubernetes</td></tr></tbody></table>
+<p><strong>왜 이런 차이가 생길까요?</strong></p>
+<p>VM은 하이퍼바이저를 통해 물리적 하드웨어를 가상화하기 때문에, 각 VM마다 완전한 운영체제가 필요해요. 하이퍼바이저가 물리적 하드웨어를 소프트웨어적으로 에뮬레이션하여 여러 개의 독립된 가상 컴퓨터를 만드는 개념이에요.</p>
+<p>반면 컨테이너는 Container Engine이 호스트 OS 커널을 공유하면서, <strong>Namespaces</strong>와 **cgroups(Control Groups)**를 통해 프로세스를 격리해요. Namespaces는 프로세스가 보는 리소스(파일 시스템, 네트워크, 프로세스 ID 등)를 격리하고, cgroups는 CPU, 메모리, 디스크 I/O 등의 리소스 사용량을 제한해요. 이로 인해 컨테이너는 VM보다 훨씬 가볍고 빠르게 실행될 수 있어요.</p>
+<p><strong>언제 무엇을 사용할까요?</strong></p>
+<p><strong>컨테이너가 적합한 경우</strong>:</p>
+<ul>
+<li>마이크로서비스 아키텍처: 경량이고 빠른 시작 시간이 중요해요</li>
+<li>클라우드 네이티브 애플리케이션: 확장성과 이식성이 중요해요</li>
+<li>CI/CD 파이프라인: 빠른 빌드와 배포가 필요해요</li>
+<li>개발/테스트 환경: 빠르게 환경을 구축하고 정리해야 해요</li>
+</ul>
+<p><strong>VM이 적합한 경우</strong>:</p>
+<ul>
+<li>완전한 격리가 필요한 경우: 보안이 중요한 환경</li>
+<li>다양한 OS가 필요한 경우: Windows, Linux 등 서로 다른 OS를 동시에 실행</li>
+<li>레거시 시스템 마이그레이션: 기존 시스템을 그대로 가상화</li>
+<li>클라우드 인프라 제공: 여러 고객에게 격리된 환경 제공</li>
+</ul>
+<p>실무에서는 마이크로서비스 아키텍처에는 컨테이너가 더 적합하고(경량, 빠른 시작), 레거시 시스템처럼 완전한 격리가 필요한 경우에는 전통적인 VM이 더 적합해요. 클라우드 네이티브 환경에서는 컨테이너 기반 배포가 표준이에요.</p>
+<p><strong>격리 수준의 차이</strong></p>
+<p>순수하게 격리의 강도만을 놓고 본다면, <strong>독립된 커널을 사용하는 VM이 커널을 공유하는 컨테이너보다 더 강력한 격리 수준</strong>을 제공해요. 하지만 컨테이너가 제공하는 운영체제 수준의 격리도 대부분의 일반적인 애플리케이션 환경에서는 충분한 수준의 보안과 안정성을 제공할 수 있어요.</p>
+<p>특히 <strong>SELinux/AppArmor, Seccomp, Capabilities, User Namespaces</strong> 등 다양한 보안 강화 기법들을 함께 적용하면 컨테이너의 격리 수준을 더욱 높일 수 있어요. 또한 <strong>gVisor</strong>(커널 시스템 콜을 사용자 공간에서 가로채어 처리)나 <strong>Kata Containers</strong>(각 컨테이너를 경량화된 VM 위에서 실행) 같은 기술들은 약간의 성능 오버헤드를 감수하는 대신 하드웨어 가상화 수준의 격리를 제공해요.</p>
+<p>결국 어떤 기술을 선택할지는 워크로드의 특성, 보안 요구사항, 운영체제 환경, 관리 복잡성 및 비용 효율성 등을 종합적으로 고려해야 해요.</p>
+<h3>실제 사용 사례</h3>
+<ol>
+<li><strong>서버 통합</strong>: 물리 서버 10대를 가상 서버 100대로 통합하여 하드웨어 자원 활용률을 높이고 운영 비용을 절감</li>
+<li><strong>클라우드 인프라</strong>: AWS EC2, Azure VM, GCP Compute Engine 등에서 여러 고객이 같은 물리 서버를 공유하면서 자원 격리와 보안 보장</li>
+<li><strong>개발/테스트 환경</strong>: 프로덕션 환경과 동일한 환경 구축, 여러 버전의 OS/소프트웨어 테스트, 환경 분리로 안전한 테스트</li>
+</ol>
+<h3>실제 테스트: VM vs 컨테이너 리소스 비교</h3>
+<p>실제로 VM과 Docker 컨테이너를 만들어서 리소스 사용량을 측정해봤어요. 직접 해보시면 차이를 확실히 느낄 수 있을 거예요.</p>
+<p><strong>참고</strong>: VirtualBox는 버전 7.1부터 Apple Silicon Mac을 지원하지만, 일부 제한사항이 있을 수 있어요. Apple Silicon Mac 사용자는 UTM, Parallels Desktop, VMware Fusion 같은 대안도 고려해볼 수 있어요.</p>
+<p><strong>테스트 환경</strong>:</p>
+<ul>
+<li>Host OS: macOS Sonoma 14.1</li>
+<li>CPU: Apple M1 Pro</li>
+<li>RAM: 16GB</li>
+</ul>
+<p><strong>참고</strong>: Ubuntu 22.04 LTS를 선택한 이유는 LTS(Long Term Support) 버전이라 안정적이고, 널리 사용되는 버전이기 때문이에요. 다른 버전(20.04, 24.04 등)이나 다른 OS 이미지(Alpine, Debian 등)를 사용해도 비교 테스트는 가능해요.</p>
+<h4>Docker 컨테이너 테스트</h4>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-bash"># 먼저 이미지가 있는지 확인 (없으면 pull 시간이 추가됨)
+$ docker images | grep ubuntu
+
+# 이미지가 없으면 먼저 pull (처음 한 번만)
+# Ubuntu 22.04 LTS 사용 (다른 버전도 가능)
+$ docker pull ubuntu:22.04
+
+# 컨테이너 시작 시간 측정 (이미지가 이미 있는 경우)
+$ time docker run -d --name test-container ubuntu:22.04 sleep infinity
+75336bb865e15b8f56cbfe9bdfc4b860ffdb8d4a79c24ad27be78aec3042e44b
+docker run -d --name test-container ubuntu:22.04 sleep infinity  0.01s user 0.01s system 13% cpu 0.154 total
+# 실제 측정: 약 0.15초 (이미지 pull 시간 제외)
+
+# 메모리 사용량 확인
+$ docker stats test-container --no-stream
+CONTAINER ID   NAME             CPU %     MEM USAGE / LIMIT   MEM %     NET I/O        BLOCK I/O    PIDS
+75336bb865e1   test-container   0.00%     712KiB / 5.786GiB   0.01%     1.7kB / 126B   147kB / 0B   1
+# 실제 측정: 약 712KiB (0.7MB) - 정말 가볍네요!
+
+# 디스크 사용량 확인
+$ docker system df -v | grep test-container
+75336bb865e1   ubuntu:22.04         "sleep infinity"         0               4.1kB     About a minute ago   Up About a minute        test-container
+# 컨테이너 레이어 크기: 4.1kB (매우 작아요!)
+# 전체 이미지 크기는 별도로 확인 가능:
+$ docker images ubuntu:22.04
+REPOSITORY   TAG       IMAGE ID       CREATED       SIZE
+ubuntu       22.04     ...            ...           77.8MB
+
+# 테스트 후 정리
+$ docker stop test-container
+$ docker rm test-container
+</code></pre></pre>
+<p><strong>참고</strong>: 처음 실행할 때는 이미지를 pull하는 시간이 추가되지만, 이후에는 이미지가 로컬에 있어서 매우 빠르게 시작돼요. 위의 0.15초는 이미지가 이미 있는 상태에서 실제 측정한 시간이에요. 컨테이너가 정말 빠르게 시작되는 걸 확인할 수 있어요!</p>
+<h4>VM 테스트</h4>
+<p><strong>참고</strong>: VirtualBox는 버전 7.1부터 Apple Silicon Mac을 지원하기 시작했어요. (<a href="https://blogs.oracle.com/virtualization/post/oracle-virtualbox-710">Oracle VirtualBox 7.1 공식 발표</a>) 하지만 일부 기능이 제한적이거나 성능 저하가 있을 수 있어요. Apple Silicon Mac에서는 UTM, Parallels Desktop, VMware Fusion 같은 대안도 고려해볼 수 있어요.</p>
+<p>VirtualBox가 설치되어 있다면:</p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-bash"># VM 시작 시간 측정 (VirtualBox CLI 사용)
+$ time VBoxManage startvm "Ubuntu-VM" --type headless
+real    0m35.456s  # 약 35초
+
+# VM 메모리 할당 확인
+$ VBoxManage showvminfo "Ubuntu-VM" | grep Memory
+Memory size: 2048MB
+
+# VM 디스크 크기 확인
+$ VBoxManage showvminfo "Ubuntu-VM" | grep "Storage"
+</code></pre></pre>
+<p>또는 VirtualBox GUI에서 VM을 시작하고 Activity Monitor(맥) 또는 Task Manager(윈도우)로 메모리 사용량을 확인할 수 있어요.</p>
+<p><strong>Apple Silicon Mac 사용자를 위한 대안</strong>:</p>
+<p>VirtualBox 대신 다음 도구들도 사용할 수 있어요:</p>
+<ol>
+<li>
+<p><strong>UTM</strong> (무료, 오픈소스)</p>
+<ul>
+<li>App Store에서 설치 가능</li>
+<li>QEMU 기반으로 다양한 OS 지원</li>
+<li>설치 및 사용이 간단해요</li>
+</ul>
+</li>
+<li>
+<p><strong>Parallels Desktop</strong> (유료)</p>
+<ul>
+<li>Apple Silicon 최적화</li>
+<li>성능이 우수하고 사용이 편리해요</li>
+</ul>
+</li>
+<li>
+<p><strong>VMware Fusion</strong> (유료, 개인 사용 무료)</p>
+<ul>
+<li>Apple Silicon 지원</li>
+<li>엔터프라이즈 환경에서 많이 사용해요</li>
+</ul>
+</li>
+</ol>
+<p>VM 테스트는 선택 사항이에요. Docker 컨테이너 테스트만으로도 VM과 컨테이너의 차이를 충분히 확인할 수 있어요.</p>
+<p><strong>결과</strong>:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>항목</th><th>VM (Ubuntu 22.04 LTS)</th><th>Docker Container (Ubuntu 22.04 LTS)</th></tr></thead><tbody><tr><td>시작 시간</td><td>약 35초 (VirtualBox 기준)</td><td>약 0.15초</td></tr><tr><td>메모리 사용량</td><td>2GB (할당)</td><td>약 0.7MB (712KiB)</td></tr><tr><td>디스크 사용량</td><td>약 10GB</td><td>이미지 77.8MB, 컨테이너 레이어 4.1kB</td></tr><tr><td>CPU 오버헤드</td><td>높음 (하이퍼바이저)</td><td>낮음 (커널 공유)</td></tr></tbody></table>
+<p><strong>참고</strong>: VirtualBox는 버전 7.1부터 Apple Silicon Mac을 지원하지만, 일부 제한사항이 있을 수 있어요. Apple Silicon Mac 사용자는 UTM, Parallels Desktop, VMware Fusion 같은 대안도 고려해볼 수 있어요. VM 테스트는 선택 사항이며, Docker 컨테이너 테스트만으로도 차이를 충분히 확인할 수 있어요.</p>
+<p>VM은 전체 OS를 포함하므로 리소스 사용량이 크지만, 컨테이너는 호스트 OS 커널을 공유하므로 훨씬 가벼워요. 직접 테스트해보시면 이 차이를 확실히 느낄 수 있을 거예요.</p>
+<hr>
+<h2>실무 활용</h2>
+<h3>개발 환경</h3>
+<p>로컬 개발 환경에서는 Docker(컨테이너)로 마이크로서비스 개발과 의존성 격리를 해요. 여러 OS 환경 테스트가 필요할 때는 가상머신을 사용하죠.</p>
+<p>CI/CD 파이프라인에서는 컨테이너로 빌드 및 배포 환경을 표준화해요.</p>
+<p>프로덕션 환경에서는 클라우드 VM(AWS EC2, Azure VM 등)을 사용하고, 컨테이너 오케스트레이션(Kubernetes)을 활용해요.</p>
+<h3>성능 최적화</h3>
+<p>시스템 VM 최적화는 하이퍼바이저 타입 선택(Type 1 vs Type 2), CPU/메모리 오버커밋 설정, 네트워크/디스크 I/O 최적화로 진행해요.</p>
+<hr>
+<h2>정리</h2>
+<p>시스템 가상머신은 전체 OS를 가상화하여 하드웨어를 추상화해요. 하이퍼바이저 기반(Type 1, Type 2)으로 동작하며, 예로는 VMware, AWS EC2가 있어요.</p>
+<p>컨테이너는 OS 레벨 가상화 기술로, 시스템 가상머신과는 다른 접근 방식을 사용해요. 호스트 OS 커널을 공유하면서 Namespaces와 cgroups를 통해 프로세스를 격리해요.</p>
+<p>VM과 컨테이너는 각각의 장단점이 있어서, 워크로드의 특성과 요구사항에 따라 선택해야 해요. 클라우드 네이티브 환경에서는 컨테이너가 표준이지만, 완전한 격리가 필요한 경우에는 VM이 더 적합해요.</p>
+<hr>
+<h2>📚 <strong>참고 자료</strong></h2>
+<ul>
+<li><a href="https://www.samsungsds.com/kr/story/220222_kubernetes1.html">Samsung SDS - Kubernetes와 컨테이너 가상화</a> - 컨테이너와 VM의 차이</li>
+<li><a href="https://www.nutanix.com/ko/info/hypervisor">Nutanix - 하이퍼바이저 가이드</a> - Type 1, Type 2 하이퍼바이저 설명</li>
+<li><a href="https://notavoid.tistory.com/369">VirtualBox 실전 가이드</a> - VirtualBox 설치부터 Headless Frontend 운용, 공유폴더 설정까지</li>
+<li><a href="https://kchs0529.tistory.com/entry/%EA%B0%80%EC%83%81%ED%99%94-%EA%B0%9C%EB%85%90-%EC%A0%95%EB%A6%AC-%EA%B0%80%EC%83%81%EB%A8%B8%EC%8B%A0-%ED%95%98%EC%9D%B4%ED%8D%BC%EB%B0%94%EC%9D%B4%EC%A0%80%EC%9D%98-%EC%B0%A8%EC%9D%B4-%EA%B7%B8%EB%A6%AC%EA%B3%A0-XenServer">가상화 개념 정리 - 가상머신과 하이퍼바이저의 차이</a> - 가상화 개념과 하이퍼바이저 상세 설명</li>
+<li><a href="https://www.cncf.co.kr/ebook/kubernetes/part-1-introduction-to-cloud-native-and-containers/chapter-2-understanding-and-utilizing-container-technology/2-1-background-of-container-technology/2-1-2-comparison-of-vms-and-containers/">CNCF - VM과 컨테이너 비교</a> - VM과 컨테이너 기술 비교</li>
+</ul></div></div><div class="MuiBox-root css-1cpq4zq"><hr class="MuiDivider-root MuiDivider-fullWidth css-7jtdmc"><h5 class="MuiTypography-root MuiTypography-h5 css-85yo2n">같은 카테고리의 다른 글</h5><div class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-2 css-1eikg3m"><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] Serializable 깊이 파기 — Part 2: 바이트에서 다시 객체로, 그리고 함정들</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">직렬화된 바이트를 ObjectInputStream이 어떤 순서로 읽어 객체로 복원하는지, 그때 생성자가 호출되지 않는다는 점을 확인합니다. | serialVersionUID, transient, 커스텀 readObject·writeObject, 역직렬화 취약점, Java 직렬화의 현재로 마무리합니다.</p><div class="MuiBox-root css-107ld1r"></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 4월 5일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] Serializable 깊이 파기 — Part 1: 객체가 바이트가 되는 과정</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">Python이나 JavaScript와 달리 Java는 왜 Serializable을 선언해야 하는지, 메서드가 하나도 없는 이 인터페이스가 무슨 일을 하는지 묻는 글입니다. | ObjectOutputStream이 만든 실제 바이트를 열어 보고, 참조 객체가 들어 있을 때는 어떻게 되는지 확인합니다.</p><div class="MuiBox-root css-107ld1r"></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 4월 5일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] 주식 거래 엔진 직접 만들기 - Part 3: 오더북을 어떻게 구현할 것인가</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">주식 거래 엔진의 오더북을 TreeMap과 ArrayDeque 조합으로 만든 이유를, PriorityQueue, LinkedList, Skip List와 비교하며 설명합니다. | 주문 취소를 Lazy Removal로 처리한 방법과 Kafka를 연결하며 만난 멱등성 문제를 마지막에 둡니다.</p><div class="MuiBox-root css-107ld1r"></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 27일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] 주식 거래 엔진 직접 만들기 - Part 2: Phase 1 — 모놀리식으로 시작하기</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">단일 JAR 모놀리식 구조인 Phase 1에서 만난 문제를 차례로 다룹니다. | SELECT FOR UPDATE로 동시성을 해결했고, 락 보유 시간을 줄이고, 락 획득 순서를 통일해 데드락 위험을 없앴습니다. @Transactional 원칙과 Lazy Loading 함정도 짚습니다.</p><div class="MuiBox-root css-107ld1r"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Java</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Spring Boot</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">JPA</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">+2</span></div></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 27일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] 주식 거래 엔진 직접 만들기 - Part 1: 왜 주식 거래 엔진인가</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">F-lab 멘토링 프로젝트로 주식 거래 엔진을 직접 설계하고 구현한 과정을 기록하는 시리즈의 첫 글입니다. | 프로젝트를 고른 기준과 멀티모듈 구조, Phase 로드맵, 시리즈 전체에서 답할 질문들을 먼저 밝힙니다.</p><div class="MuiBox-root css-107ld1r"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Java</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Spring Boot</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Kafka</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">+5</span></div></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 27일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[개발자가 직접 써봤어요] Claude Code 완전 가이드: 설치부터 멀티에이전트까지</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">Claude Code를 Spring Boot와 Kafka 기반 주식 매매 엔진 프로젝트에 적용해 본 경험을 바탕으로, 설치부터 멀티에이전트까지 소개합니다. | CLAUDE.md, Skills, Subagents, Hooks, MCP, Agent Teams의 여섯 레이어와 Cursor AI와의 비교, 주의사항이 나옵니다.</p><div class="MuiBox-root css-107ld1r"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Claude Code</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">AI</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Developer Tools</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">+4</span></div></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 9일</span></div></div></div></div><div class="MuiBox-root css-1b94f21"><a class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways css-104ms0" href="/blog/posts" data-discover="true"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowBackIcon"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z"></path></svg>게시글 목록으로 돌아가기</a></div><button class="MuiButtonBase-root MuiFab-root MuiFab-circular MuiFab-sizeMedium MuiFab-primary MuiFab-root MuiFab-circular MuiFab-sizeMedium MuiFab-primary css-1nl6bps" tabindex="0" type="button" aria-label="scroll to top" style="opacity: 0; visibility: hidden;"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="KeyboardArrowUpIcon"><path d="M7.41 15.41 12 10.83l4.59 4.58L18 14l-6-6-6 6z"></path></svg></button></div></div></div></div><footer style="text-align: center; padding: 2rem 0px; color: rgb(0, 0, 0); font-size: 0.9rem; border-top: 1px solid rgb(0, 0, 0); margin-top: auto; background-color: rgb(255, 255, 255);"><p>© 2025 DevTaco Blog. All rights reserved.</p></footer><div class="MuiBox-root css-1hyfx7x"><div class="visitor-counter MuiBox-root css-19midj6"><h6 class="MuiTypography-root MuiTypography-h6 MuiTypography-gutterBottom css-izz7ci">방문자 수</h6><div class="MuiBox-root css-zwd3xv"><h4 class="MuiTypography-root MuiTypography-h4 css-1dg27va">85</h4><p class="MuiTypography-root MuiTypography-body2 css-l6pb42">오늘</p><h6 class="MuiTypography-root MuiTypography-h6 css-kh42wg">총 85명</h6></div></div></div><div class="MuiBox-root css-1y95mt5" data-testid="terminal-navigation"><div class="MuiBox-root css-1kw3y0a"><p class="MuiTypography-root MuiTypography-body2 css-1fktdtb">devtaco@portfolio:~$ navigation</p><div class="MuiBox-root css-j0ozid"><p class="MuiTypography-root MuiTypography-body2 css-1cn40rb">⌘M to close</p><button class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-470314" tabindex="0" type="button" id=":r1:"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeSmall css-vh810p" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="CloseIcon"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg></button></div></div><div class="MuiBox-root css-13t3iqc"><div class="MuiBox-root css-0"><p class="MuiTypography-root MuiTypography-body2 css-cbhj4f">Navigation:</p><div class="MuiBox-root css-1kkt86i"><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">1 → home</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">2 → about</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">3 → posts</p></div></div><div class="MuiBox-root css-0"><p class="MuiTypography-root MuiTypography-body2 css-cbhj4f">External:</p><div class="MuiBox-root css-1kkt86i"><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">g → github</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">e → email</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">l → linkedin</p></div></div></div><p class="MuiTypography-root MuiTypography-body2 css-1e7vt2">Press number keys (1,2,3) or letter keys (g,e,l) to navigate. Use ⌘+M to close.</p></div></div></div></body></html>

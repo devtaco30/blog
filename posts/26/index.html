@@ -1,0 +1,328 @@
+<!DOCTYPE html><html lang="en"><head><script type="text/javascript">!function(n){if("/"===n.search[1]){var a=n.search.slice(1).split("&").map((function(n){return n.replace(/~and~/g,"&")})).join("?");window.history.replaceState(null,null,n.pathname.slice(0,-1)+a+n.hash)}}(window.location)</script><meta charset="utf-8"><link rel="icon" href="/blog/favicon.ico"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#000000"><meta name="keywords" content="Java, Kotlin, Spring Boot, MSA, 개발, 백엔드, coroutine"><meta name="author" content="DevTaco"><meta property="og:image" content="https://devtaco30.github.io/blog/og-image.png"><meta property="twitter:image" content="https://devtaco30.github.io/blog/og-image.png"><meta property="twitter:url" content="https://devtaco30.github.io/blog/"><link rel="apple-touch-icon" href="/blog/apple-touch-icon.png"><link rel="manifest" href="/blog/manifest.json"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&amp;family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet"><script defer="defer" src="/blog/static/js/main.404b9165.js"></script><link href="/blog/static/css/main.5b86466f.css" rel="stylesheet"><style data-emotion="css" data-s=""></style><title>EST AI - Python(mile per gallon data) | DevTaco Blog</title><meta name="description" content="미국 환경 보호국이 공개한 자동차 234종의 연비(mpg) 데이터를 불러와 구조를 살펴봅니다. 다중 조건 필터링과 groupby 집계로 연비를 분석하고 그래프로 그립니다."><meta property="og:title" content="EST AI - Python(mile per gallon data)"><meta property="og:description" content="미국 환경 보호국이 공개한 자동차 234종의 연비(mpg) 데이터를 불러와 구조를 살펴봅니다. 다중 조건 필터링과 groupby 집계로 연비를 분석하고 그래프로 그립니다."><meta property="og:type" content="article"><meta property="og:url" content="https://devtaco30.github.io/blog/posts/26"><meta name="twitter:card" content="summary"></head><body><noscript>You need to enable JavaScript to run this app.</noscript><div id="root"><div class="App"><div class="MuiBox-root css-kurlqb"><div class="MuiBox-root css-171onha"><button class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-1f6w95t" tabindex="0" type="button" id=":r0:"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="MenuIcon"><path d="M3 18h18v-2H3zm0-5h18v-2H3zm0-7v2h18V6z"></path></svg></button><div class="MuiBox-root css-1szb58x"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-218waq" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowBackIcon"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z"></path></svg><div class="MuiBox-root css-wq4jw1"><span>⌘+M</span></div></div></div></div><div class="MuiContainer-root css-15jb5o1" data-testid="page-container"><div class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-2 MuiGrid-spacing-md-3 css-1ht06td"><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-md-12 css-15j76c0"><div class="MuiBox-root css-15rigdj"><nav class="MuiTypography-root MuiTypography-body1 MuiBreadcrumbs-root css-1v2kxik"><ol class="MuiBreadcrumbs-ol css-51eq8m"><li class="MuiBreadcrumbs-li"><a class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways css-gj78h6" href="/blog/posts" data-discover="true">게시글 목록</a></li><li aria-hidden="true" class="MuiBreadcrumbs-separator css-1nd5pgh">/</li><li class="MuiBreadcrumbs-li"><p class="MuiTypography-root MuiTypography-body1 css-1cr0rz6">EST AI - Python(mile per gallon data)</p></li></ol></nav><div class="MuiBox-root css-15djlns"><button class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-1y18wdw" tabindex="0" type="button" id=":r9:"><span class="MuiButton-icon MuiButton-startIcon MuiButton-iconSizeMedium css-1ygddt1"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowBackIcon"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z"></path></svg></span><div class="MuiBox-root css-0"><span class="MuiTypography-root MuiTypography-caption css-115rlu8">이전글</span><p class="MuiTypography-root MuiTypography-body2 css-10qk5g4">EST AI - Python(HR data)</p></div></button><button class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-1k0z50p" tabindex="0" type="button" id=":ra:"><div class="MuiBox-root css-0"><span class="MuiTypography-root MuiTypography-caption css-115rlu8">다음글</span><p class="MuiTypography-root MuiTypography-body2 css-10qk5g4">EST AI - Python(apply,lambda)</p></div><span class="MuiButton-icon MuiButton-endIcon MuiButton-iconSizeMedium css-6bt4d2"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowForwardIcon"><path d="m12 4-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"></path></svg></span></button></div><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-10t0qv5" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h4 class="MuiTypography-root MuiTypography-h4 css-k5jvd2">EST AI - Python(mile per gallon data)</h4><p class="MuiTypography-root MuiTypography-body1 css-104xg3">미국 환경 보호국이 공개한 자동차 234종의 연비(mpg) 데이터를 불러와 구조를 살펴봅니다. | 다중 조건 필터링과 groupby 집계로 연비를 분석하고 그래프로 그립니다.</p><div class="MuiBox-root css-1prrn6n"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">ython</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Programming</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Data Visualization</span></div></div><p class="MuiTypography-root MuiTypography-body2 css-l6pb42">2025년 12월 4일 오후 11:43</p></div><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-1i779yj" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><div class="MuiBox-root css-13lazol"><h3>📋 mpg 데이터 소개 및 탐색</h3>
+<p><strong>데이터 소개:</strong></p>
+<ul>
+<li>mpg (mile per gallon, 연비): 미국 환경 보호국에서 공개한 데이터</li>
+<li>1999 ~ 2008년 출시된 자동차 234종 정보</li>
+</ul>
+<p><strong>데이터 로드 및 샘플 확인:</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python">import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+mpg = pd.read_csv('../data/mpg.csv', encoding='utf-8')
+mpg.head(3)
+</code></pre></pre>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">  manufacturer model  displ  year  cyl       trans drv  cty  hwy fl category
+0         audi    a4    1.8  1999    4    auto(l5)   f   18   29  p  compact
+1         audi    a4    1.8  1999    4  manual(m5)   f   21   29  p  compact
+2         audi    a4    2.0  2008    4  manual(m6)   f   20   31  p  compact
+</code></pre>
+<p><strong>데이터 탐색:</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python"># 기본 정보 확인
+mpg.shape  # (234, 11)
+mpg.info()  # 데이터 타입, 결측치 확인
+mpg.head(3)  # 앞 3개 행
+mpg.tail(3)  # 뒤 3개 행
+
+# 통계량 구하기
+mpg.describe()  # 수치 데이터에 대한 통계량
+mpg[['manufacturer', 'model']].describe()  # 문자열 데이터 통계량
+</code></pre></pre>
+<p><strong>문자열 데이터 describe() 결과:</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th></th><th>manufacturer</th><th>model</th></tr></thead><tbody><tr><td>count</td><td>234</td><td>234</td></tr><tr><td>unique</td><td>15</td><td>38</td></tr><tr><td>top</td><td>dodge</td><td>caravan 2wd</td></tr><tr><td>freq</td><td>37</td><td>11</td></tr></tbody></table>
+<p><strong>데이터 정렬:</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python"># 오름차순
+mpg.sort_values('year')
+
+# 내림차순
+mpg.sort_values('year', ascending=False)
+
+# 특정 조건으로 필터링 후 정렬
+mpg[mpg['manufacturer'] == 'audi'].sort_values('hwy', ascending=False).head(5)
+</code></pre></pre>
+<hr>
+<h3>📋 다중 조건 필터링</h3>
+<p><strong>특정 제조사들의 데이터만 추출하기:</strong></p>
+<ul>
+<li>toyota, ford, audi, hyundai, honda</li>
+</ul>
+<p><strong>방법 1: pd.concat() 사용</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python">hw_method_1 = pd.concat([
+    mpg[mpg['manufacturer'] == 'toyota'],
+    mpg[mpg['manufacturer'] == 'ford'],
+    mpg[mpg['manufacturer'] == 'audi'],
+    mpg[mpg['manufacturer'] == 'hyundai'],
+    mpg[mpg['manufacturer'] == 'honda']
+], axis=0)
+</code></pre></pre>
+<p><strong>방법 2: 다중 조건 (| 연산자)</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python"># ⚠️ 각 조건을 괄호로 묶어야 함!
+hw_method_2 = mpg[
+    (mpg['manufacturer'] == 'toyota') | 
+    (mpg['manufacturer'] == 'ford') | 
+    (mpg['manufacturer'] == 'audi') | 
+    (mpg['manufacturer'] == 'hyundai') | 
+    (mpg['manufacturer'] == 'honda')
+]
+</code></pre></pre>
+<blockquote>
+<p>⚠️ <strong>주의</strong>: pandas에서 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">|</code> 연산자를 사용할 때는 각 조건을 괄호로 묶어야 합니다. 괄호 없이 사용하면 연산자 우선순위로 인해 에러가 발생합니다.</p>
+</blockquote>
+<p><strong>방법 3: isin() 사용 (권장)</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python"># 가장 간결하고 읽기 쉬움
+hw_method_3 = mpg[mpg['manufacturer'].isin(['toyota', 'ford', 'audi', 'hyundai', 'honda'])]
+</code></pre></pre>
+<hr>
+<h3>📋 groupby를 활용한 집계 분석</h3>
+<p><strong>카테고리별 도시 연비 평균:</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python"># 카테고리별 cty 평균
+cty_mean = mpg[['category', 'cty']].groupby('category').mean()
+cty_mean.sort_values('cty', ascending=False)
+
+# 회사별 hwy 평균 (상위 3개)
+mpg[['manufacturer', 'hwy']].groupby('manufacturer').mean().sort_values('hwy', ascending=False).head(3)
+</code></pre></pre>
+<p><strong>다중 기준 groupby:</strong></p>
+<p>여러 컬럼을 기준으로 그룹화하여 더 세밀한 분석을 수행할 수 있습니다.</p>
+<p><strong>제조사와 자동차 종류별 고속도로 연비:</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python"># 5개 제조사 데이터 (위에서 추출한 데이터)
+total = hw_method_1  # 또는 hw_method_2, hw_method_3
+
+# 제조사와 자동차 종류별로 그룹화하여 고속도로 연비(hwy) 평균 계산
+subset = total[['manufacturer', 'category', 'hwy']]
+
+# 방법 1: 단계별로 수행
+grouped_by_mf_cty = subset.groupby(['manufacturer', 'category'])
+grouped_by_mf_cty.mean()
+
+# 방법 2: 한 줄로 수행 (권장)
+total[['manufacturer', 'category', 'hwy']].groupby(['manufacturer', 'category']).mean()
+
+# 평균 연비 기준으로 내림차순 정렬
+total[['manufacturer', 'category', 'hwy']].groupby(['manufacturer', 'category']).mean().sort_values('hwy', ascending=False)
+</code></pre></pre>
+<p><strong>구동방식과 연료종류별 연비:</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python"># drv: 구동방식 (f=전륜구동, r=후륜구동, 4=4륜구동)
+# fl: 연료종류 (c=압축천연가스, d=디젤, e=에탄올, p=프리미엄, r=일반)
+# hwy: 고속도로 연비
+# cty: 도시 연비
+
+subset = mpg[['drv', 'fl', 'hwy', 'cty']].groupby(['drv', 'fl']).mean()
+subset
+</code></pre></pre>
+<p><strong>결과 해석:</strong></p>
+<ul>
+<li>다중 기준 groupby는 여러 컬럼을 동시에 기준으로 그룹화하여 더 세밀한 분석이 가능합니다</li>
+<li>결과는 MultiIndex 형태로 반환되며, 각 그룹별 집계 결과를 확인할 수 있습니다</li>
+</ul>
+<hr>
+<h3>📋 데이터 시각화</h3>
+<h4>1. Countplot (카운트 플롯)</h4>
+<p><strong>제조사별 자동차 종류 시각화:</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python"># countplot: 범주형 데이터의 개수를 시각화
+# data: 데이터프레임
+# x: x축에 표시할 컬럼
+# hue: 분할 기준 (나타내고자 하는 것)
+sns.countplot(data=total, x='manufacturer', hue='category')
+plt.show()
+</code></pre></pre>
+<p><strong>countplot 옵션 설명:</strong></p>
+<ul>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">data</code>: 시각화할 DataFrame</li>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">x</code>: x축에 표시할 컬럼 (제조사)</li>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">hue</code>: 분할 기준 (자동차 종류별로 색상 구분)</li>
+</ul>
+<blockquote>
+<p>💡 <strong>결측치 처리 참고:</strong></p>
+<p>만약 데이터에 결측치가 있을 경우, 다른 컬럼을 참고하여 채울 수 있습니다.
+예: 자동차 종류(category)에 결측치가 있다면, 제조사(manufacturer)를 참고하여 추론 가능</p>
+<ul>
+<li>audi → compact일 확률이 높음</li>
+<li>일반적으로 결측치를 채울 때는 평균, 중앙값, 최빈값 등을 사용하거나, 다른 컬럼을 참고하여 채움</li>
+</ul>
+</blockquote>
+<hr>
+<h4>2. Violinplot (바이올린 플롯)</h4>
+<p><strong>Violinplot이란?</strong></p>
+<ul>
+<li>수치형 데이터의 <strong>분포</strong>를 확인할 때 사용하는 그래프</li>
+<li>데이터가 많으면 두꺼워지고, 데이터가 적으면 얇아짐</li>
+<li>박스플롯과 유사하지만 분포의 형태를 더 잘 보여줌</li>
+</ul>
+<p><strong>제조사와 자동차 종류에 따른 고속도로 연비 분포:</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python">plt.figure(figsize=(15, 6))
+sns.violinplot(
+    data=total, 
+    x='manufacturer',      # x축: 제조사
+    y='hwy',               # y축: 고속도로 연비
+    hue='category',        # 분류 기준: 자동차 종류
+    inner='stick',         # inner 옵션: violin 내부에 stick(막대) 표시
+    palette='Pastel1'      # 색상 팔레트
+)
+plt.ylim(0, 50)  # y축 범위 설정
+plt.show()
+</code></pre></pre>
+<p><strong>inner 옵션 설명:</strong></p>
+<ul>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">inner='stick'</code>: violin 내부에 각 데이터 포인트를 막대(stick)로 표시</li>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">inner='box'</code>: violin 내부에 박스플롯 표시</li>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">inner='quart'</code>: 사분위수 표시</li>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">inner=None</code>: 내부 표시 없음</li>
+</ul>
+<hr>
+<h4>3. Heatmap (히트맵) with Pivot Table</h4>
+<p><strong>목표:</strong></p>
+<ul>
+<li>제조사별, 모델별 생산연도에 따른 연비를 히트맵으로 시각화</li>
+<li>자동차 종류(category)도 함께 표시</li>
+</ul>
+<p><strong>데이터 준비 및 그룹화:</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python"># 필요한 컬럼만 추출
+sample_base = mpg[['manufacturer', 'model', 'year', 'category', 'hwy']]
+
+# 제조사와 모델을 인덱스로 설정 (선택사항)
+sample = sample_base.set_index(['manufacturer', 'model'])
+
+# 제조사, 모델, 카테고리, 연도별로 그룹화하여 hwy 평균 계산
+sample_result = sample.groupby(['manufacturer', 'model', 'category', 'year']).mean().reset_index()
+</code></pre></pre>
+<p><strong>Pivot Table 생성:</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python"># 제조사명과 모델명을 공백으로 연결하여 'manufacturer_model' 컬럼 생성
+sample_result['manufacturer_model'] = sample_result['manufacturer'] + ' ' + sample_result['model']
+
+# pivot_table을 사용하여 데이터를 재구조화
+# index='manufacturer_model': 행 인덱스를 제조사-모델 조합으로 설정
+# columns='year': 열을 연도(1999, 2008)로 설정
+# values='hwy': 각 셀의 값은 고속도로 연비(hwy)
+pivot_data = sample_result.pivot_table(
+    index='manufacturer_model',
+    columns='year',
+    values='hwy'
+)
+</code></pre></pre>
+<p><strong>평균 연비 기준 정렬:</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python"># 각 행(제조사-모델)의 평균 연비를 계산하여 'avg_hwy' 컬럼에 저장
+# axis=1: 각 행(row)에 대해 평균 계산 (연도별 연비의 평균)
+pivot_data['avg_hwy'] = pivot_data.mean(axis=1)
+
+# 'avg_hwy' 기준으로 내림차순 정렬 후, 정렬에 사용한 임시 컬럼 'avg_hwy' 제거
+pivot_data = pivot_data.sort_values('avg_hwy', ascending=False).drop('avg_hwy', axis=1)
+</code></pre></pre>
+<p><strong>Heatmap 시각화:</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python">from matplotlib import rc
+import platform
+
+# 한글 폰트 설정
+os_name = platform.system()
+if os_name == 'Darwin':  # macOS
+    rc('font', family='AppleGothic')
+elif os_name == 'Windows':  # Windows
+    rc('font', family='Malgun Gothic')
+elif os_name == 'Linux':  # Linux
+    rc('font', family='NanumGothic')
+
+rc('axes', unicode_minus=False)  # 마이너스 기호 깨짐 방지
+
+# 그래프 크기 설정 (데이터 행 수에 비례하여 높이 조정)
+plt.figure(figsize=(12, len(pivot_data)*0.3))
+
+# 히트맵 생성
+sns.heatmap(
+    pivot_data,                    # 위에서 만든 pivot 테이블 데이터
+    annot=True,                    # 각 셀에 실제 값 표시
+    fmt='.1f',                     # 값 표시 형식: 소수점 1자리까지
+    cmap='RdYlGn',                 # 색상 맵: Red-Yellow-Green
+    cbar_kws={'label': '연비 (hwy)'}  # 컬러바(색상 범례)의 라벨 설정
+)
+
+plt.title('제조사별 Model별 생산연도에 따른 연비 Heatmap (평균 연비 기준 정렬)')
+plt.xlabel('생산연도')
+plt.ylabel('제조사 - Model')
+plt.tight_layout()
+plt.show()
+</code></pre></pre>
+<p><strong>Heatmap 옵션 설명:</strong></p>
+<ul>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">annot=True</code>: 각 셀에 실제 값 표시</li>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">fmt='.1f'</code>: 값 표시 형식 (소수점 1자리)</li>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">cmap='RdYlGn'</code>: 색상 맵 (Red-Yellow-Green - 높은 값이 초록색, 낮은 값이 빨간색)</li>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">cbar_kws</code>: 컬러바(색상 범례) 옵션</li>
+</ul>
+<p><strong>Heatmap의 장점:</strong></p>
+<ul>
+<li>2차원(행×열) 패턴을 색상으로 빠르게 파악 가능</li>
+<li>연도별 비교와 전체적인 연비 분포를 동시에 확인</li>
+<li>정렬 기준에 따라 보는 관점이 달라짐 (평균 연비 기준 정렬 시 연비 순위 파악 용이)</li>
+</ul>
+<hr>
+<h2>💡 핵심 정리</h2>
+<h3>배운 것</h3>
+<ul>
+<li><strong>데이터 탐색</strong>: <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">shape</code>, <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">info()</code>, <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">describe()</code>, <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">head()</code>, <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">tail()</code></li>
+<li><strong>데이터 정렬</strong>: <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">sort_values()</code> 활용</li>
+<li><strong>다중 조건 필터링</strong>: <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">isin()</code>, <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">pd.concat()</code>, 다중 조건 (<code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">|</code> 연산자)</li>
+<li><strong>groupby 집계</strong>: 단일 기준 및 다중 기준 groupby</li>
+<li><strong>Seaborn 시각화</strong>: <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">countplot</code>, <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">violinplot</code>, <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">heatmap</code> 등 다양한 차트 타입</li>
+<li><strong>Pivot Table</strong>: 데이터를 재구조화하여 히트맵으로 시각화</li>
+</ul>
+<h3>인사이트</h3>
+<ul>
+<li><strong>시각화의 중요성</strong>: 데이터를 시각화하면 패턴과 트렌드를 한눈에 파악 가능</li>
+<li><strong>다중 기준 분석</strong>: 여러 기준으로 그룹화하면 더 세밀한 인사이트 도출 가능</li>
+<li><strong>Pivot Table 활용</strong>: 데이터를 재구조화하여 시각화하면 더 명확한 패턴 파악 가능</li>
+<li><strong>isin() 권장</strong>: 다중 조건 필터링에서 가장 간결하고 읽기 쉬움</li>
+</ul>
+<h3>주의사항</h3>
+<ul>
+<li>⚠️ <strong>다중 조건에서 괄호 필수</strong>: <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">|</code> 연산자 사용 시 각 조건을 괄호로 묶어야 함</li>
+<li>⚠️ <strong>한글 폰트 설정</strong>: 시각화 시 한글이 깨지지 않도록 폰트 설정 필요</li>
+<li>✅ <strong>isin() 권장</strong>: 다중 조건 필터링에서 가장 간결하고 읽기 쉬움</li>
+<li>✅ <strong>Pivot Table 정렬</strong>: 정렬 기준에 따라 보는 관점이 달라짐</li>
+</ul>
+<hr>
+<h2>🔍 추가 학습 필요 사항</h2>
+<ul class="contains-task-list">
+<li class="task-list-item"><input disabled="" type="checkbox"> 다른 Seaborn 차트 타입 (boxplot, scatterplot, pairplot 등)</li>
+<li class="task-list-item"><input disabled="" type="checkbox"> 더 복잡한 pivot_table 활용</li>
+<li class="task-list-item"><input disabled="" type="checkbox"> 인터랙티브 시각화 (plotly 등)</li>
+</ul>
+<hr>
+<h2>📝 실습/과제</h2>
+<h3>완료한 것</h3>
+<ul>
+<li>mpg 데이터 탐색 및 정렬</li>
+<li>다중 조건 필터링 (isin, pd.concat)</li>
+<li>groupby를 활용한 집계 분석 (단일/다중 기준)</li>
+<li>mpg 데이터 시각화 (countplot, violinplot, heatmap)</li>
+<li>Pivot Table을 활용한 히트맵 생성</li>
+</ul></div></div><div class="MuiBox-root css-1cpq4zq"><hr class="MuiDivider-root MuiDivider-fullWidth css-7jtdmc"><h5 class="MuiTypography-root MuiTypography-h5 css-85yo2n">같은 카테고리의 다른 글</h5><div class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-2 css-1eikg3m"><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] Serializable 깊이 파기 — Part 2: 바이트에서 다시 객체로, 그리고 함정들</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">직렬화된 바이트를 ObjectInputStream이 어떤 순서로 읽어 객체로 복원하는지, 그때 생성자가 호출되지 않는다는 점을 확인합니다. | serialVersionUID, transient, 커스텀 readObject·writeObject, 역직렬화 취약점, Java 직렬화의 현재로 마무리합니다.</p><div class="MuiBox-root css-107ld1r"></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 4월 5일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] Serializable 깊이 파기 — Part 1: 객체가 바이트가 되는 과정</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">Python이나 JavaScript와 달리 Java는 왜 Serializable을 선언해야 하는지, 메서드가 하나도 없는 이 인터페이스가 무슨 일을 하는지 묻는 글입니다. | ObjectOutputStream이 만든 실제 바이트를 열어 보고, 참조 객체가 들어 있을 때는 어떻게 되는지 확인합니다.</p><div class="MuiBox-root css-107ld1r"></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 4월 5일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] 주식 거래 엔진 직접 만들기 - Part 3: 오더북을 어떻게 구현할 것인가</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">주식 거래 엔진의 오더북을 TreeMap과 ArrayDeque 조합으로 만든 이유를, PriorityQueue, LinkedList, Skip List와 비교하며 설명합니다. | 주문 취소를 Lazy Removal로 처리한 방법과 Kafka를 연결하며 만난 멱등성 문제를 마지막에 둡니다.</p><div class="MuiBox-root css-107ld1r"></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 27일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] 주식 거래 엔진 직접 만들기 - Part 2: Phase 1 — 모놀리식으로 시작하기</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">단일 JAR 모놀리식 구조인 Phase 1에서 만난 문제를 차례로 다룹니다. | SELECT FOR UPDATE로 동시성을 해결했고, 락 보유 시간을 줄이고, 락 획득 순서를 통일해 데드락 위험을 없앴습니다. @Transactional 원칙과 Lazy Loading 함정도 짚습니다.</p><div class="MuiBox-root css-107ld1r"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Java</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Spring Boot</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">JPA</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">+2</span></div></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 27일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] 주식 거래 엔진 직접 만들기 - Part 1: 왜 주식 거래 엔진인가</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">F-lab 멘토링 프로젝트로 주식 거래 엔진을 직접 설계하고 구현한 과정을 기록하는 시리즈의 첫 글입니다. | 프로젝트를 고른 기준과 멀티모듈 구조, Phase 로드맵, 시리즈 전체에서 답할 질문들을 먼저 밝힙니다.</p><div class="MuiBox-root css-107ld1r"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Java</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Spring Boot</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Kafka</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">+5</span></div></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 27일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[개발자가 직접 써봤어요] Claude Code 완전 가이드: 설치부터 멀티에이전트까지</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">Claude Code를 Spring Boot와 Kafka 기반 주식 매매 엔진 프로젝트에 적용해 본 경험을 바탕으로, 설치부터 멀티에이전트까지 소개합니다. | CLAUDE.md, Skills, Subagents, Hooks, MCP, Agent Teams의 여섯 레이어와 Cursor AI와의 비교, 주의사항이 나옵니다.</p><div class="MuiBox-root css-107ld1r"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Claude Code</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">AI</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Developer Tools</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">+4</span></div></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 9일</span></div></div></div></div><div class="MuiBox-root css-1b94f21"><a class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways css-104ms0" href="/blog/posts" data-discover="true"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowBackIcon"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z"></path></svg>게시글 목록으로 돌아가기</a></div><button class="MuiButtonBase-root MuiFab-root MuiFab-circular MuiFab-sizeMedium MuiFab-primary MuiFab-root MuiFab-circular MuiFab-sizeMedium MuiFab-primary css-1nl6bps" tabindex="0" type="button" aria-label="scroll to top" style="opacity: 0; visibility: hidden;"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="KeyboardArrowUpIcon"><path d="M7.41 15.41 12 10.83l4.59 4.58L18 14l-6-6-6 6z"></path></svg></button></div></div></div></div><footer style="text-align: center; padding: 2rem 0px; color: rgb(0, 0, 0); font-size: 0.9rem; border-top: 1px solid rgb(0, 0, 0); margin-top: auto; background-color: rgb(255, 255, 255);"><p>© 2025 DevTaco Blog. All rights reserved.</p></footer><div class="MuiBox-root css-1hyfx7x"><div class="visitor-counter MuiBox-root css-19midj6"><h6 class="MuiTypography-root MuiTypography-h6 MuiTypography-gutterBottom css-izz7ci">방문자 수</h6><div class="MuiBox-root css-zwd3xv"><h4 class="MuiTypography-root MuiTypography-h4 css-1dg27va">89</h4><p class="MuiTypography-root MuiTypography-body2 css-l6pb42">오늘</p><h6 class="MuiTypography-root MuiTypography-h6 css-kh42wg">총 89명</h6></div></div></div><div class="MuiBox-root css-1y95mt5" data-testid="terminal-navigation"><div class="MuiBox-root css-1kw3y0a"><p class="MuiTypography-root MuiTypography-body2 css-1fktdtb">devtaco@portfolio:~$ navigation</p><div class="MuiBox-root css-j0ozid"><p class="MuiTypography-root MuiTypography-body2 css-1cn40rb">⌘M to close</p><button class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-470314" tabindex="0" type="button" id=":r1:"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeSmall css-vh810p" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="CloseIcon"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg></button></div></div><div class="MuiBox-root css-13t3iqc"><div class="MuiBox-root css-0"><p class="MuiTypography-root MuiTypography-body2 css-cbhj4f">Navigation:</p><div class="MuiBox-root css-1kkt86i"><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">1 → home</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">2 → about</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">3 → posts</p></div></div><div class="MuiBox-root css-0"><p class="MuiTypography-root MuiTypography-body2 css-cbhj4f">External:</p><div class="MuiBox-root css-1kkt86i"><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">g → github</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">e → email</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">l → linkedin</p></div></div></div><p class="MuiTypography-root MuiTypography-body2 css-1e7vt2">Press number keys (1,2,3) or letter keys (g,e,l) to navigate. Use ⌘+M to close.</p></div></div></div></body></html>

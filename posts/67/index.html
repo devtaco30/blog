@@ -1,0 +1,210 @@
+<!DOCTYPE html><html lang="en"><head><script type="text/javascript">!function(n){if("/"===n.search[1]){var a=n.search.slice(1).split("&").map((function(n){return n.replace(/~and~/g,"&")})).join("?");window.history.replaceState(null,null,n.pathname.slice(0,-1)+a+n.hash)}}(window.location)</script><meta charset="utf-8"><link rel="icon" href="/blog/favicon.ico"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#000000"><meta name="keywords" content="Java, Kotlin, Spring Boot, MSA, 개발, 백엔드, coroutine"><meta name="author" content="DevTaco"><meta property="og:image" content="https://devtaco30.github.io/blog/og-image.png"><meta property="twitter:image" content="https://devtaco30.github.io/blog/og-image.png"><meta property="twitter:url" content="https://devtaco30.github.io/blog/"><link rel="apple-touch-icon" href="/blog/apple-touch-icon.png"><link rel="manifest" href="/blog/manifest.json"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&amp;family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet"><script defer="defer" src="/blog/static/js/main.404b9165.js"></script><link href="/blog/static/css/main.5b86466f.css" rel="stylesheet"><style data-emotion="css" data-s=""></style><title>[Java Deep Dive] Serializable 깊이 파기 — Part 1: 객체가 바이트가 되는 과정 | DevTaco Blog</title><meta name="description" content="Python이나 JavaScript와 달리 Java는 왜 Serializable을 선언해야 하는지, 메서드가 하나도 없는 이 인터페이스가 무슨 일을 하는지 묻는 글입니다. ObjectOutputStream이 만든 실제 바이트를 열어 보고, 참조 객체가 들어 있을 때는 어떻게 되는지 확인합니다."><meta property="og:title" content="[Java Deep Dive] Serializable 깊이 파기 — Part 1: 객체가 바이트가 되는 과정"><meta property="og:description" content="Python이나 JavaScript와 달리 Java는 왜 Serializable을 선언해야 하는지, 메서드가 하나도 없는 이 인터페이스가 무슨 일을 하는지 묻는 글입니다. ObjectOutputStream이 만든 실제 바이트를 열어 보고, 참조 객체가 들어 있을 때는 어떻게 되는지 확인합니다."><meta property="og:type" content="article"><meta property="og:url" content="https://devtaco30.github.io/blog/posts/67"><meta name="twitter:card" content="summary"></head><body><noscript>You need to enable JavaScript to run this app.</noscript><div id="root"><div class="App"><div class="MuiBox-root css-kurlqb"><div class="MuiBox-root css-171onha"><button class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-1f6w95t" tabindex="0" type="button" id=":r0:"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="MenuIcon"><path d="M3 18h18v-2H3zm0-5h18v-2H3zm0-7v2h18V6z"></path></svg></button><div class="MuiBox-root css-1szb58x"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-218waq" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowBackIcon"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z"></path></svg><div class="MuiBox-root css-wq4jw1"><span>⌘+M</span></div></div></div></div><div class="MuiContainer-root css-15jb5o1" data-testid="page-container"><div class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-2 MuiGrid-spacing-md-3 css-1ht06td"><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-md-12 css-15j76c0"><div class="MuiBox-root css-15rigdj"><nav class="MuiTypography-root MuiTypography-body1 MuiBreadcrumbs-root css-1v2kxik"><ol class="MuiBreadcrumbs-ol css-51eq8m"><li class="MuiBreadcrumbs-li"><a class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways css-gj78h6" href="/blog/posts" data-discover="true">게시글 목록</a></li><li aria-hidden="true" class="MuiBreadcrumbs-separator css-1nd5pgh">/</li><li class="MuiBreadcrumbs-li"><p class="MuiTypography-root MuiTypography-body1 css-1cr0rz6">[Java Deep Dive] Serializable 깊이 파기 — Part 1: 객체가 바이트가 되는 과정</p></li></ol></nav><div class="MuiBox-root css-15djlns"><button class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-1y18wdw" tabindex="0" type="button" id=":r9:"><span class="MuiButton-icon MuiButton-startIcon MuiButton-iconSizeMedium css-1ygddt1"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowBackIcon"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z"></path></svg></span><div class="MuiBox-root css-0"><span class="MuiTypography-root MuiTypography-caption css-115rlu8">이전글</span><p class="MuiTypography-root MuiTypography-body2 css-10qk5g4">[Java Deep Dive] Serializable 깊이 파기 — Part 2: 바이트에서 다시 객체로, 그리고 함정들</p></div></button><button class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-1k0z50p" tabindex="0" type="button" id=":ra:"><div class="MuiBox-root css-0"><span class="MuiTypography-root MuiTypography-caption css-115rlu8">다음글</span><p class="MuiTypography-root MuiTypography-body2 css-10qk5g4">[Java Deep Dive] 주식 거래 엔진 직접 만들기 - Part 3: 오더북을 어떻게 구현할 것인가</p></div><span class="MuiButton-icon MuiButton-endIcon MuiButton-iconSizeMedium css-6bt4d2"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowForwardIcon"><path d="m12 4-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"></path></svg></span></button></div><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-10t0qv5" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h4 class="MuiTypography-root MuiTypography-h4 css-k5jvd2">[Java Deep Dive] Serializable 깊이 파기 — Part 1: 객체가 바이트가 되는 과정</h4><p class="MuiTypography-root MuiTypography-body1 css-104xg3">Python이나 JavaScript와 달리 Java는 왜 Serializable을 선언해야 하는지, 메서드가 하나도 없는 이 인터페이스가 무슨 일을 하는지 묻는 글입니다. | ObjectOutputStream이 만든 실제 바이트를 열어 보고, 참조 객체가 들어 있을 때는 어떻게 되는지 확인합니다.</p><div class="MuiBox-root css-1prrn6n"></div><p class="MuiTypography-root MuiTypography-body2 css-l6pb42">2026년 4월 5일 오후 07:20</p></div><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-1i779yj" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><div class="MuiBox-root css-13lazol"><h2>📚 시리즈 목차</h2>
+<ul>
+<li><strong>Part 1: 왜 Java에만 이게 있는가, 그리고 어떻게 동작하는가</strong> ← 현재</li>
+<li>Part 2: 바이트에서 다시 객체로 — 그리고 함정들</li>
+</ul>
+<hr>
+<p>안녕하세요. 이번 포스팅에서는 Java의 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">Serializable</code>을 바이트 스트림 수준까지 직접 뜯어보려 합니다.</p>
+<p>5년 넘게 Java를 쓰면서 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">implements Serializable</code>을 수도 없이 작성했지만, 사실 "왜 이게 필요한가"를 제대로 생각해본 적이 없었습니다. Python이나 JavaScript에서는 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">json.dumps()</code>, <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">JSON.stringify()</code> 한 줄로 끝나는데 Java는 왜 인터페이스까지 만들어서 명시적으로 선언해야 할까요? 그리고 이 인터페이스는 메서드가 하나도 없는데, 대체 무슨 역할을 하는 걸까요?</p>
+<p>이 궁금증에서 시작해서 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">ObjectOutputStream</code>이 실제로 어떤 바이트를 만들어내는지까지 추적해 보겠습니다.</p>
+<hr>
+<h2>🌍 <strong>1. Python도 JS도 있는데, 왜 Java만 선언이 필요한가</strong></h2>
+<p>Python에도 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">pickle</code>, JavaScript에도 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">JSON.stringify</code>가 있습니다. 하지만 이 둘은 "직렬화"라는 단어를 쓰면서도 Java의 Serializable과 결이 다릅니다.</p>
+<p>Python의 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">pickle</code>을 먼저 보겠습니다.</p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python">import pickle
+
+class User:
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
+
+user = User("Kim", 30)
+data = pickle.dumps(user)  # 아무 선언 없이 그냥 됩니다
+</code></pre></pre>
+<p>아무런 사전 선언 없이 직렬화됩니다. 왜 그럴까요? Python 객체는 내부적으로 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">__dict__</code>라는 딕셔너리를 들고 있습니다. <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">user.__dict__</code>를 찍어보면 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">{'name': 'Kim', 'age': 30}</code>이 나옵니다. 객체가 이미 "직렬화 가능한 구조"로 존재하는 셈입니다. pickle은 이 딕셔너리를 그냥 저장하면 됩니다.</p>
+<p>JavaScript도 비슷합니다.</p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-javascript">const user = { name: "Kim", age: 30 };
+JSON.stringify(user); // '{"name":"Kim","age":30}'
+</code></pre></pre>
+<p>JavaScript 객체는 런타임에 프로퍼티가 자유롭게 추가되고, 구조 자체가 JSON과 거의 동일합니다. 타입 정보를 별도로 기록할 필요가 없습니다.</p>
+<p>Java는 사정이 다릅니다.</p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-java">User user = new User("Kim", 30);
+// 이걸 어떻게 바이트로 만들 것인가?
+</code></pre></pre>
+<p>Java 객체는 JVM 힙 위에 있습니다. 필드는 강한 타입으로 선언되어 있고, 클래스 계층 구조가 있으며, 참조 관계가 복잡하게 얽혀 있을 수 있습니다. 이 객체를 바이트로 만들려면 단순히 "값"만 저장해서는 부족합니다. <strong>나중에 이 바이트를 받은 쪽이 어떤 클래스의 어떤 필드인지를 알아야 객체를 복원할 수 있기 때문입니다.</strong></p>
+<p>게다가 Java가 Serializable을 설계한 1997년, 주된 목적은 **RMI(Remote Method Invocation)**였습니다. 네트워크 너머에 있는 JVM에 객체를 그대로 전송해서 원격 메서드를 호출하는 기술입니다. 단순한 데이터 전송이 아니라, 클래스 정보를 포함한 완전한 객체 상태를 전달해야 했습니다.</p>
+<p>그래서 Java는 "이 클래스는 직렬화 가능하다"는 것을 개발자가 명시적으로 선언하도록 설계했습니다.</p>
+<hr>
+<h2>🏷️ <strong>2. 메서드가 하나도 없는 인터페이스가 하는 일</strong></h2>
+<p><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">Serializable</code>의 소스를 처음 열어봤을 때 당황했습니다.</p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-java">// java.io.Serializable
+public interface Serializable {
+    // 아무것도 없습니다
+}
+</code></pre></pre>
+<p>메서드도 없고, 상수도 없습니다. 이런 인터페이스를 **마커 인터페이스(Marker Interface)**라고 합니다. 구현을 강제하는 게 아니라, "이 클래스는 특정 속성을 갖는다"는 타입 정보를 JVM에게 알려주는 역할을 합니다.</p>
+<p><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">ObjectOutputStream</code>은 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">writeObject()</code>를 호출할 때 이렇게 확인합니다.</p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-java">// ObjectOutputStream 내부 (단순화)
+private void writeObject0(Object obj) throws IOException {
+    Class&lt;?&gt; cl = obj.getClass();
+
+    // Serializable을 구현하지 않으면 예외
+    if (!(obj instanceof Serializable)) {
+        throw new NotSerializableException(cl.getName());
+    }
+    // ...
+}
+</code></pre></pre>
+<p><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">instanceof</code> 체크로 마커 인터페이스를 확인하는 것입니다. 선언 하나가 JVM에게 "이 객체는 바이트 스트림으로 변환해도 된다"는 허가증이 됩니다.</p>
+<hr>
+<h2>🔧 <strong>3. ObjectOutputStream은 실제로 무슨 일을 하는가</strong></h2>
+<p>직렬화는 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">ObjectOutputStream.writeObject()</code>에서 시작됩니다. 이 메서드가 객체를 받아서 바이트 스트림을 만드는 과정을 따라가 보겠습니다.</p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-java">ByteArrayOutputStream baos = new ByteArrayOutputStream();
+ObjectOutputStream oos = new ObjectOutputStream(baos);
+oos.writeObject(new User("Kim", 30));
+byte[] bytes = baos.toByteArray();
+</code></pre></pre>
+<p>내부적으로는 크게 세 단계로 동작합니다.</p>
+<p><strong>첫째, 클래스 메타데이터를 수집합니다.</strong></p>
+<p><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">ObjectStreamClass</code>가 이 역할을 합니다. 리플렉션으로 클래스를 분석해서 직렬화 가능한 필드 목록을 만듭니다. <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">transient</code>나 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">static</code>으로 선언된 필드는 제외됩니다.</p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-java">// ObjectStreamClass 내부 (단순화)
+ObjectStreamClass desc = ObjectStreamClass.lookup(User.class);
+ObjectStreamField[] fields = desc.getFields();
+// → [age(int), name(String)]  (알파벳 순으로 정렬됩니다)
+</code></pre></pre>
+<p>필드가 알파벳 순으로 정렬된다는 점이 처음에는 의외였습니다. 클래스에 선언한 순서가 아닙니다.</p>
+<p><strong>둘째, serialVersionUID를 결정합니다.</strong></p>
+<p>클래스에 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">serialVersionUID</code>를 직접 선언하지 않았다면, JVM이 클래스 구조를 기반으로 자동 계산합니다. 클래스 이름, 인터페이스 목록, 필드 이름과 타입, 메서드 시그니처를 SHA-1 해시로 계산한 값입니다. 이 값은 역직렬화 시 클래스 버전 호환성 체크에 쓰입니다. (이 이야기는 Part 2에서 자세히 다루겠습니다.)</p>
+<p><strong>셋째, 스트림에 씁니다.</strong></p>
+<p>클래스 메타데이터를 먼저 기록하고, 그 뒤에 실제 필드 값을 씁니다. 이 순서가 바이트 스트림을 읽을 때 "어떤 클래스인지 먼저 파악하고, 그 다음 값을 복원"하는 것을 가능하게 합니다.</p>
+<hr>
+<h2>🔬 <strong>4. 실제 바이트를 직접 뜯어보자</strong></h2>
+<p>이제 실제로 바이트를 만들어서 hex로 읽어보겠습니다. 최대한 단순한 클래스를 사용합니다.</p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-java">import java.io.Serializable;
+
+public class Point implements Serializable {
+    int x;
+    int y;
+
+    public Point(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+}
+</code></pre></pre>
+<p><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">new Point(1, 2)</code>를 직렬화하면 다음 바이트가 나옵니다.</p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">AC ED 00 05 73 72 00 05 50 6F 69 6E 74 D0 8B 37
+B2 AC 8E 95 A8 02 00 02 49 00 01 78 49 00 01 79
+78 70 00 00 00 01 00 00 00 02
+</code></pre>
+<p>한 덩어리씩 분해해 보겠습니다.</p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">AC ED
+└── STREAM_MAGIC: 직렬화 스트림의 시작 마커
+    Java 직렬화 스트림은 항상 이 2바이트로 시작합니다.
+
+00 05
+└── STREAM_VERSION: 직렬화 프로토콜 버전 (5)
+    Java 1.1 이후 고정값입니다.
+
+73
+└── TC_OBJECT (0x73): "지금부터 객체 하나가 시작됩니다"
+
+72
+└── TC_CLASSDESC (0x72): "지금부터 클래스 설명이 시작됩니다"
+
+00 05
+└── 클래스 이름 길이: 5바이트
+
+50 6F 69 6E 74
+└── 클래스 이름: "Point" (ASCII)
+
+D0 8B 37 B2 AC 8E 95 A8
+└── serialVersionUID: 8바이트
+    선언하지 않았으므로 JVM이 자동 계산한 값입니다.
+
+02
+└── classDescFlags: 0x02 = SC_SERIALIZABLE
+    이 클래스가 Serializable을 구현한다는 플래그입니다.
+
+00 02
+└── 필드 수: 2개
+
+49
+└── 첫 번째 필드 타입: 'I' (int의 타입 코드)
+    기본 타입 코드: B=byte, C=char, D=double, F=float,
+                   I=int, J=long, S=short, Z=boolean
+
+00 01
+└── 첫 번째 필드명 길이: 1바이트
+
+78
+└── 첫 번째 필드명: "x"
+
+49
+└── 두 번째 필드 타입: 'I' (int)
+
+00 01
+└── 두 번째 필드명 길이: 1바이트
+
+79
+└── 두 번째 필드명: "y"
+
+78
+└── TC_ENDBLOCKDATA (0x78): 클래스 설명 블록 끝
+
+70
+└── TC_NULL (0x70): 슈퍼클래스 없음
+    Object는 Serializable이 아니므로 null로 표시합니다.
+
+00 00 00 01
+└── x 필드 값: 1 (int, 빅 엔디안 4바이트)
+
+00 00 00 02
+└── y 필드 값: 2 (int, 빅 엔디안 4바이트)
+</code></pre>
+<p>눈에 띄는 점이 있습니다. 원본 데이터인 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">x=1, y=2</code>는 맨 마지막 8바이트에 불과합니다. 나머지 30여 바이트는 전부 <strong>클래스 메타데이터</strong>입니다. 클래스 이름, 필드 이름, 타입 코드, serialVersionUID까지 모두 스트림에 포함됩니다. 이것이 Java 직렬화가 Python pickle이나 JSON보다 크기가 큰 이유이기도 합니다.</p>
+<p>이제 String 필드가 포함된 경우를 보겠습니다.</p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-java">public class User implements Serializable {
+    String name;  // Object 타입
+    int age;
+}
+</code></pre></pre>
+<p><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">new User("Kim", 30)</code>을 직렬화하면 필드 선언 부분이 달라집니다.</p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">49            # 'I' — int 타입 (age)
+00 03         # 필드명 길이: 3
+61 67 65      # "age"
+
+4C            # 'L' — Object 타입 (String, 배열 외 참조 타입은 모두 'L')
+00 04         # 필드명 길이: 4
+6E 61 6D 65   # "name"
+
+74            # TC_STRING: 클래스 참조를 위한 문자열 타입 시그니처 시작
+00 12         # 시그니처 길이: 18바이트
+4C 6A 61 76 61 2F 6C 61 6E 67 2F 53 74 72 69 6E 67 3B
+              # "Ljava/lang/String;" — JVM 내부 타입 디스크립터
+
+...
+</code></pre>
+<p>참조 타입 필드는 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">'L'</code>로 표시되고, 타입 시그니처(<code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">Ljava/lang/String;</code>)가 스트림에 기록됩니다. 실제 String 값은 필드 값 영역에 TC_STRING으로 별도 기록됩니다.</p>
+<hr>
+<h2>🔗 <strong>5. 참조 객체가 포함되면 어떻게 되는가</strong></h2>
+<p>직렬화가 흥미로워지는 지점은 객체 안에 또 다른 객체가 있을 때입니다.</p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-java">public class Order implements Serializable {
+    String orderId;
+    User user;      // User도 Serializable을 구현해야 합니다
+    int amount;
+}
+</code></pre></pre>
+<p><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">ObjectOutputStream</code>은 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">Order</code>를 직렬화하면서 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">user</code> 필드를 만나면 재귀적으로 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">User</code> 객체도 직렬화합니다. 이때 같은 객체를 두 번 직렬화하지 않기 위해 <strong>핸들 테이블</strong>을 관리합니다.</p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-java">Order order = new Order();
+order.user = user;
+
+Order order2 = new Order();
+order2.user = user; // 같은 user 객체 참조
+</code></pre></pre>
+<p>이 두 Order를 같은 스트림에 쓰면, <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">user</code>는 한 번만 직렬화되고 두 번째 참조는 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">TC_REFERENCE (0x71)</code>와 핸들 번호로 대체됩니다. 덕분에 순환 참조도 스택 오버플로우 없이 처리할 수 있고, 역직렬화 시 같은 객체 참조 관계도 복원됩니다.</p>
+<hr>
+<h2>🤔 <strong>마무리 — 그래서 어디에 써야 하는가</strong></h2>
+<p>Java 직렬화가 만들어내는 바이트 스트림을 보면, 설계 의도가 명확합니다. 단순한 데이터 전송이 아니라 <strong>JVM 객체 그래프의 완전한 스냅샷</strong>을 만드는 것입니다. 클래스 메타데이터, 타입 정보, 객체 참조 관계까지 모두 포함합니다.</p>
+<p>그래서 Java 직렬화는 같은 JVM끼리 객체를 주고받을 때 (RMI, EJB, Java 기반 캐시) 강력하지만, 그 외의 용도에서는 다소 무겁습니다. JSON이나 Protocol Buffers가 언어 간 통신에 선호되는 이유이기도 합니다.</p>
+<p>다음 파트에서는 이 바이트 스트림을 받아서 다시 객체로 복원하는 과정, 그리고 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">serialVersionUID</code>가 왜 존재하고 어떻게 클래스 버전 불일치를 만들어내는지를 다루겠습니다.</p></div></div><div class="MuiBox-root css-1cpq4zq"><hr class="MuiDivider-root MuiDivider-fullWidth css-7jtdmc"><h5 class="MuiTypography-root MuiTypography-h5 css-85yo2n">같은 카테고리의 다른 글</h5><div class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-2 css-1eikg3m"><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] Serializable 깊이 파기 — Part 2: 바이트에서 다시 객체로, 그리고 함정들</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">직렬화된 바이트를 ObjectInputStream이 어떤 순서로 읽어 객체로 복원하는지, 그때 생성자가 호출되지 않는다는 점을 확인합니다. | serialVersionUID, transient, 커스텀 readObject·writeObject, 역직렬화 취약점, Java 직렬화의 현재로 마무리합니다.</p><div class="MuiBox-root css-107ld1r"></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 4월 5일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] 주식 거래 엔진 직접 만들기 - Part 3: 오더북을 어떻게 구현할 것인가</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">주식 거래 엔진의 오더북을 TreeMap과 ArrayDeque 조합으로 만든 이유를, PriorityQueue, LinkedList, Skip List와 비교하며 설명합니다. | 주문 취소를 Lazy Removal로 처리한 방법과 Kafka를 연결하며 만난 멱등성 문제를 마지막에 둡니다.</p><div class="MuiBox-root css-107ld1r"></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 27일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] 주식 거래 엔진 직접 만들기 - Part 2: Phase 1 — 모놀리식으로 시작하기</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">단일 JAR 모놀리식 구조인 Phase 1에서 만난 문제를 차례로 다룹니다. | SELECT FOR UPDATE로 동시성을 해결했고, 락 보유 시간을 줄이고, 락 획득 순서를 통일해 데드락 위험을 없앴습니다. @Transactional 원칙과 Lazy Loading 함정도 짚습니다.</p><div class="MuiBox-root css-107ld1r"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Java</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Spring Boot</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">JPA</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">+2</span></div></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 27일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] 주식 거래 엔진 직접 만들기 - Part 1: 왜 주식 거래 엔진인가</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">F-lab 멘토링 프로젝트로 주식 거래 엔진을 직접 설계하고 구현한 과정을 기록하는 시리즈의 첫 글입니다. | 프로젝트를 고른 기준과 멀티모듈 구조, Phase 로드맵, 시리즈 전체에서 답할 질문들을 먼저 밝힙니다.</p><div class="MuiBox-root css-107ld1r"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Java</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Spring Boot</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Kafka</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">+5</span></div></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 27일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[개발자가 직접 써봤어요] Claude Code 완전 가이드: 설치부터 멀티에이전트까지</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">Claude Code를 Spring Boot와 Kafka 기반 주식 매매 엔진 프로젝트에 적용해 본 경험을 바탕으로, 설치부터 멀티에이전트까지 소개합니다. | CLAUDE.md, Skills, Subagents, Hooks, MCP, Agent Teams의 여섯 레이어와 Cursor AI와의 비교, 주의사항이 나옵니다.</p><div class="MuiBox-root css-107ld1r"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Claude Code</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">AI</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Developer Tools</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">+4</span></div></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 9일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">EST AI - YOLO : 객체 탐지 실습 · 세그멘테이션 · 트래킹</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">YOLO로 고양이와 강아지 탐지 모델을 직접 학습하고, 차량 파손 범위를 이미지 세그멘테이션으로 예측하고, 영상에서 객체를 트래킹합니다. | 탐지용 데이터셋 폴더 구조와 바운딩 박스 좌표 형식, Roboflow 사용법도 있습니다.</p><div class="MuiBox-root css-107ld1r"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">YOLO</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Object Detection</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Segmentation</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">+4</span></div></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 9일</span></div></div></div></div><div class="MuiBox-root css-1b94f21"><a class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways css-104ms0" href="/blog/posts" data-discover="true"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowBackIcon"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z"></path></svg>게시글 목록으로 돌아가기</a></div><button class="MuiButtonBase-root MuiFab-root MuiFab-circular MuiFab-sizeMedium MuiFab-primary MuiFab-root MuiFab-circular MuiFab-sizeMedium MuiFab-primary css-1nl6bps" tabindex="0" type="button" aria-label="scroll to top" style="opacity: 0; visibility: hidden;"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="KeyboardArrowUpIcon"><path d="M7.41 15.41 12 10.83l4.59 4.58L18 14l-6-6-6 6z"></path></svg></button></div></div></div></div><footer style="text-align: center; padding: 2rem 0px; color: rgb(0, 0, 0); font-size: 0.9rem; border-top: 1px solid rgb(0, 0, 0); margin-top: auto; background-color: rgb(255, 255, 255);"><p>© 2025 DevTaco Blog. All rights reserved.</p></footer><div class="MuiBox-root css-1hyfx7x"><div class="visitor-counter MuiBox-root css-19midj6"><h6 class="MuiTypography-root MuiTypography-h6 MuiTypography-gutterBottom css-izz7ci">방문자 수</h6><div class="MuiBox-root css-zwd3xv"><h4 class="MuiTypography-root MuiTypography-h4 css-1dg27va">50</h4><p class="MuiTypography-root MuiTypography-body2 css-l6pb42">오늘</p><h6 class="MuiTypography-root MuiTypography-h6 css-kh42wg">총 50명</h6></div></div></div><div class="MuiBox-root css-1y95mt5" data-testid="terminal-navigation"><div class="MuiBox-root css-1kw3y0a"><p class="MuiTypography-root MuiTypography-body2 css-1fktdtb">devtaco@portfolio:~$ navigation</p><div class="MuiBox-root css-j0ozid"><p class="MuiTypography-root MuiTypography-body2 css-1cn40rb">⌘M to close</p><button class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-470314" tabindex="0" type="button" id=":r1:"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeSmall css-vh810p" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="CloseIcon"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg></button></div></div><div class="MuiBox-root css-13t3iqc"><div class="MuiBox-root css-0"><p class="MuiTypography-root MuiTypography-body2 css-cbhj4f">Navigation:</p><div class="MuiBox-root css-1kkt86i"><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">1 → home</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">2 → about</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">3 → posts</p></div></div><div class="MuiBox-root css-0"><p class="MuiTypography-root MuiTypography-body2 css-cbhj4f">External:</p><div class="MuiBox-root css-1kkt86i"><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">g → github</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">e → email</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">l → linkedin</p></div></div></div><p class="MuiTypography-root MuiTypography-body2 css-1e7vt2">Press number keys (1,2,3) or letter keys (g,e,l) to navigate. Use ⌘+M to close.</p></div></div></div></body></html>

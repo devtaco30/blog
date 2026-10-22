@@ -1,0 +1,276 @@
+<!DOCTYPE html><html lang="en"><head><script type="text/javascript">!function(n){if("/"===n.search[1]){var a=n.search.slice(1).split("&").map((function(n){return n.replace(/~and~/g,"&")})).join("?");window.history.replaceState(null,null,n.pathname.slice(0,-1)+a+n.hash)}}(window.location)</script><meta charset="utf-8"><link rel="icon" href="/blog/favicon.ico"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#000000"><meta name="keywords" content="Java, Kotlin, Spring Boot, MSA, 개발, 백엔드, coroutine"><meta name="author" content="DevTaco"><meta property="og:image" content="https://devtaco30.github.io/blog/og-image.png"><meta property="twitter:image" content="https://devtaco30.github.io/blog/og-image.png"><meta property="twitter:url" content="https://devtaco30.github.io/blog/"><link rel="apple-touch-icon" href="/blog/apple-touch-icon.png"><link rel="manifest" href="/blog/manifest.json"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&amp;family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet"><script defer="defer" src="/blog/static/js/main.404b9165.js"></script><link href="/blog/static/css/main.5b86466f.css" rel="stylesheet"><style data-emotion="css" data-s=""></style><title>[6년차 쯤 되면 좀 알자] 그럼 GC 는 뭔데? - 2부 - | DevTaco Blog</title><meta name="description" content="G1GC가 Young GC, Mixed GC, Full GC를 각각 어떤 단계로 수행하는지 따라갑니다. 예제 코드로 객체 할당과 RSet 업데이트를 확인하고, 튜닝 목표와 모니터링 포인트로 끝납니다."><meta property="og:title" content="[6년차 쯤 되면 좀 알자] 그럼 GC 는 뭔데? - 2부 -"><meta property="og:description" content="G1GC가 Young GC, Mixed GC, Full GC를 각각 어떤 단계로 수행하는지 따라갑니다. 예제 코드로 객체 할당과 RSet 업데이트를 확인하고, 튜닝 목표와 모니터링 포인트로 끝납니다."><meta property="og:type" content="article"><meta property="og:url" content="https://devtaco30.github.io/blog/posts/42"><meta name="twitter:card" content="summary"></head><body><noscript>You need to enable JavaScript to run this app.</noscript><div id="root"><div class="App"><div class="MuiBox-root css-kurlqb"><div class="MuiBox-root css-171onha"><button class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-1f6w95t" tabindex="0" type="button" id=":r0:"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="MenuIcon"><path d="M3 18h18v-2H3zm0-5h18v-2H3zm0-7v2h18V6z"></path></svg></button><div class="MuiBox-root css-1szb58x"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-218waq" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowBackIcon"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z"></path></svg><div class="MuiBox-root css-wq4jw1"><span>⌘+M</span></div></div></div></div><div class="MuiContainer-root css-15jb5o1" data-testid="page-container"><div class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-2 MuiGrid-spacing-md-3 css-1ht06td"><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-md-12 css-15j76c0"><div class="MuiBox-root css-15rigdj"><nav class="MuiTypography-root MuiTypography-body1 MuiBreadcrumbs-root css-1v2kxik"><ol class="MuiBreadcrumbs-ol css-51eq8m"><li class="MuiBreadcrumbs-li"><a class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways css-gj78h6" href="/blog/posts" data-discover="true">게시글 목록</a></li><li aria-hidden="true" class="MuiBreadcrumbs-separator css-1nd5pgh">/</li><li class="MuiBreadcrumbs-li"><p class="MuiTypography-root MuiTypography-body1 css-1cr0rz6">[6년차 쯤 되면 좀 알자] 그럼 GC 는 뭔데? - 2부 -</p></li></ol></nav><div class="MuiBox-root css-15djlns"><button class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-1y18wdw" tabindex="0" type="button" id=":r9:"><span class="MuiButton-icon MuiButton-startIcon MuiButton-iconSizeMedium css-1ygddt1"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowBackIcon"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z"></path></svg></span><div class="MuiBox-root css-0"><span class="MuiTypography-root MuiTypography-caption css-115rlu8">이전글</span><p class="MuiTypography-root MuiTypography-body2 css-10qk5g4">[6년차 쯤 되면 좀 알자] thread 알고 쓰는거니? - 1부 -</p></div></button><button class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-1k0z50p" tabindex="0" type="button" id=":ra:"><div class="MuiBox-root css-0"><span class="MuiTypography-root MuiTypography-caption css-115rlu8">다음글</span><p class="MuiTypography-root MuiTypography-body2 css-10qk5g4">[6년차 쯤 되면 좀 알자] 그럼 GC 는 뭔데? - 1부 -</p></div><span class="MuiButton-icon MuiButton-endIcon MuiButton-iconSizeMedium css-6bt4d2"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowForwardIcon"><path d="m12 4-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"></path></svg></span></button></div><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-10t0qv5" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h4 class="MuiTypography-root MuiTypography-h4 css-k5jvd2">[6년차 쯤 되면 좀 알자] 그럼 GC 는 뭔데? - 2부 -</h4><p class="MuiTypography-root MuiTypography-body1 css-104xg3">G1GC가 Young GC, Mixed GC, Full GC를 각각 어떤 단계로 수행하는지 따라갑니다. | 예제 코드로 객체 할당과 RSet 업데이트를 확인하고, 튜닝 목표와 모니터링 포인트로 끝납니다.</p><div class="MuiBox-root css-1prrn6n"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">JVM</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">GC</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">G1GC</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Garbage Collection</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Java</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Kotlin</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Backend</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Performance</span></div></div><p class="MuiTypography-root MuiTypography-body2 css-l6pb42">2025년 12월 30일 오후 11:41</p></div><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-1i779yj" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><div class="MuiBox-root css-13lazol"><p>안녕하세요. Java/Kotlin 백엔드 개발자로서 G1GC(Garbage-First Garbage Collector)를 완벽하게 이해하는 것은 대규모 애플리케이션의 성능 최적화에 필수적입니다.</p>
+<p>본 포스팅(2부)에서는 G1GC의 실제 동작 과정을 단계별로 아주 자세하게 분석하고, 실제 코드 예제와 실무 활용 방법을 다룹니다.</p>
+<p><strong>1부에서는 기본 개념과 핵심 원리(Region, RSet, CSet, SATB, TAMS, Tri-Color Marking, STW)를 다뤘습니다.</strong></p>
+<hr>
+<h2>🔄 <strong>1. G1GC가 실제로 어떻게 동작하나요?</strong></h2>
+<h3>1-1. Young GC (Minor GC) - 단계별 상세 설명</h3>
+<p><strong>Young GC는 Eden Region이 가득 찰 때 발생합니다.</strong></p>
+<h4>Step 1: Initial Mark (STW) - 시작 마킹</h4>
+<p><strong>"누가 살아있는지 시작점을 찾는 단계"</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">1. Root Set 확인
+   - Stack의 지역 변수들
+   - Static 변수들
+   - JNI 참조들
+   
+2. Root Set에서 직접 참조되는 객체 마킹
+   - Gray로 표시
+   
+3. TAMS 설정
+   - 각 Region의 현재 할당 위치 기록
+   - 이후 할당된 객체는 자동으로 살아있음
+</code></pre>
+<p><strong>예시:</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-java">public static void main(String[] args) {
+    A a = new A();  // Stack에 a 변수
+    B b = new B();  // Stack에 b 변수
+}
+
+// Initial Mark:
+// Root Set: Stack의 a, b
+// → A 객체, B 객체를 Gray로 마킹
+</code></pre></pre>
+<p><strong>메모리 상태:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">┌─────────────────────────────────────┐
+│  Root Set                           │
+├─────────────────────────────────────┤
+│  Stack: a → A 객체 (Gray)           │
+│  Stack: b → B 객체 (Gray)           │
+│  Method Area: A.STR → "ABC" (Gray)  │
+└─────────────────────────────────────┘
+</code></pre>
+<h4>Step 2: Concurrent Marking - 동시 마킹</h4>
+<p><strong>"애플리케이션과 동시에 마킹하는 단계"</strong></p>
+<p><strong>⚠️ 이 단계는 STW가 아닙니다!</strong> 애플리케이션이 계속 실행됩니다.</p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">반복:
+  1. Gray 객체 하나 선택
+  2. 자식 객체 확인
+     - White → Gray로 변경
+  3. 현재 객체 → Black
+  
+Write Barrier:
+  - 참조 변경 감지
+  - White 객체 → Gray로 변경
+  - SATB Queue에 기록
+</code></pre>
+<p><strong>동시 실행:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">애플리케이션:          GC:
+  객체 사용            Gray 객체 처리
+  새 객체 생성         객체 그래프 탐색
+  참조 변경           Write Barrier 처리
+</code></pre>
+<p><strong>예시:</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-java">// Marking 시작: A 객체 (Gray)
+A a = new A();
+B b = new B();
+a.ref = b;
+
+// Concurrent Marking:
+// 1. A 객체 확인 (Gray → Black)
+// 2. A의 자식 확인: a.ref = b
+// 3. B 객체 발견 (White → Gray)
+// 4. B 객체 확인 (Gray → Black)
+
+// 동시에 애플리케이션 실행:
+C c = new C();  // 새 객체 생성 (TAMS 이후, 자동 살아있음)
+a.ref = c;      // 참조 변경 (Write Barrier 처리)
+</code></pre></pre>
+<h4>Step 3: Remark (STW) - 재확인</h4>
+<p><strong>"동시 마킹 중 변경사항을 최종 확인하는 단계"</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">1. SATB Queue 처리
+   - Marking 시작 시점의 참조 마킹
+   
+2. 모든 Gray 객체 처리
+   - 남은 Gray → Black
+   
+3. Weak Reference 처리
+   - 약한 참조 객체 정리
+</code></pre>
+<p><strong>왜 필요한가요?</strong></p>
+<ul>
+<li>동시 Marking 중 참조가 변경됨</li>
+<li>변경사항을 최종 확인해야 함</li>
+<li>일관성 보장</li>
+</ul>
+<h4>Step 4: Cleanup - 정리</h4>
+<p><strong>"수집할 Region을 결정하는 단계"</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">1. 각 Region의 가비지 비율 계산
+2. CSet 선택
+   - 가비지가 많은 Region 우선
+3. Freelist 업데이트
+   - 빈 Region 추가
+</code></pre>
+<p><strong>예시:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">Region 0: 가비지 80% → CSet 포함
+Region 1: 가비지 20% → CSet 제외
+Region 2: 가비지 90% → CSet 포함 (우선순위 높음)
+</code></pre>
+<h4>Step 5: Evacuation (STW) - 이동</h4>
+<p><strong>"살아있는 객체를 다른 Region으로 복사하는 단계"</strong></p>
+<p><strong>⚠️ 이 단계가 가장 중요한 STW입니다!</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">CSet의 각 Region에 대해:
+  1. 살아있는 객체 식별 (Black 객체)
+  2. 대상 Region 선택 (Survivor 또는 Old)
+  3. 객체 복사
+  4. 참조 업데이트
+  5. 원본 Region 해제
+</code></pre>
+<p><strong>예시:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">Region A (Eden, CSet):
+  A 객체 (Black) → Region B (Survivor)로 복사
+  C 객체 (White) → 수집 (가비지)
+  
+참조 업데이트:
+  Stack의 a → Region B의 A 객체 (새 주소)
+  RSet 업데이트
+</code></pre>
+<p><strong>비유:</strong></p>
+<ul>
+<li>이사: 살아있는 물건만 새 집으로 옮기기</li>
+<li>옮긴 후 주소 변경 (참조 업데이트)</li>
+<li>옛 집 정리 (원본 Region 해제)</li>
+</ul>
+<h3>1-2. Mixed GC</h3>
+<p><strong>Mixed GC는 Old Generation도 함께 수집합니다.</strong></p>
+<p><strong>Young GC vs Mixed GC:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">Young GC:
+  - Eden + Survivor Region만 수집
+  
+Mixed GC:
+  - Eden + Survivor + 일부 Old Region 수집
+  - Old Region은 가비지 비율이 높은 것부터
+</code></pre>
+<p><strong>언제 발생하나요?</strong></p>
+<ol>
+<li><strong>IHOP 도달</strong>: Old Generation이 일정 비율 도달</li>
+<li><strong>가비지 비율</strong>: Old Region의 가비지 비율이 높을 때</li>
+</ol>
+<h3>1-3. Full GC (피해야 함!)</h3>
+<p><strong>Full GC는 G1GC의 최후의 수단입니다.</strong></p>
+<p><strong>발생 조건:</strong></p>
+<ol>
+<li><strong>Evacuation 실패</strong>: 살아있는 객체를 복사할 공간이 없을 때</li>
+<li><strong>메모리 부족</strong>: Freelist에 빈 Region이 없을 때</li>
+<li><strong>명시적 호출</strong>: <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">System.gc()</code> 호출 시</li>
+</ol>
+<p><strong>특징:</strong></p>
+<ul>
+<li>전체 힙 수집</li>
+<li>긴 STW 시간 (예측 불가능)</li>
+<li><strong>회피해야 함!</strong></li>
+</ul>
+<hr>
+<h2>📊 <strong>2. 실제 코드로 이해하기</strong></h2>
+<h3>예제 코드</h3>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-java">class A {
+    private static final String STR = "ABC";
+    private static Long l = Long.valueOf(-1L);
+    private static int i = -1;
+    private static C c = new C();
+
+    private final String a = "ABC";
+    private final int ii = 1;
+    private C cc = new C();
+
+    public static void main(String[] args) {
+        A a = new A();
+        B b = new B();
+        System.out.println(A.STR);
+
+        System.out.println(A.STR == a.a); // true? false?
+        System.out.println(A.STR == "ABC"); // true? false?
+
+        System.out.println(A.l == new Long(-1L)); // true? false?
+        System.out.println(A.l == Long.valueOf(-1L)); // true? false?
+    }
+}
+</code></pre></pre>
+<h3>객체 할당 과정</h3>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">main 메서드 실행:
+  1. A a = new A();
+     - Freelist에서 Region 가져옴
+     - Region을 Eden으로 설정
+     - A 객체 할당
+     
+  2. B b = new B();
+     - 또 다른 Region에서 B 객체 할당
+     
+  3. String 비교
+     - "ABC"는 String Constant Pool에 있음
+     - 참조만 확인 (객체 생성 없음)
+</code></pre>
+<h3>Young GC 발생 시</h3>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">Eden Region 가득 참:
+  
+  1. Initial Mark (STW)
+     - Root Set: Stack의 a, b
+     - A 객체, B 객체 마킹
+     
+  2. Concurrent Marking
+     - A 객체의 필드 확인
+     - B 객체의 필드 확인
+     - 참조된 객체들 마킹
+     
+  3. Remark (STW)
+     - 최종 확인
+     
+  4. Evacuation (STW)
+     - 살아있는 객체 → Survivor Region
+     - 가비지 수집
+</code></pre>
+<h3>RSet 업데이트 예시</h3>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">A 객체가 C 객체 참조:
+  A 객체 (Old Region)
+    → C 객체 (Eden Region)
+    
+C 객체의 Region RSet 업데이트:
+  - A 객체의 Region 정보 기록
+  - Write Barrier가 자동 처리
+</code></pre>
+<hr>
+<h2>🎓 <strong>핵심 정리</strong></h2>
+<h3>1. ⚠️ Region 기반 구조</h3>
+<ul>
+<li>힙을 작은 Region으로 나눔</li>
+<li>Region 단위로 빠르게 수집</li>
+<li>예측 가능한 성능</li>
+</ul>
+<h3>2. ⚠️ RSet은 필수!</h3>
+<ul>
+<li>다른 Region 간 참조 추적</li>
+<li>Region 단위 GC의 핵심</li>
+<li>Write Barrier로 자동 업데이트</li>
+</ul>
+<h3>3. ⚠️ STW는 필수지만 최소화</h3>
+<ul>
+<li>객체 그래프 일관성 보장</li>
+<li>G1GC는 STW를 최소화하지만 완전히 제거할 수는 없음</li>
+<li>예측 가능한 짧은 STW 시간</li>
+</ul>
+<h3>4. ⚠️ Tri-Color Marking</h3>
+<ul>
+<li>White, Gray, Black으로 상태 구분</li>
+<li>동시 Marking 시 Write Barrier 필요</li>
+<li>SATB로 일관성 보장</li>
+</ul>
+<h3>5. ⚠️ SATB와 TAMS</h3>
+<ul>
+<li>SATB: Marking 시작 시점 스냅샷</li>
+<li>TAMS: 새 객체 자동 마킹</li>
+<li>동시 Marking의 핵심 기법</li>
+</ul>
+<hr>
+<h2>💡 <strong>실무에서 기억할 것</strong></h2>
+<h3>G1GC 튜닝 목표</h3>
+<ol>
+<li><strong>STW 시간 최소화</strong>: <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">-XX:MaxGCPauseMillis=200</code></li>
+<li><strong>Full GC 회피</strong>: 충분한 메모리 할당</li>
+<li><strong>처리량 최적화</strong>: Region 크기 조정</li>
+</ol>
+<h3>모니터링 포인트</h3>
+<ol>
+<li><strong>GC 로그 분석</strong>: STW 시간, GC 빈도 확인</li>
+<li><strong>RSet 크기</strong>: RSet이 너무 크면 성능 저하</li>
+<li><strong>Evacuation 실패</strong>: Full GC 위험 신호</li>
+</ol>
+<hr>
+<p>이상으로 G1GC의 실제 동작 과정과 실무 활용 방법을 설명했습니다. 1부와 2부를 통해 G1GC의 내부 동작 원리를 완벽하게 이해하실 수 있을 것입니다.</p></div></div><div class="MuiBox-root css-1cpq4zq"><hr class="MuiDivider-root MuiDivider-fullWidth css-7jtdmc"><h5 class="MuiTypography-root MuiTypography-h5 css-85yo2n">같은 카테고리의 다른 글</h5><div class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-2 css-1eikg3m"><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] Serializable 깊이 파기 — Part 2: 바이트에서 다시 객체로, 그리고 함정들</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">직렬화된 바이트를 ObjectInputStream이 어떤 순서로 읽어 객체로 복원하는지, 그때 생성자가 호출되지 않는다는 점을 확인합니다. | serialVersionUID, transient, 커스텀 readObject·writeObject, 역직렬화 취약점, Java 직렬화의 현재로 마무리합니다.</p><div class="MuiBox-root css-107ld1r"></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 4월 5일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] Serializable 깊이 파기 — Part 1: 객체가 바이트가 되는 과정</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">Python이나 JavaScript와 달리 Java는 왜 Serializable을 선언해야 하는지, 메서드가 하나도 없는 이 인터페이스가 무슨 일을 하는지 묻는 글입니다. | ObjectOutputStream이 만든 실제 바이트를 열어 보고, 참조 객체가 들어 있을 때는 어떻게 되는지 확인합니다.</p><div class="MuiBox-root css-107ld1r"></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 4월 5일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] 주식 거래 엔진 직접 만들기 - Part 3: 오더북을 어떻게 구현할 것인가</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">주식 거래 엔진의 오더북을 TreeMap과 ArrayDeque 조합으로 만든 이유를, PriorityQueue, LinkedList, Skip List와 비교하며 설명합니다. | 주문 취소를 Lazy Removal로 처리한 방법과 Kafka를 연결하며 만난 멱등성 문제를 마지막에 둡니다.</p><div class="MuiBox-root css-107ld1r"></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 27일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] 주식 거래 엔진 직접 만들기 - Part 2: Phase 1 — 모놀리식으로 시작하기</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">단일 JAR 모놀리식 구조인 Phase 1에서 만난 문제를 차례로 다룹니다. | SELECT FOR UPDATE로 동시성을 해결했고, 락 보유 시간을 줄이고, 락 획득 순서를 통일해 데드락 위험을 없앴습니다. @Transactional 원칙과 Lazy Loading 함정도 짚습니다.</p><div class="MuiBox-root css-107ld1r"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Java</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Spring Boot</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">JPA</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">+2</span></div></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 27일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] 주식 거래 엔진 직접 만들기 - Part 1: 왜 주식 거래 엔진인가</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">F-lab 멘토링 프로젝트로 주식 거래 엔진을 직접 설계하고 구현한 과정을 기록하는 시리즈의 첫 글입니다. | 프로젝트를 고른 기준과 멀티모듈 구조, Phase 로드맵, 시리즈 전체에서 답할 질문들을 먼저 밝힙니다.</p><div class="MuiBox-root css-107ld1r"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Java</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Spring Boot</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Kafka</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">+5</span></div></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 27일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[개발자가 직접 써봤어요] Claude Code 완전 가이드: 설치부터 멀티에이전트까지</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">Claude Code를 Spring Boot와 Kafka 기반 주식 매매 엔진 프로젝트에 적용해 본 경험을 바탕으로, 설치부터 멀티에이전트까지 소개합니다. | CLAUDE.md, Skills, Subagents, Hooks, MCP, Agent Teams의 여섯 레이어와 Cursor AI와의 비교, 주의사항이 나옵니다.</p><div class="MuiBox-root css-107ld1r"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Claude Code</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">AI</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Developer Tools</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">+4</span></div></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 9일</span></div></div></div></div><div class="MuiBox-root css-1b94f21"><a class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways css-104ms0" href="/blog/posts" data-discover="true"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowBackIcon"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z"></path></svg>게시글 목록으로 돌아가기</a></div><button class="MuiButtonBase-root MuiFab-root MuiFab-circular MuiFab-sizeMedium MuiFab-primary MuiFab-root MuiFab-circular MuiFab-sizeMedium MuiFab-primary css-1nl6bps" tabindex="0" type="button" aria-label="scroll to top" style="opacity: 0; visibility: hidden;"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="KeyboardArrowUpIcon"><path d="M7.41 15.41 12 10.83l4.59 4.58L18 14l-6-6-6 6z"></path></svg></button></div></div></div></div><footer style="text-align: center; padding: 2rem 0px; color: rgb(0, 0, 0); font-size: 0.9rem; border-top: 1px solid rgb(0, 0, 0); margin-top: auto; background-color: rgb(255, 255, 255);"><p>© 2025 DevTaco Blog. All rights reserved.</p></footer><div class="MuiBox-root css-1hyfx7x"><div class="visitor-counter MuiBox-root css-19midj6"><h6 class="MuiTypography-root MuiTypography-h6 MuiTypography-gutterBottom css-izz7ci">방문자 수</h6><div class="MuiBox-root css-zwd3xv"><h4 class="MuiTypography-root MuiTypography-h4 css-1dg27va">74</h4><p class="MuiTypography-root MuiTypography-body2 css-l6pb42">오늘</p><h6 class="MuiTypography-root MuiTypography-h6 css-kh42wg">총 74명</h6></div></div></div><div class="MuiBox-root css-1y95mt5" data-testid="terminal-navigation"><div class="MuiBox-root css-1kw3y0a"><p class="MuiTypography-root MuiTypography-body2 css-1fktdtb">devtaco@portfolio:~$ navigation</p><div class="MuiBox-root css-j0ozid"><p class="MuiTypography-root MuiTypography-body2 css-1cn40rb">⌘M to close</p><button class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-470314" tabindex="0" type="button" id=":r1:"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeSmall css-vh810p" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="CloseIcon"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg></button></div></div><div class="MuiBox-root css-13t3iqc"><div class="MuiBox-root css-0"><p class="MuiTypography-root MuiTypography-body2 css-cbhj4f">Navigation:</p><div class="MuiBox-root css-1kkt86i"><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">1 → home</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">2 → about</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">3 → posts</p></div></div><div class="MuiBox-root css-0"><p class="MuiTypography-root MuiTypography-body2 css-cbhj4f">External:</p><div class="MuiBox-root css-1kkt86i"><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">g → github</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">e → email</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">l → linkedin</p></div></div></div><p class="MuiTypography-root MuiTypography-body2 css-1e7vt2">Press number keys (1,2,3) or letter keys (g,e,l) to navigate. Use ⌘+M to close.</p></div></div></div></body></html>

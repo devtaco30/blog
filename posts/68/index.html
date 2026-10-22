@@ -1,0 +1,215 @@
+<!DOCTYPE html><html lang="en"><head><script type="text/javascript">!function(n){if("/"===n.search[1]){var a=n.search.slice(1).split("&").map((function(n){return n.replace(/~and~/g,"&")})).join("?");window.history.replaceState(null,null,n.pathname.slice(0,-1)+a+n.hash)}}(window.location)</script><meta charset="utf-8"><link rel="icon" href="/blog/favicon.ico"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#000000"><meta name="keywords" content="Java, Kotlin, Spring Boot, MSA, 개발, 백엔드, coroutine"><meta name="author" content="DevTaco"><meta property="og:image" content="https://devtaco30.github.io/blog/og-image.png"><meta property="twitter:image" content="https://devtaco30.github.io/blog/og-image.png"><meta property="twitter:url" content="https://devtaco30.github.io/blog/"><link rel="apple-touch-icon" href="/blog/apple-touch-icon.png"><link rel="manifest" href="/blog/manifest.json"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&amp;family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet"><script defer="defer" src="/blog/static/js/main.404b9165.js"></script><link href="/blog/static/css/main.5b86466f.css" rel="stylesheet"><style data-emotion="css" data-s=""></style><title>[Java Deep Dive] Serializable 깊이 파기 — Part 2: 바이트에서 다시 객체로, 그리고 함정들 | DevTaco Blog</title><meta name="description" content="직렬화된 바이트를 ObjectInputStream이 어떤 순서로 읽어 객체로 복원하는지, 그때 생성자가 호출되지 않는다는 점을 확인합니다. serialVersionUID, transient, 커스텀 readObject·writeObject, 역직렬화 취약점, Java 직렬화의 현재로 마무리합니다."><meta property="og:title" content="[Java Deep Dive] Serializable 깊이 파기 — Part 2: 바이트에서 다시 객체로, 그리고 함정들"><meta property="og:description" content="직렬화된 바이트를 ObjectInputStream이 어떤 순서로 읽어 객체로 복원하는지, 그때 생성자가 호출되지 않는다는 점을 확인합니다. serialVersionUID, transient, 커스텀 readObject·writeObject, 역직렬화 취약점, Java 직렬화의 현재로 마무리합니다."><meta property="og:type" content="article"><meta property="og:url" content="https://devtaco30.github.io/blog/posts/68"><meta name="twitter:card" content="summary"></head><body><noscript>You need to enable JavaScript to run this app.</noscript><div id="root"><div class="App"><div class="MuiBox-root css-kurlqb"><div class="MuiBox-root css-171onha"><button class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-1f6w95t" tabindex="0" type="button" id=":r0:"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="MenuIcon"><path d="M3 18h18v-2H3zm0-5h18v-2H3zm0-7v2h18V6z"></path></svg></button><div class="MuiBox-root css-1szb58x"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-218waq" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowBackIcon"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z"></path></svg><div class="MuiBox-root css-wq4jw1"><span>⌘+M</span></div></div></div></div><div class="MuiContainer-root css-15jb5o1" data-testid="page-container"><div class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-2 MuiGrid-spacing-md-3 css-1ht06td"><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-md-12 css-15j76c0"><div class="MuiBox-root css-15rigdj"><nav class="MuiTypography-root MuiTypography-body1 MuiBreadcrumbs-root css-1v2kxik"><ol class="MuiBreadcrumbs-ol css-51eq8m"><li class="MuiBreadcrumbs-li"><a class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways css-gj78h6" href="/blog/posts" data-discover="true">게시글 목록</a></li><li aria-hidden="true" class="MuiBreadcrumbs-separator css-1nd5pgh">/</li><li class="MuiBreadcrumbs-li"><p class="MuiTypography-root MuiTypography-body1 css-1cr0rz6">[Java Deep Dive] Serializable 깊이 파기 — Part 2: 바이트에서 다시 객체로, 그리고 함정들</p></li></ol></nav><div class="MuiBox-root css-15djlns"><div class="MuiBox-root css-1rr4qq7"></div><button class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-1k0z50p" tabindex="0" type="button" id=":r5:"><div class="MuiBox-root css-0"><span class="MuiTypography-root MuiTypography-caption css-115rlu8">다음글</span><p class="MuiTypography-root MuiTypography-body2 css-10qk5g4">[Java Deep Dive] Serializable 깊이 파기 — Part 1: 객체가 바이트가 되는 과정</p></div><span class="MuiButton-icon MuiButton-endIcon MuiButton-iconSizeMedium css-6bt4d2"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowForwardIcon"><path d="m12 4-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"></path></svg></span></button></div><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-10t0qv5" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h4 class="MuiTypography-root MuiTypography-h4 css-k5jvd2">[Java Deep Dive] Serializable 깊이 파기 — Part 2: 바이트에서 다시 객체로, 그리고 함정들</h4><p class="MuiTypography-root MuiTypography-body1 css-104xg3">직렬화된 바이트를 ObjectInputStream이 어떤 순서로 읽어 객체로 복원하는지, 그때 생성자가 호출되지 않는다는 점을 확인합니다. | serialVersionUID, transient, 커스텀 readObject·writeObject, 역직렬화 취약점, Java 직렬화의 현재로 마무리합니다.</p><div class="MuiBox-root css-1prrn6n"></div><p class="MuiTypography-root MuiTypography-body2 css-l6pb42">2026년 4월 5일 오후 08:11</p></div><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-1i779yj" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><div class="MuiBox-root css-13lazol"><h2>📚 시리즈 목차</h2>
+<ul>
+<li>Part 1: 왜 Java에만 이게 있는가, 그리고 어떻게 동작하는가</li>
+<li><strong>Part 2: 바이트에서 다시 객체로 — 그리고 함정들</strong> ← 현재</li>
+</ul>
+<hr>
+<p>안녕하세요. 이번 파트에서는 직렬화된 바이트 스트림이 어떻게 다시 객체로 복원되는지, 그 과정에서 어떤 함정이 있는지를 다룹니다.</p>
+<p>Part 1에서 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">Point(1, 2)</code>를 직렬화하면 클래스 이름, 필드 이름, 타입 코드까지 모두 바이트에 박힌다는 것을 봤습니다. 이번에는 그 바이트를 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">ObjectInputStream</code>이 받았을 때 어떻게 읽어서 객체를 만드는지를 따라가 보겠습니다. 그리고 이 구조가 만들어내는 몇 가지 불편한 진실도 함께 마주하겠습니다.</p>
+<hr>
+<h2>🔄 <strong>1. ObjectInputStream은 어떤 순서로 읽는가</strong></h2>
+<p>역직렬화는 직렬화의 역순입니다. <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">ObjectInputStream.readObject()</code>를 호출하면 이런 순서로 진행됩니다.</p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-java">ObjectInputStream ois = new ObjectInputStream(new ByteArrayInputStream(bytes));
+Point point = (Point) ois.readObject();
+</code></pre></pre>
+<p>내부적으로 스트림을 앞에서부터 읽어나갑니다.</p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">AC ED → STREAM_MAGIC 확인. 이 값이 아니면 즉시 StreamCorruptedException
+00 05 → STREAM_VERSION 확인
+73    → TC_OBJECT: 객체 하나를 읽겠다
+72    → TC_CLASSDESC: 클래스 설명 블록 시작
+</code></pre>
+<p>클래스 이름을 읽으면 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">Class.forName()</code>으로 현재 ClassLoader에서 해당 클래스를 찾습니다.</p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-java">// ObjectInputStream 내부 (단순화)
+String className = readUTF(); // "Point"
+Class&lt;?&gt; cl = Class.forName(className, false, latestUserDefinedLoader());
+</code></pre></pre>
+<p>클래스를 찾으면 스트림에 기록된 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">serialVersionUID</code>와 현재 클래스의 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">serialVersionUID</code>를 비교합니다. 일치하면 계속 진행하고, 불일치하면 즉시 예외를 던집니다. 이 부분이 나중에 꽤 골치 아픈 상황을 만들기도 합니다.</p>
+<p>이어서 필드 목록을 읽고, 스트림에 기록된 필드와 현재 클래스의 필드를 매핑합니다. 그 다음 객체를 생성하고 필드 값을 채웁니다.</p>
+<hr>
+<h2>🏗️ <strong>2. 생성자가 호출되지 않는다</strong></h2>
+<p>역직렬화에서 가장 당황스러운 부분이 여기입니다. 객체를 만드는데 <strong>생성자가 실행되지 않습니다.</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-java">public class User implements Serializable {
+    String name;
+    int age;
+
+    public User(String name, int age) {
+        if (age &lt; 0) throw new IllegalArgumentException("나이는 음수일 수 없습니다");
+        this.name = name;
+        this.age = age;
+    }
+}
+</code></pre></pre>
+<p>이 클래스를 역직렬화하면 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">new User(name, age)</code>가 아니라 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">sun.reflect.ReflectionFactory</code>를 통해 생성자를 완전히 우회한 객체가 만들어집니다.</p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-java">// ObjectInputStream 내부에서 실제로 벌어지는 일 (단순화)
+ReflectionFactory rf = ReflectionFactory.getReflectionFactory();
+Constructor&lt;?&gt; objDef = Object.class.getDeclaredConstructor();
+Constructor&lt;?&gt; intConstr = rf.newConstructorForSerialization(User.class, objDef);
+User user = (User) intConstr.newInstance(); // User 생성자는 실행되지 않습니다
+</code></pre></pre>
+<p><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">Object</code>의 기본 생성자만 호출하고, <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">User</code>의 생성자는 건너뜁니다. 그 뒤 리플렉션으로 필드에 값을 직접 주입합니다.</p>
+<p>이것이 의미하는 바는 이렇습니다. 생성자에서 아무리 꼼꼼하게 유효성 검사를 해두어도, 역직렬화 경로로 들어오는 객체는 그 검사를 전혀 거치지 않습니다. <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">age = -1</code>인 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">User</code> 객체가 만들어질 수 있습니다.</p>
+<p>직렬화를 지원하는 클래스를 설계할 때 생성자 유효성 검사를 맹신하면 안 되는 이유가 여기 있습니다.</p>
+<hr>
+<h2>🔑 <strong>3. serialVersionUID가 실제로 하는 일</strong></h2>
+<p><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">serialVersionUID</code>를 선언하지 않으면 IDE에서 노란 경고가 뜹니다. 관성적으로 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">1L</code>을 넣어왔는데, 이게 정확히 무슨 역할을 하는지 짚어보겠습니다.</p>
+<p>직렬화 스트림에는 8바이트짜리 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">serialVersionUID</code>가 기록됩니다. 역직렬화 시 스트림의 UID와 현재 클래스의 UID가 다르면 이 예외가 발생합니다.</p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">java.io.InvalidClassException: User; local class incompatible:
+stream classdesc serialVersionUID = 8683452581122892189,
+local class serialVersionUID = -6849794470754667710
+</code></pre>
+<p>선언하지 않으면 JVM이 자동으로 계산하는데, 계산 기준이 까다롭습니다.</p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-java">// serialVersionUID 자동 계산에 포함되는 요소들
+// - 클래스 이름
+// - 구현한 인터페이스 목록 (알파벳 순)
+// - 필드 이름과 타입 (static, transient 포함)
+// - 생성자 시그니처
+// - 메서드 이름과 시그니처 (알파벳 순)
+</code></pre></pre>
+<p>메서드를 하나 추가했을 뿐인데 UID가 바뀝니다. 데이터는 전혀 바뀌지 않았지만 역직렬화가 실패합니다. 리팩토링 한 번에 저장된 세션이나 캐시가 전부 날아갈 수 있습니다.</p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-java">// 이것만 추가해도 자동 계산 UID가 바뀝니다
+public String getDisplayName() {
+    return name + " (" + age + ")";
+}
+</code></pre></pre>
+<p>그래서 명시적으로 선언하는 것이 권장됩니다.</p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-java">public class User implements Serializable {
+    private static final long serialVersionUID = 1L; // 명시적 선언
+
+    String name;
+    int age;
+}
+</code></pre></pre>
+<p>UID를 고정하면 클래스 구조가 바뀌어도 역직렬화는 시도합니다. 단, 필드가 삭제되거나 타입이 바뀌면 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">InvalidClassException</code> 대신 다른 문제가 생길 수 있으니, UID가 같다고 해서 항상 안전한 것은 아닙니다.</p>
+<hr>
+<h2>🚫 <strong>4. transient — 직렬화에서 제외하기</strong></h2>
+<p>모든 필드를 직렬화할 필요는 없습니다. 아니, 해서는 안 되는 필드도 있습니다.</p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-java">public class UserSession implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+    String userId;
+    String token;
+
+    transient String password;           // 민감 정보 — 직렬화 제외
+    transient Connection dbConnection;   // Connection은 Serializable이 아님
+    transient long cachedTimestamp;      // 재계산 가능한 값 — 저장 불필요
+}
+</code></pre></pre>
+<p><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">transient</code> 필드는 직렬화 스트림에 포함되지 않습니다. 역직렬화 시에는 해당 타입의 기본값으로 초기화됩니다. <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">String</code>은 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">null</code>, <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">int</code>는 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">0</code>, <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">boolean</code>은 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">false</code>입니다.</p>
+<p>문제는 역직렬화 후에 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">transient</code> 필드가 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">null</code>인 상태로 객체가 반환된다는 점입니다. <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">dbConnection</code>을 쓰는 코드가 있다면 즉시 NPE가 발생합니다. 역직렬화 후 반드시 재초기화가 필요한 필드는 명시적으로 처리해야 합니다. 이 처리를 하는 곳이 커스텀 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">readObject()</code>입니다.</p>
+<hr>
+<h2>✏️ <strong>5. 커스텀 readObject / writeObject</strong></h2>
+<p>기본 직렬화 동작을 덮어쓰고 싶을 때 이 두 메서드를 선언합니다. 접근 제어자가 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">private</code>인 것이 포인트입니다. 인터페이스 메서드가 아니지만 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">ObjectOutputStream</code>과 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">ObjectInputStream</code>이 리플렉션으로 이 메서드를 찾아서 호출합니다.</p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-java">public class UserSession implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+    String userId;
+    transient String sensitiveToken;
+
+    private void writeObject(ObjectOutputStream out) throws IOException {
+        out.defaultWriteObject();                         // 기본 직렬화 (transient 제외 필드)
+        out.writeObject(encrypt(this.sensitiveToken));   // 암호화해서 별도 기록
+    }
+
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        in.defaultReadObject();                               // 기본 역직렬화
+        this.sensitiveToken = decrypt((String) in.readObject()); // 복호화 후 복원
+        // 여기서 transient 필드 재초기화도 가능합니다
+    }
+}
+</code></pre></pre>
+<p><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">defaultWriteObject()</code>와 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">defaultReadObject()</code>를 호출하면 기본 동작은 그대로 유지하면서 추가 데이터를 앞뒤로 붙일 수 있습니다. 단, <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">writeObject</code>에서 추가로 쓴 데이터는 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">readObject</code>에서 같은 순서로 읽어야 합니다. 스트림 포인터를 직접 다루는 것이기 때문에 순서가 어긋나면 엉뚱한 값이 읽힙니다.</p>
+<p><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">readResolve()</code>도 알아두면 좋습니다. 역직렬화 직후 반환할 객체를 바꾸고 싶을 때 씁니다. 싱글턴 패턴에서 역직렬화로 인스턴스가 여러 개 생기는 것을 막을 때 사용합니다.</p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-java">public class DatabaseConfig implements Serializable {
+    private static final DatabaseConfig INSTANCE = new DatabaseConfig();
+
+    private Object readResolve() {
+        return INSTANCE; // 역직렬화 결과를 항상 싱글턴 인스턴스로 교체
+    }
+}
+</code></pre></pre>
+<hr>
+<h2>☠️ <strong>6. 역직렬화 취약점 — 가장 위험한 함정</strong></h2>
+<p>Java 역직렬화는 실제로 심각한 보안 취약점의 원인이 된 역사가 있습니다. 원리를 이해해두는 것이 좋습니다.</p>
+<p><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">ObjectInputStream.readObject()</code>는 스트림에 적힌 클래스 이름을 보고 현재 ClassLoader에서 그 클래스를 찾아 인스턴스화합니다. 그리고 그 클래스에 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">readObject()</code>가 있으면 실행합니다.</p>
+<p>문제는 여기서 시작합니다. 공격자가 악의적으로 조작한 바이트 스트림을 서버에 보내면, 서버는 스트림에 적힌 클래스를 그대로 역직렬화합니다. 클래스패스에 있는 클래스라면 어떤 클래스든 로딩할 수 있습니다.</p>
+<p>Apache Commons Collections 라이브러리를 예로 들면, 이 라이브러리의 특정 클래스들은 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">readObject()</code> 내부에서 변환 체인(Transformer chain)을 실행합니다. 공격자는 이 클래스들을 연쇄적으로 조합해서 최종적으로 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">Runtime.exec()</code>를 호출하는 바이트 스트림을 만들어낼 수 있습니다.</p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">악의적 직렬화 스트림 전송
+→ ObjectInputStream.readObject()
+→ InvokerTransformer.readObject()   ← 클래스패스에 있는 정상 클래스
+→ ChainedTransformer.transform()
+→ Runtime.getRuntime().exec("...")  ← 원격 코드 실행
+</code></pre>
+<p>코드를 하나도 수정하지 않았는데, 신뢰할 수 없는 바이트 스트림을 받아서 역직렬화하는 것만으로 서버에서 임의 명령이 실행됩니다. 2015년에 공개된 이 취약점은 WebLogic, JBoss, Jenkins 등 광범위한 시스템에 영향을 미쳤습니다.</p>
+<p>대응 방법은 크게 세 가지입니다.</p>
+<p><strong>첫째, 신뢰할 수 없는 소스의 데이터는 역직렬화하지 않습니다.</strong> 근본적인 해결책입니다. 외부에서 받은 데이터를 Java 직렬화 형식으로 받을 이유가 없다면, JSON이나 Protobuf를 쓰는 것이 맞습니다.</p>
+<p><strong>둘째, Java 9+의 ObjectInputFilter로 허용 클래스를 제한합니다.</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-java">ObjectInputStream ois = new ObjectInputStream(inputStream);
+
+// 화이트리스트 방식: 허용할 클래스만 명시
+ois.setObjectInputFilter(filterInfo -&gt; {
+    Class&lt;?&gt; cl = filterInfo.serialClass();
+    if (cl == null) return ObjectInputFilter.Status.UNDECIDED;
+
+    if (cl == Point.class || cl == User.class) {
+        return ObjectInputFilter.Status.ALLOWED;
+    }
+    return ObjectInputFilter.Status.REJECTED; // 나머지는 전부 차단
+});
+</code></pre></pre>
+<p><strong>셋째, 역직렬화 자체를 막는 래퍼를 씁니다.</strong> 레거시 시스템에서 어쩔 수 없이 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">ObjectInputStream</code>을 써야 하지만 특정 클래스 이외의 역직렬화는 막고 싶을 때 사용하는 방어적 패턴입니다.</p>
+<hr>
+<h2>📉 <strong>7. Java 직렬화의 현재</strong></h2>
+<p>Effective Java를 쓴 Joshua Bloch는 Java 직렬화 설계에 직접 참여했던 사람입니다. 3판에서 이렇게 말합니다.</p>
+<blockquote>
+<p>"자바 직렬화는 위험 요소가 너무 많다. 신규 시스템을 설계할 때는 자바 직렬화를 쓸 이유가 거의 없다."</p>
+</blockquote>
+<p>Java 팀도 이 판단에 동의합니다. Project Valhalla와 함께 논의되는 방향 중 하나는 Serializable을 사실상 deprecated 처리하는 것입니다.</p>
+<p>현대적인 대안들과 비교하면 이렇습니다.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th><strong>항목</strong></th><th><strong>Java Serializable</strong></th><th><strong>JSON (Jackson)</strong></th><th><strong>Protocol Buffers</strong></th></tr></thead><tbody><tr><td><strong>언어 간 호환</strong></td><td>JVM 전용</td><td>모든 언어</td><td>모든 언어</td></tr><tr><td><strong>스키마 진화</strong></td><td>UID 관리 필요</td><td>유연 (필드 추가/제거)</td><td>명시적 버전 관리</td></tr><tr><td><strong>보안</strong></td><td>역직렬화 취약점</td><td>상대적으로 안전</td><td>안전</td></tr><tr><td><strong>성능 (크기)</strong></td><td>큼 (메타데이터 포함)</td><td>중간</td><td>작음</td></tr><tr><td><strong>적합한 용도</strong></td><td>JVM 내부, 레거시</td><td>대부분의 API</td><td>대용량 바이너리 통신</td></tr></tbody></table>
+<p>그렇다고 Serializable을 쓰는 것이 무조건 나쁜 선택은 아닙니다. JVM 기반 분산 캐시(예: Hazelcast), Java EE 레거시 시스템, HttpSession 직렬화처럼 JVM끼리 통신하는 구조에서는 여전히 합리적인 선택입니다. 다만 선택할 때 이 글에서 다룬 함정들을 의식하고 있어야 한다는 것입니다.</p>
+<hr>
+<h2>🤔 <strong>마무리</strong></h2>
+<p>두 파트를 거치면서 Java 직렬화가 하는 일을 처음부터 끝까지 추적해 봤습니다.</p>
+<p>직렬화 스트림에는 값뿐만 아니라 클래스 이름, 필드 이름, 타입 코드, serialVersionUID까지 전부 박혀 있고, 역직렬화는 이 정보를 읽어 ClassLoader에서 클래스를 찾고 생성자를 우회해서 객체를 만들어냅니다. 생성자가 실행되지 않기 때문에 유효성 검사 로직은 역직렬화 경로에서 무력화됩니다. serialVersionUID를 명시하지 않으면 메서드 하나 추가했을 뿐인데 기존 데이터를 읽지 못하게 되고, 신뢰할 수 없는 스트림을 역직렬화하면 원격 코드 실행까지 가능합니다.</p>
+<p><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">implements Serializable</code> 한 줄 뒤에 이 모든 동작이 숨어있습니다.</p></div></div><div class="MuiBox-root css-1cpq4zq"><hr class="MuiDivider-root MuiDivider-fullWidth css-7jtdmc"><h5 class="MuiTypography-root MuiTypography-h5 css-85yo2n">같은 카테고리의 다른 글</h5><div class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-2 css-1eikg3m"><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] Serializable 깊이 파기 — Part 1: 객체가 바이트가 되는 과정</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">Python이나 JavaScript와 달리 Java는 왜 Serializable을 선언해야 하는지, 메서드가 하나도 없는 이 인터페이스가 무슨 일을 하는지 묻는 글입니다. | ObjectOutputStream이 만든 실제 바이트를 열어 보고, 참조 객체가 들어 있을 때는 어떻게 되는지 확인합니다.</p><div class="MuiBox-root css-107ld1r"></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 4월 5일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] 주식 거래 엔진 직접 만들기 - Part 3: 오더북을 어떻게 구현할 것인가</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">주식 거래 엔진의 오더북을 TreeMap과 ArrayDeque 조합으로 만든 이유를, PriorityQueue, LinkedList, Skip List와 비교하며 설명합니다. | 주문 취소를 Lazy Removal로 처리한 방법과 Kafka를 연결하며 만난 멱등성 문제를 마지막에 둡니다.</p><div class="MuiBox-root css-107ld1r"></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 27일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] 주식 거래 엔진 직접 만들기 - Part 2: Phase 1 — 모놀리식으로 시작하기</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">단일 JAR 모놀리식 구조인 Phase 1에서 만난 문제를 차례로 다룹니다. | SELECT FOR UPDATE로 동시성을 해결했고, 락 보유 시간을 줄이고, 락 획득 순서를 통일해 데드락 위험을 없앴습니다. @Transactional 원칙과 Lazy Loading 함정도 짚습니다.</p><div class="MuiBox-root css-107ld1r"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Java</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Spring Boot</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">JPA</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">+2</span></div></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 27일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] 주식 거래 엔진 직접 만들기 - Part 1: 왜 주식 거래 엔진인가</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">F-lab 멘토링 프로젝트로 주식 거래 엔진을 직접 설계하고 구현한 과정을 기록하는 시리즈의 첫 글입니다. | 프로젝트를 고른 기준과 멀티모듈 구조, Phase 로드맵, 시리즈 전체에서 답할 질문들을 먼저 밝힙니다.</p><div class="MuiBox-root css-107ld1r"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Java</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Spring Boot</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Kafka</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">+5</span></div></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 27일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[개발자가 직접 써봤어요] Claude Code 완전 가이드: 설치부터 멀티에이전트까지</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">Claude Code를 Spring Boot와 Kafka 기반 주식 매매 엔진 프로젝트에 적용해 본 경험을 바탕으로, 설치부터 멀티에이전트까지 소개합니다. | CLAUDE.md, Skills, Subagents, Hooks, MCP, Agent Teams의 여섯 레이어와 Cursor AI와의 비교, 주의사항이 나옵니다.</p><div class="MuiBox-root css-107ld1r"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Claude Code</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">AI</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Developer Tools</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">+4</span></div></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 9일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">EST AI - YOLO : 객체 탐지 실습 · 세그멘테이션 · 트래킹</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">YOLO로 고양이와 강아지 탐지 모델을 직접 학습하고, 차량 파손 범위를 이미지 세그멘테이션으로 예측하고, 영상에서 객체를 트래킹합니다. | 탐지용 데이터셋 폴더 구조와 바운딩 박스 좌표 형식, Roboflow 사용법도 있습니다.</p><div class="MuiBox-root css-107ld1r"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">YOLO</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Object Detection</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Segmentation</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">+4</span></div></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 9일</span></div></div></div></div><div class="MuiBox-root css-1b94f21"><a class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways css-104ms0" href="/blog/posts" data-discover="true"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowBackIcon"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z"></path></svg>게시글 목록으로 돌아가기</a></div><button class="MuiButtonBase-root MuiFab-root MuiFab-circular MuiFab-sizeMedium MuiFab-primary MuiFab-root MuiFab-circular MuiFab-sizeMedium MuiFab-primary css-1nl6bps" tabindex="0" type="button" aria-label="scroll to top" style="opacity: 0; visibility: hidden;"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="KeyboardArrowUpIcon"><path d="M7.41 15.41 12 10.83l4.59 4.58L18 14l-6-6-6 6z"></path></svg></button></div></div></div></div><footer style="text-align: center; padding: 2rem 0px; color: rgb(0, 0, 0); font-size: 0.9rem; border-top: 1px solid rgb(0, 0, 0); margin-top: auto; background-color: rgb(255, 255, 255);"><p>© 2025 DevTaco Blog. All rights reserved.</p></footer><div class="MuiBox-root css-1hyfx7x"><div class="visitor-counter MuiBox-root css-19midj6"><h6 class="MuiTypography-root MuiTypography-h6 MuiTypography-gutterBottom css-izz7ci">방문자 수</h6><div class="MuiBox-root css-zwd3xv"><h4 class="MuiTypography-root MuiTypography-h4 css-1dg27va">49</h4><p class="MuiTypography-root MuiTypography-body2 css-l6pb42">오늘</p><h6 class="MuiTypography-root MuiTypography-h6 css-kh42wg">총 49명</h6></div></div></div><div class="MuiBox-root css-1y95mt5" data-testid="terminal-navigation"><div class="MuiBox-root css-1kw3y0a"><p class="MuiTypography-root MuiTypography-body2 css-1fktdtb">devtaco@portfolio:~$ navigation</p><div class="MuiBox-root css-j0ozid"><p class="MuiTypography-root MuiTypography-body2 css-1cn40rb">⌘M to close</p><button class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-470314" tabindex="0" type="button" id=":r1:"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeSmall css-vh810p" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="CloseIcon"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg></button></div></div><div class="MuiBox-root css-13t3iqc"><div class="MuiBox-root css-0"><p class="MuiTypography-root MuiTypography-body2 css-cbhj4f">Navigation:</p><div class="MuiBox-root css-1kkt86i"><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">1 → home</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">2 → about</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">3 → posts</p></div></div><div class="MuiBox-root css-0"><p class="MuiTypography-root MuiTypography-body2 css-cbhj4f">External:</p><div class="MuiBox-root css-1kkt86i"><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">g → github</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">e → email</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">l → linkedin</p></div></div></div><p class="MuiTypography-root MuiTypography-body2 css-1e7vt2">Press number keys (1,2,3) or letter keys (g,e,l) to navigate. Use ⌘+M to close.</p></div></div></div></body></html>

@@ -1,0 +1,758 @@
+<!DOCTYPE html><html lang="en"><head><script type="text/javascript">!function(n){if("/"===n.search[1]){var a=n.search.slice(1).split("&").map((function(n){return n.replace(/~and~/g,"&")})).join("?");window.history.replaceState(null,null,n.pathname.slice(0,-1)+a+n.hash)}}(window.location)</script><meta charset="utf-8"><link rel="icon" href="/blog/favicon.ico"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#000000"><meta name="keywords" content="Java, Kotlin, Spring Boot, MSA, 개발, 백엔드, coroutine"><meta name="author" content="DevTaco"><meta property="og:image" content="https://devtaco30.github.io/blog/og-image.png"><meta property="twitter:image" content="https://devtaco30.github.io/blog/og-image.png"><meta property="twitter:url" content="https://devtaco30.github.io/blog/"><link rel="apple-touch-icon" href="/blog/apple-touch-icon.png"><link rel="manifest" href="/blog/manifest.json"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&amp;family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet"><script defer="defer" src="/blog/static/js/main.404b9165.js"></script><link href="/blog/static/css/main.5b86466f.css" rel="stylesheet"><style data-emotion="css" data-s=""></style><title>[개발자가 직접 써봤어요] Claude Code 완전 가이드: 설치부터 멀티에이전트까지 | DevTaco Blog</title><meta name="description" content="Claude Code를 Spring Boot와 Kafka 기반 주식 매매 엔진 프로젝트에 적용해 본 경험을 바탕으로, 설치부터 멀티에이전트까지 소개합니다. CLAUDE.md, Skills, Subagents, Hooks, MCP, Agent Teams의 여섯 레이어와 Cursor AI와의 비교, 주의사항이 나옵니다."><meta property="og:title" content="[개발자가 직접 써봤어요] Claude Code 완전 가이드: 설치부터 멀티에이전트까지"><meta property="og:description" content="Claude Code를 Spring Boot와 Kafka 기반 주식 매매 엔진 프로젝트에 적용해 본 경험을 바탕으로, 설치부터 멀티에이전트까지 소개합니다. CLAUDE.md, Skills, Subagents, Hooks, MCP, Agent Teams의 여섯 레이어와 Cursor AI와의 비교, 주의사항이 나옵니다."><meta property="og:type" content="article"><meta property="og:url" content="https://devtaco30.github.io/blog/posts/63"><meta name="twitter:card" content="summary"></head><body><noscript>You need to enable JavaScript to run this app.</noscript><div id="root"><div class="App"><div class="MuiBox-root css-kurlqb"><div class="MuiBox-root css-171onha"><button class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-1f6w95t" tabindex="0" type="button" id=":r0:"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="MenuIcon"><path d="M3 18h18v-2H3zm0-5h18v-2H3zm0-7v2h18V6z"></path></svg></button><div class="MuiBox-root css-1szb58x"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-218waq" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowBackIcon"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z"></path></svg><div class="MuiBox-root css-wq4jw1"><span>⌘+M</span></div></div></div></div><div class="MuiContainer-root css-15jb5o1" data-testid="page-container"><div class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-2 MuiGrid-spacing-md-3 css-1ht06td"><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-md-12 css-15j76c0"><div class="MuiBox-root css-15rigdj"><nav class="MuiTypography-root MuiTypography-body1 MuiBreadcrumbs-root css-1v2kxik"><ol class="MuiBreadcrumbs-ol css-51eq8m"><li class="MuiBreadcrumbs-li"><a class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways css-gj78h6" href="/blog/posts" data-discover="true">게시글 목록</a></li><li aria-hidden="true" class="MuiBreadcrumbs-separator css-1nd5pgh">/</li><li class="MuiBreadcrumbs-li"><p class="MuiTypography-root MuiTypography-body1 css-1cr0rz6">[개발자가 직접 써봤어요] Claude Code 완전 가이드: 설치부터 멀티에이전트까지</p></li></ol></nav><div class="MuiBox-root css-15djlns"><button class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-1y18wdw" tabindex="0" type="button" id=":r9:"><span class="MuiButton-icon MuiButton-startIcon MuiButton-iconSizeMedium css-1ygddt1"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowBackIcon"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z"></path></svg></span><div class="MuiBox-root css-0"><span class="MuiTypography-root MuiTypography-caption css-115rlu8">이전글</span><p class="MuiTypography-root MuiTypography-body2 css-10qk5g4">[Java Deep Dive] 주식 거래 엔진 직접 만들기 - Part 1: 왜 주식 거래 엔진인가</p></div></button><button class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-1k0z50p" tabindex="0" type="button" id=":ra:"><div class="MuiBox-root css-0"><span class="MuiTypography-root MuiTypography-caption css-115rlu8">다음글</span><p class="MuiTypography-root MuiTypography-body2 css-10qk5g4">EST AI - YOLO : 객체 탐지 실습 · 세그멘테이션 · 트래킹</p></div><span class="MuiButton-icon MuiButton-endIcon MuiButton-iconSizeMedium css-6bt4d2"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowForwardIcon"><path d="m12 4-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"></path></svg></span></button></div><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-10t0qv5" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h4 class="MuiTypography-root MuiTypography-h4 css-k5jvd2">[개발자가 직접 써봤어요] Claude Code 완전 가이드: 설치부터 멀티에이전트까지</h4><p class="MuiTypography-root MuiTypography-body1 css-104xg3">Claude Code를 Spring Boot와 Kafka 기반 주식 매매 엔진 프로젝트에 적용해 본 경험을 바탕으로, 설치부터 멀티에이전트까지 소개합니다. | CLAUDE.md, Skills, Subagents, Hooks, MCP, Agent Teams의 여섯 레이어와 Cursor AI와의 비교, 주의사항이 나옵니다.</p><div class="MuiBox-root css-1prrn6n"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Claude Code</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">AI</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Developer Tools</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Productivity</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Automation</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">MCP</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Agent</span></div></div><p class="MuiTypography-root MuiTypography-body2 css-l6pb42">2026년 3월 9일 오후 09:47</p></div><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-1i779yj" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><div class="MuiBox-root css-13lazol"><p>안녕하세요. 요즘 AI 코딩 도구가 넘쳐나는 시대에, 저는 Anthropic의 Claude Code를 직접 프로젝트에 적용해보면서 느낀 것들을 정리해보려 합니다.</p>
+<p>단순 코드 자동완성 도구를 기대했다면 예상 밖일 겁니다. Claude Code는 파일 시스템에 직접 접근하고, 명령어를 실행하고, 외부 서비스와 연동하며, 하위 에이전트를 생성해 작업을 병렬로 처리하는 <strong>자율 실행 시스템</strong>에 가깝습니다.</p>
+<p>이 포스팅은 공식 문서와 실제 Spring Boot + Kafka 기반 주식 매매 엔진 프로젝트 적용 경험을 바탕으로 검증된 내용만 정리했습니다. 2026년 3월 기준입니다.</p>
+<hr>
+<h2>⚙️ <strong>1. Claude Code란?</strong></h2>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">터미널에서 claude 명령어 하나로 시작 →
+Claude가 프로젝트 전체를 파악 →
+파일 읽기/수정/생성, 테스트 실행, Git 커밋까지 직접 처리
+</code></pre>
+<p>터미널 기반 AI 코딩 에이전트입니다. IDE 플러그인이나 웹 UI가 아닌 터미널에서 동작하는 게 핵심 특징이에요. 코드를 "제안"하는 수준이 아니라, 직접 파일을 수정하고 명령어를 실행합니다.</p>
+<p><strong>요금제</strong> (2026년 3월 기준)</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>플랜</th><th>가격</th><th>특징</th></tr></thead><tbody><tr><td>Pro</td><td>$20/월</td><td>사용량 제한 있음</td></tr><tr><td>Max</td><td>$100~200/월</td><td>무제한</td></tr><tr><td>Teams / Enterprise</td><td>별도 문의</td><td>-</td></tr></tbody></table>
+<p>Claude Code만 단독 구매는 안 되고, Claude 구독 후 사용 가능합니다.</p>
+<img alt="이미지" src="https://bimuiyejfcapaxqlgkre.supabase.co/storage/v1/object/public/blog-images/temp/1773059256072.png" style="max-width: 60%; height: auto; display: block; margin: 20px auto; cursor: pointer; transition: opacity 0.2s ease-in-out;">
+<p>제 로컬의 토이프로젝트에서 실행을 해봤습니다.
+위처럼 처음 실행하면 workspace 를 trust 하냐고 물어옵니다.</p>
+<img alt="이미지" src="https://bimuiyejfcapaxqlgkre.supabase.co/storage/v1/object/public/blog-images/temp/1773059291253.png" style="max-width: 60%; height: auto; display: block; margin: 20px auto; cursor: pointer; transition: opacity 0.2s ease-in-out;">
+<p>trust 하면 이렇게 귀여운 터미널이 열립니다.</p>
+<h2>🏗️ <strong>2. 핵심 구조: 6개 레이어</strong></h2>
+<p>Claude Code의 기능은 <strong>6개 레이어</strong>가 아래에서 위로 쌓이는 구조입니다. 아래 레이어가 없으면 위 레이어가 제대로 동작하지 않아요.</p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">┌─────────────────────────────────────┐
+│  Agent Teams (멀티에이전트 협업)     │  ← 레이어 6 (실험적)
+├─────────────────────────────────────┤
+│  MCP (외부 서비스 연결)              │  ← 레이어 5
+├─────────────────────────────────────┤
+│  Hooks (이벤트 자동 실행)            │  ← 레이어 4
+├─────────────────────────────────────┤
+│  Subagents (병렬 전문가)             │  ← 레이어 3
+├─────────────────────────────────────┤
+│  Skills &amp; Commands (워크플로우)      │  ← 레이어 2
+├─────────────────────────────────────┤
+│  CLAUDE.md (프로젝트 기억)           │  ← 레이어 1 (기반)
+└─────────────────────────────────────┘
+</code></pre>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>기능</th><th>역할</th><th>활성화 방식</th></tr></thead><tbody><tr><td>CLAUDE.md</td><td>매 세션 자동 로드되는 프로젝트 규칙</td><td>자동 (항상)</td></tr><tr><td>Skills</td><td>컨텍스트 기반으로 Claude가 자동 적용하는 워크플로우</td><td>자동</td></tr><tr><td>Commands</td><td><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">/명령어</code>로 수동 호출하는 워크플로우</td><td>수동</td></tr><tr><td>Subagents</td><td>독립 컨텍스트로 작업을 분리 실행하는 전문 에이전트</td><td>자동 or 명시적 지시</td></tr><tr><td>Hooks</td><td>도구 실행 전/후에 자동으로 트리거되는 스크립트</td><td>이벤트 기반 자동</td></tr><tr><td>MCP</td><td>외부 서비스(GitHub, DB 등)와 연결하는 플러그인</td><td>설정 후 항상</td></tr><tr><td>Agent Teams</td><td>에이전트끼리 직접 소통하는 멀티에이전트 팀</td><td>수동 (실험적)</td></tr></tbody></table>
+<hr>
+<h2>🚀 <strong>3. 설치 및 시작</strong></h2>
+<p><strong>방법 1 — 공식 인스톨러 (권장)</strong></p>
+<p><a href="https://claude.ai/download">claude.ai/download</a> 에서 OS에 맞는 인스톨러를 받아 실행하면 끝입니다. Node.js 없이 네이티브 바이너리로 설치됩니다.</p>
+<p><strong>방법 2 — npm</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-bash"># Node.js 18 이상 필요
+npm install -g @anthropic-ai/claude-code
+</code></pre></pre>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-bash">
+# 프로젝트 폴더로 이동 후 실행
+cd my-project
+claude
+</code></pre></pre>
+<p>처음 실행하면 브라우저가 열리며 Claude 계정 인증을 요청합니다. 인증 완료 후 터미널에서 바로 대화할 수 있어요.</p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-bash"># 프로젝트 초기 설정 (CLAUDE.md 자동 생성)
+/init
+</code></pre></pre>
+<img alt="이미지" src="https://bimuiyejfcapaxqlgkre.supabase.co/storage/v1/object/public/blog-images/temp/1773059308514.png" style="max-width: 60%; height: auto; display: block; margin: 20px auto; cursor: pointer; transition: opacity 0.2s ease-in-out;">
+<p>프로젝트의 루트에서 init 명령을 하게되면, 이 프로젝트를 쭉 scan 하고 'CLAUDE.md' 라는 마크다운을 생성합니다.</p>
+<hr>
+<h2>📋 <strong>4. 레이어 1 — CLAUDE.md: 프로젝트의 기억</strong></h2>
+<p>CLAUDE.md는 <strong>매 세션 시작 시 자동으로 로드</strong>되는 마크다운 파일입니다. <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">/compact</code>(컨텍스트 압축) 이후에도 살아남는 유일한 영구 기억이에요.</p>
+<h3>위치 우선순위</h3>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">./CLAUDE.md                ← 현재 프로젝트 (가장 우선)
+./.claude/CLAUDE.md        ← 숨김 폴더 내 프로젝트 설정
+~/.claude/CLAUDE.md        ← 전역 설정 (모든 프로젝트에 적용)
+</code></pre>
+<h3>무엇을 써야 하나</h3>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-markdown"># CLAUDE.md 예시
+
+## 프로젝트 개요
+Node.js + TypeScript 기반 REST API 서버
+
+## 코드 컨벤션
+- 커밋 메시지: feat:, fix:, chore: 접두사 필수
+- 테스트 없이 커밋 금지
+- src/legacy/ 폴더 절대 수정 금지
+
+## 자주 쓰는 명령어
+- 개발 서버: npm run dev
+- 테스트: npm test
+- 빌드: npm run build
+</code></pre></pre>
+<p><strong>권장 분량</strong>: 200줄 이하. 초과하면 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">.claude/rules/</code> 폴더로 분할하세요.</p>
+<h3>컨텍스트 관리 명령어</h3>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-bash">/compact      # 현재 대화를 요약 → 컨텍스트 창 확보 (80% 도달 시 사용)
+/remember     # 특정 내용을 명시적으로 영구 저장
+</code></pre></pre>
+<hr>
+<h2>🔧 <strong>5. 레이어 2 — Skills &amp; Commands: 반복 작업 자동화</strong></h2>
+<h3>Skills — 자동 발동 워크플로우</h3>
+<p>Skills는 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">.claude/skills/</code> 폴더 안의 마크다운 파일입니다. Claude가 대화 맥락을 보고 <strong>자동으로 적용</strong>합니다. 별도 코드나 빌드 과정 없이 마크다운만 작성하면 돼요.</p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">.claude/
+└── skills/
+    ├── tdd-workflow/
+    │   └── SKILL.md     ← 테스트 관련 작업 시 자동 활성화
+    └── git-deploy/
+        └── SKILL.md     ← 배포 관련 작업 시 자동 활성화
+</code></pre>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-markdown">&lt;!-- .claude/skills/tdd-workflow/SKILL.md 예시 --&gt;
+# TDD 워크플로우
+
+## 발동 조건
+테스트 작성, 기능 구현, 버그 수정 요청 시
+
+## 실행 순서
+1. 인터페이스 먼저 정의
+2. 실패하는 테스트 작성 (RED)
+3. 최소한의 구현 코드 작성 (GREEN)
+4. 리팩터링 (REFACTOR)
+5. 커버리지 80% 이상 확인
+</code></pre></pre>
+<h3>Commands — 수동 호출 워크플로우</h3>
+<p><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">/슬래시명령어</code> 형태로 원할 때만 직접 실행합니다.</p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-bash">/deploy       # 배포 워크플로우 실행
+/review       # 코드 리뷰 실행
+/batch        # 코드베이스를 여러 단위로 분해해 병렬 처리 후 각각 PR 생성
+</code></pre></pre>
+<p><strong>Skills vs Commands 선택 기준</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>상황</th><th>선택</th></tr></thead><tbody><tr><td>거의 모든 작업에 적용되길 원함</td><td>Skill</td></tr><tr><td>내가 원할 때만 실행하고 싶음</td><td>Command</td></tr><tr><td>컨텍스트와 무관하게 명시적 제어 필요</td><td>Command</td></tr></tbody></table>
+<hr>
+<h2>🤖 <strong>6. 레이어 3 — Subagents: 병렬 전문가</strong></h2>
+<p>Subagents는 <strong>독립적인 컨텍스트 창</strong>을 가진 전문화된 하위 에이전트입니다. 메인 세션의 컨텍스트를 소비하지 않고 별도로 작업을 처리하고, 완료 후 결과만 리포트합니다.</p>
+<h3>정의 방법</h3>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-markdown">&lt;!-- .claude/agents/code-reviewer.md --&gt;
+---
+name: code-reviewer
+description: 코드 품질, 보안, 유지보수성 관점에서 코드를 리뷰합니다
+tools: Read, Glob, Grep
+model: sonnet
+---
+
+당신은 시니어 코드 리뷰어입니다.
+각 이슈에 대해 현재 코드, 문제점, 개선된 코드를 함께 제시하세요.
+</code></pre></pre>
+<p>자연어로도 호출할 수 있습니다:</p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">"code-reviewer 에이전트를 불러서 src/auth/ 폴더 전체 리뷰해줘"
+</code></pre>
+<h3>Claude Code 내장 Subagents</h3>
+<ul>
+<li><strong>Explore</strong>: 파일 탐색 및 코드베이스 파악</li>
+<li><strong>Plan</strong>: 구현 계획 수립</li>
+<li><strong>General-purpose</strong>: 복잡한 멀티스텝 작업</li>
+</ul>
+<h3>Subagents가 효과적인 상황</h3>
+<ul>
+<li>50개 이상의 파일을 분석할 때 (메인 컨텍스트 보호)</li>
+<li>독립적인 작업을 병렬로 처리할 때</li>
+<li>특정 도구만 허용하는 제한된 환경이 필요할 때</li>
+</ul>
+<hr>
+<h2>🪝 <strong>7. 레이어 4 — Hooks: 이벤트 기반 자동 실행</strong></h2>
+<p>Hooks는 특정 이벤트 발생 시 자동으로 실행되는 스크립트입니다. Claude의 작업에 <strong>자동 검증, 차단, 후처리</strong>를 붙일 수 있습니다.</p>
+<h3>Hook 종류</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Hook</th><th>실행 시점</th><th>차단 가능 여부</th></tr></thead><tbody><tr><td><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">PreToolUse</code></td><td>도구 실행 직전</td><td>✅ (exit code 2)</td></tr><tr><td><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">PostToolUse</code></td><td>도구 실행 직후</td><td>❌</td></tr><tr><td><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">Stop</code></td><td>Claude 응답 완료 후</td><td>❌</td></tr><tr><td><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">SessionEnd</code></td><td>세션 종료 시</td><td>❌</td></tr></tbody></table>
+<h3>설정 방법</h3>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-json">// .claude/settings.json
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "./scripts/validate-command.sh"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "npm test -- --watchAll=false"
+          }
+        ]
+      }
+    ]
+  }
+}
+</code></pre></pre>
+<p>Hook에서 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">exit 2</code>로 종료하면 Claude가 해당 작업을 차단하고 오류 메시지를 받습니다.</p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-bash">#!/bin/bash
+# 민감한 파일을 커밋하려 할 때 차단하는 예시
+if git diff --cached --name-only | grep -qE '\.(env|key|pem)$'; then
+  echo "BLOCKED: 민감한 파일이 포함되어 있습니다"
+  exit 2  # exit 2 = Claude에게 차단 메시지 전달
+fi
+</code></pre></pre>
+<hr>
+<h2>🔌 <strong>8. 레이어 5 — MCP: 외부 서비스 연결</strong></h2>
+<p>MCP(Model Context Protocol)는 Anthropic이 공개한 오픈 표준으로, Claude Code가 외부 서비스에 연결하는 방식입니다. GitHub, Postgres, Slack, Notion 등 300개 이상의 서비스가 MCP 서버를 제공합니다.</p>
+<h3>추가 방법</h3>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-bash"># HTTP 방식 (원격 서버)
+claude mcp add --transport http notion https://mcp.notion.com/mcp
+
+# stdio 방식 (로컬 서버)
+claude mcp add --transport stdio github -- npx @modelcontextprotocol/server-github
+
+# 등록된 MCP 서버 목록 확인
+/mcp
+</code></pre></pre>
+<h3>팀 공유 설정</h3>
+<p><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">.mcp.json</code> 파일을 프로젝트 루트에 두면 팀 전체가 같은 MCP 설정을 공유할 수 있습니다.</p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-json">{
+  "mcpServers": {
+    "github": {
+      "command": "npx",
+      "args": ["@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_TOKEN": "${GITHUB_TOKEN}"
+      }
+    }
+  }
+}
+</code></pre></pre>
+<h3>⚠️ 컨텍스트 주의사항</h3>
+<p>MCP 서버가 많아질수록 컨텍스트 창이 줄어듭니다. <strong>동시에 활성화하는 MCP는 10개 이하, 총 도구 수는 80개 이하</strong>로 유지하는 것을 권장해요. 200K 토큰 컨텍스트가 MCP 도구 정의만으로 70K까지 줄어들 수 있습니다.</p>
+<hr>
+<h2>👥 <strong>9. 레이어 6 — Agent Teams: 멀티에이전트 협업 (실험적)</strong></h2>
+<p>Agent Teams는 에이전트들이 <strong>서로 직접 메시지를 주고받으며 협업</strong>할 수 있는 기능입니다. 2026년 현재 실험적 기능으로, 명시적으로 활성화해야 합니다.</p>
+<h3>활성화 방법</h3>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-json">// .claude/settings.json
+{
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+  }
+}
+</code></pre></pre>
+<h3>Agent Teams 구조</h3>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">리드 에이전트 (Lead)
+├── 팀원 A (Teammate) ─ 직접 메시지 가능 ─┐
+├── 팀원 B (Teammate) ─────────────────── 서로 소통
+└── 팀원 C (Teammate) ──────────────────┘
+</code></pre>
+<ul>
+<li>각 팀원은 독립적인 컨텍스트 창 보유</li>
+<li>팀원끼리 <strong>직접(P2P) 메시지</strong> 가능 — Subagents와의 핵심 차이</li>
+<li>공유 태스크 리스트를 통해 작업 분배</li>
+<li>팀원 수에 비례해 토큰 비용 증가 (3명 팀 ≈ 3~4배)</li>
+</ul>
+<h3>Subagents vs Agent Teams</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>구분</th><th>Subagents</th><th>Agent Teams</th></tr></thead><tbody><tr><td>에이전트 소통</td><td>리드에게만 보고</td><td>팀원 간 P2P 직접 소통</td></tr><tr><td>적합한 상황</td><td>독립적인 분석·검색</td><td>서로 결과를 공유하며 협업</td></tr><tr><td>토큰 비용</td><td>낮음</td><td>높음 (팀원 수 비례)</td></tr><tr><td>안정성</td><td>안정</td><td>실험적</td></tr></tbody></table>
+<p><strong>권장</strong>: Subagents로 먼저 시작하고, 에이전트 간 실시간 조율이 필요할 때만 Agent Teams로 업그레이드하세요.</p>
+<hr>
+<h2>🌳 <strong>10. Git Worktrees: 충돌 없는 병렬 실행</strong></h2>
+<p>Git Worktrees는 <strong>같은 저장소에서 여러 브랜치를 별도 디렉터리에 동시에 체크아웃</strong>하는 Git 기능입니다. Claude Code에서 병렬 작업 시 파일 충돌을 방지합니다.</p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-bash"># 새 워크트리 생성 (브랜치 자동 생성)
+git worktree add .claude/worktrees/feat-1024 -b feat-1024
+
+# 또는 Claude Code에서 직접
+claude --worktree feat-1024
+</code></pre></pre>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>구분</th><th>Subagents</th><th>Agent Teams</th><th>Worktrees</th></tr></thead><tbody><tr><td>파일 격리</td><td>❌</td><td>❌</td><td>✅ (브랜치 분리)</td></tr><tr><td>에이전트 소통</td><td>리드에게만</td><td>P2P 가능</td><td>없음 (완전 독립)</td></tr><tr><td>주요 용도</td><td>독립 분석</td><td>협업·검증</td><td>동시 파일 수정</td></tr></tbody></table>
+<p>Worktrees는 에이전트 기능이 아니라 Git 기능입니다. 위 두 가지와 조합해서 씁니다.</p>
+<hr>
+<h2>📁 <strong>11. 전체 디렉터리 구조</strong></h2>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">your-project/
+├── CLAUDE.md                        ← 프로젝트 헌법 (필수)
+├── .mcp.json                        ← MCP 서버 설정 (팀 공유)
+│
+└── .claude/
+    ├── settings.json                ← Hooks, Agent Teams 활성화
+    ├── rules/                       ← CLAUDE.md 분할 규칙 (200줄 초과 시)
+    │   ├── coding-style.md
+    │   └── git-conventions.md
+    ├── agents/                      ← Subagent 정의
+    │   ├── code-reviewer.md
+    │   └── security-checker.md
+    ├── skills/                      ← 자동 발동 워크플로우
+    │   ├── tdd-workflow/
+    │   │   └── SKILL.md
+    │   └── git-deploy/
+    │       └── SKILL.md
+    └── worktrees/                   ← 병렬 실행 시 자동 생성
+        └── .gitkeep                 ← .gitignore에 worktrees/ 추가 필요
+</code></pre>
+<hr>
+<h2>🗺️ <strong>12. 실전 세팅 순서</strong></h2>
+<p>아래 레이어일수록 위 레이어의 컨텍스트를 필요로 합니다. CLAUDE.md 없이 Subagents를 만들면 에이전트가 프로젝트 맥락을 모른 채 동작하게 됩니다.</p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">STEP 1  설치 &amp; /init                              ★ 필수
+        └─ npm install -g @anthropic-ai/claude-code
+           프로젝트 폴더에서 claude 실행 후 /init
+
+STEP 2  CLAUDE.md 작성                            ★ 가장 중요
+        └─ /init으로 생성된 초안을 프로젝트에 맞게 다듬기
+           코드 컨벤션, 금지 사항, 자주 쓰는 명령어 추가
+
+STEP 3  MCP 연결                                  ★ 권장
+        └─ GitHub, Jira, Slack 등 실제로 쓰는 서비스만 연결
+           .mcp.json으로 팀 공유
+
+STEP 4  Hooks 설정                                ★ 권장
+        └─ PostToolUse: 파일 저장 후 자동 린트/테스트
+           PreToolUse: 민감한 파일 커밋 차단
+
+STEP 5  Subagents 정의                            ★ 권장
+        └─ .claude/agents/ 에 역할별 에이전트 파일 작성
+
+STEP 6  Skills &amp; Commands 정의                    ★ 선택
+        └─ 자동/수동 워크플로우 구성
+
+STEP 7  Agent Teams + Worktrees                   ★ 고급
+        └─ 에이전트 간 직접 협업이 필요한 복잡한 작업에만
+</code></pre>
+<hr>
+<h2>🔗 <strong>13. Google Drive 연동</strong></h2>
+<h3>방법 1: Claude.ai 내장 커넥터 (가장 쉬운 방법)</h3>
+<p>Claude.ai 웹/앱 설정(Settings → Connectors)에서 Google Drive 커넥터를 연결하면 이 대화창에서 바로 드라이브 파일을 검색하고 읽을 수 있습니다. 별도 설정 없이 Anthropic 공식 지원이에요.</p>
+<h3>방법 2: Claude Code에서 MCP로 연동</h3>
+<p>Claude Code는 공식 내장 Google Drive 연동이 없습니다. 서드파티 MCP 서버를 직접 설치해야 해요.</p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-bash"># 1. Google Cloud Console에서 OAuth 2.0 클라이언트 ID 생성
+# 2. MCP 서버 설치 및 인증
+npx @piotr-agier/google-drive-mcp auth
+
+# 3. Claude Code에 등록
+claude mcp add google-drive -- npx @piotr-agier/google-drive-mcp
+</code></pre></pre>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th></th><th>Claude.ai 커넥터</th><th>MCP 서버 (서드파티)</th></tr></thead><tbody><tr><td>설정 난이도</td><td>쉬움 (클릭 몇 번)</td><td>어려움 (직접 설치)</td></tr><tr><td>보안</td><td>Anthropic 공식</td><td>소스 코드 직접 검증 필요</td></tr><tr><td>사용 환경</td><td>Claude.ai 대화창</td><td>Claude Code 터미널</td></tr><tr><td>쓰기(수정) 기능</td><td>제한적</td><td>완전 지원</td></tr></tbody></table>
+<p>⚠️ <strong>보안 주의</strong>: 서드파티 MCP 서버는 Anthropic 공식이 아닙니다. 사용 전 반드시 소스 코드를 확인하거나, 회사 기밀 문서가 있는 계정에서는 사용을 지양하세요.</p>
+<hr>
+<h2>⚠️ <strong>14. 주의사항 &amp; 안티패턴</strong></h2>
+<p><strong>CLAUDE.md</strong></p>
+<ul>
+<li>200줄 초과 시 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">.claude/rules/</code>로 분할</li>
+<li>모든 것을 한 파일에 넣지 말 것 — 관심사별 분리 권장</li>
+</ul>
+<p><strong>MCP</strong></p>
+<ul>
+<li>한 번에 10개 이상 활성화 금지 — 컨텍스트 창 급감</li>
+<li>신뢰되지 않은 서드파티 MCP 서버 주의 — 보안 위협 가능</li>
+</ul>
+<p><strong>Skills &amp; Commands</strong></p>
+<ul>
+<li>Slash Commands 20개 이상 — 관리 불가 수준이 됩니다</li>
+</ul>
+<p><strong>Agent Teams</strong></p>
+<ul>
+<li>간단한 독립 작업에 사용하면 불필요한 토큰 낭비</li>
+<li>에이전트 간 실시간 조율이 <strong>정말 필요한</strong> 복잡한 작업에만 사용</li>
+<li>팀원 수 권장: 3~5명</li>
+</ul>
+<p><strong>Headless Mode (CI/CD 자동화)</strong></p>
+<ul>
+<li>범위, 방법, 제약을 반드시 명시해야 합니다</li>
+</ul>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-bash"># 올바른 Headless 사용 예시
+claude -p "src/api/ 폴더의 모든 엔드포인트에 대해 단위 테스트를 작성하고
+          tests/api/ 폴더에 저장하라. 기존 파일은 수정하지 말 것." \
+  --allowedTools "Read,Write,Bash" \
+  --max-turns 20
+</code></pre></pre>
+<hr>
+<h2>💡 <strong>15. 실제 적용 사례 — Java 멀티모듈 프로젝트</strong></h2>
+<p>Spring Boot + Kafka 기반 주식 매매 엔진 프로젝트에 직접 적용한 설정을 공유합니다.</p>
+<h3>디렉터리 구조</h3>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">stock-trading-engine/
+├── CLAUDE.md                          ← 프로젝트 규칙 (커밋 규칙, 설계 원칙, 금지 사항)
+├── api/
+│   └── CLAUDE.md                      ← api 모듈 전용 규칙 (Kafka 설계 원칙 등)
+│
+└── .claude/
+    ├── architecture.md                ← CLAUDE.md에서 @참조하는 아키텍처 문서
+    ├── settings.json                  ← Hooks 설정
+    ├── agents/
+    │   ├── code-reviewer.md           ← 코드 리뷰 전용 Subagent
+    │   └── pr-writer.md               ← PR 초안 작성 전용 Subagent
+    └── hooks/
+        ├── protect-files.sh           ← 민감 파일 수정 차단 (PreToolUse)
+        ├── test-on-change.sh          ← 파일 수정 후 해당 모듈 테스트 자동 실행 (PostToolUse)
+        └── log-changes.sh             ← 파일 변경 이력 기록 (PostToolUse)
+</code></pre>
+<h3>CLAUDE.md — 핵심은 "하지 말 것"</h3>
+<p>CLAUDE.md에서 가장 효과적이었던 건 <strong>부정 규칙(negative rules)</strong> 이었습니다. Claude는 선의로 코드를 "개선"하려는 경향이 있는데, 이를 명시적으로 막는 게 핵심이에요.</p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-markdown">## 하지 말 것
+
+- 요청하지 않은 리팩토링, 에러 핸들링, 주석 추가
+- main 직접 푸시
+- commit message, PR 본문에 AI 도구 사용 흔적 포함
+- `docs/` 폴더 및 하위 파일 커밋에 포함
+</code></pre></pre>
+<p>"코드 수정과 그에 대응하는 테스트는 같은 커밋에 묶는다"는 원칙도 명시했습니다. 이 규칙이 없으면 Claude는 코드 변경 커밋과 테스트 추가 커밋을 분리하는 경향이 있어요.</p>
+<h3>Subagents — 역할 분리의 핵심</h3>
+<p><strong>code-reviewer</strong> — 이 프로젝트 고유의 규칙 체크</p>
+<p>단순 스타일 리뷰가 아니라, 프로젝트 설계 원칙 위반 여부를 체크합니다.</p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-markdown">&lt;!-- .claude/agents/code-reviewer.md --&gt;
+---
+name: code-reviewer
+description: 코드 리뷰 요청 시 사용. 프로젝트 규칙 위반, 잠재적 버그를 검토한다.
+tools: Read, Grep, Glob
+model: sonnet
+---
+
+## 1. 프로젝트 규칙 위반
+- @Transactional 클래스 레벨 선언 여부 (메서드 레벨 필수)
+- 도메인 로직이 Service에 있고 Entity에 없는 경우 (Rich Domain Model 위반)
+- Kafka 이벤트 발행 시 파티션 키가 stockCode가 아닌 경우
+
+## 2. 잠재적 버그
+- Optional 미처리 (.get() 직접 호출)
+- 같은 클래스 내 @Transactional 메서드 내부 호출 (프록시 미적용)
+</code></pre></pre>
+<p>tools를 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">Read, Grep, Glob</code>으로 제한한 게 포인트입니다. 리뷰어는 코드를 읽기만 해야 하고, <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">Edit</code>/<code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">Write</code> 권한은 필요 없어요.</p>
+<p><strong>pr-writer</strong> — PR 초안 자동 생성</p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-markdown">&lt;!-- .claude/agents/pr-writer.md --&gt;
+---
+name: pr-writer
+description: PR 초안 작성 요청 시 사용. 현재 브랜치의 변경 커밋을 읽어 한국어 포맷으로 PR 본문을 생성한다.
+tools: Bash, Read, Glob
+model: sonnet
+---
+
+## 작업 순서
+1. git log main..HEAD --oneline으로 커밋 목록 확인
+2. git diff main...HEAD --stat으로 변경 파일 목록 확인
+3. 주요 변경 파일을 Read로 직접 읽어 내용 파악
+4. 아래 포맷으로 한국어 PR 본문 초안 작성
+
+## PR 본문 포맷
+## 변경 배경
+## 변경 내용
+## 설계 의도
+</code></pre></pre>
+<p>이 에이전트를 만들기 전에는 PR 메시지를 직접 작성했습니다. 이제는 자연어로 "PR 초안 작성해줘"라고 하면 코드를 직접 읽고 내용 기반으로 구체적인 PR을 작성해줍니다.</p>
+<h3>Hooks — 자동 안전망</h3>
+<p><strong>protect-files.sh</strong> — 민감 파일 수정 차단 (PreToolUse)</p>
+<p><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">application-local.yml</code>, <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">.env</code> 같은 파일을 Claude가 실수로 수정하는 것을 막습니다.</p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-bash">#!/bin/bash
+INPUT=$(cat)
+FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // empty')
+
+PROTECTED=("application-local.yml" "application-secret.yml" ".env" ".env.local")
+
+for pattern in "${PROTECTED[@]}"; do
+    if [[ "$FILE_PATH" == *"$pattern"* ]]; then
+        echo "보호된 파일 수정 차단: $FILE_PATH" &gt;&amp;2
+        exit 2
+    fi
+done
+</code></pre></pre>
+<p><strong>test-on-change.sh</strong> — 모듈별 테스트 자동 실행 (PostToolUse)</p>
+<p>파일을 수정한 직후 해당 모듈의 테스트만 실행합니다. 전체 빌드 대신 수정된 모듈만 테스트하므로 빠르고, 테스트가 실패하면 Claude가 결과를 받아 스스로 수정합니다.</p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-bash">#!/bin/bash
+INPUT=$(cat)
+FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // empty')
+
+# 테스트 파일 수정 시는 스킵 (무한 루프 방지)
+if [[ "$FILE_PATH" == */test/* ]]; then exit 0; fi
+
+if [[ "$FILE_PATH" == */trading/* ]]; then
+    ./gradlew :trading:test --quiet 2&gt;&amp;1 | tail -15
+elif [[ "$FILE_PATH" == */api/* ]]; then
+    ./gradlew :api:test --quiet 2&gt;&amp;1 | tail -15
+fi
+</code></pre></pre>
+<p><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">*/test/*</code> 경로 스킵이 중요합니다. 테스트 파일을 수정했을 때도 테스트를 실행하면 → 테스트 실패 시 다시 수정 → 또 테스트 실행 → 무한 루프가 발생합니다.</p>
+<p><strong>Stop Hook</strong> — 응답 완료 후 컴파일 검증</p>
+<p>Claude가 응답을 완료할 때마다 전체 빌드를 실행해 컴파일 에러를 잡습니다. <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">-x test</code>로 테스트는 제외해 빠르게 실행돼요.</p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-bash">./gradlew build -x test --quiet 2&gt;&amp;1 | tail -10
+</code></pre></pre>
+<h3>모듈별 CLAUDE.md</h3>
+<p>루트 CLAUDE.md 외에 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">api/CLAUDE.md</code>를 별도로 두었습니다. api 모듈은 Kafka 설계 원칙이 특히 중요하기 때문이에요.</p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-markdown">&lt;!-- api/CLAUDE.md --&gt;
+## Kafka 설계 원칙
+
+파티션 키는 반드시 stockCode. 같은 종목의 메시지 순서 보장이 Single Writer의 전제.
+
+Kafka 발행은 반드시 DB 커밋 후(afterCommit).
+DB 커밋 전 발행 → Consumer가 DB 조회 시 주문 없음.
+
+ack-mode: manual_immediate — 처리 완료 후 명시적 acknowledge.
+자동 커밋 시 처리 실패해도 offset이 커밋되어 메시지 유실 가능.
+</code></pre></pre>
+<p>Claude가 api 모듈 코드를 작성할 때 이 파일이 추가로 로드되어 Kafka 관련 원칙을 자동으로 적용합니다.</p>
+<h3>실제로 겪은 것들</h3>
+<p><strong>Subagents vs Skills — 처음엔 개념이 헷갈렸다</strong></p>
+<p><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">.claude/agents/</code>를 설정하려고 했는데, Claude가 처음에 "Subagent는 빌트인만 가능하고 사용자가 직접 정의할 수 없다"고 잘못 안내했습니다. <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">.claude/agents/</code> 디렉토리에 마크다운 파일로 정의하면 된다는 걸 내가 먼저 알고 있었고, 그 사실을 말했더니 인정했어요.</p>
+<p>공식 문서를 보지 않고 Claude 말만 믿었으면 엉뚱한 방향으로 설정했을 겁니다. <strong>도구 자체의 구조에 관한 질문은 직접 문서를 확인하고 Claude의 답변을 검증</strong>하는 게 맞습니다.</p>
+<p><strong>Hooks를 한 줄로 정의하면</strong></p>
+<p>"인간이 없어도 자동으로 테스트·린트·로그를 실행하는 미들웨어". Claude가 파일을 수정하면 Hook이 트리거되고, 결과를 다시 Claude에게 피드백하면 Claude가 스스로 수정합니다. 이 루프를 사람이 개입하지 않고 돌리는 구조예요.</p>
+<p><strong>Agent Teams는 의도적으로 제외했다</strong></p>
+<p>팀원 수만큼 토큰 비용이 선형으로 늘어납니다. 3명 팀이면 단순 계산으로 3배예요. 이 프로젝트에서 에이전트 간 실시간 조율이 필요한 작업은 없어서 Subagents까지만 쓰기로 결정했습니다.</p>
+<p><strong><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">.claude/</code>는 .gitignore에 넣어야 한다</strong></p>
+<p>설정이 끝난 뒤 커밋하려고 했는데, <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">.claude/</code>와 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">CLAUDE.md</code>가 스테이징되어 있었습니다. 이 파일들은 개발자 로컬 환경 설정이지 프로젝트 코드베이스에 포함될 내용이 아니에요. <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">.gitignore</code>에 추가해서 커밋 대상에서 제외했습니다.</p>
+<hr>
+<h2>⚖️ <strong>16. Cursor AI vs Claude Code — 둘 다 써본 입장에서</strong></h2>
+<p>제 첫 AI 코딩 툴은 Cursor였습니다. Claude Code로 넘어오면서 느낀 차이를 솔직하게 정리합니다.</p>
+<h3>Cursor의 강점 — 편의성</h3>
+<p>Cursor는 VSCode 기반이라 설치하는 순간 기존 개발 환경 그대로 쓸 수 있습니다.</p>
+<p><strong>참조가 정말 편하다</strong></p>
+<ul>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">@파일명</code>, <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">@폴더명</code>을 타이핑하면 자동완성으로 파일 참조</li>
+<li>드래그해서 컨텍스트에 추가하는 것도 직관적</li>
+<li>에디터 안에서 모든 게 해결됨</li>
+</ul>
+<p><strong>MCP 설정이 GUI로</strong></p>
+<ul>
+<li>Settings 패널에서 클릭 몇 번으로 MCP 서버 추가</li>
+<li>JSON 직접 편집 없이 연동 가능</li>
+<li>진입장벽이 낮음</li>
+</ul>
+<h3>Claude Code의 강점 — 자율 실행</h3>
+<p>Claude Code는 UI가 투박합니다. 터미널이 전부고, 파일 참조도 직접 경로를 지정해야 해요. 그런데 막상 써보면 <strong>에이전트 성능 자체가 다릅니다.</strong></p>
+<p><strong>"제안"이 아니라 "실행"</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">Cursor:   내가 요청 → AI가 코드 제안 → 내가 Accept/Reject → 반복
+Claude Code: 내가 목표 제시 → AI가 파일 읽고 수정하고 테스트 돌리고 → 결과 보고
+</code></pre>
+<p>Cursor는 <strong>"AI가 제안, 내가 판단"</strong> 구조입니다. 한 번에 한 파일, 한 번에 한 변경을 내가 승인해야 해요.</p>
+<p>Claude Code는 <strong>"내가 목표, AI가 실행"</strong> 구조입니다. "이 기능 추가해줘"라고 하면 관련 파일을 스스로 찾아서 읽고, 수정하고, 테스트 실행하고, 실패하면 고치고, 완료되면 보고합니다.</p>
+<h3>어떤 상황에 뭘 쓸까</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>상황</th><th>추천</th></tr></thead><tbody><tr><td>특정 파일 몇 개만 빠르게 수정</td><td>Cursor</td></tr><tr><td>기존 IDE 환경 그대로 쓰고 싶음</td><td>Cursor</td></tr><tr><td>기능 단위로 end-to-end 구현</td><td>Claude Code</td></tr><tr><td>테스트, 빌드, 커밋까지 자동화하고 싶음</td><td>Claude Code</td></tr><tr><td>AI 코딩 툴 처음 입문</td><td>Cursor (진입장벽 낮음)</td></tr></tbody></table>
+<p><strong>결론:</strong> Cursor는 편의성, Claude Code는 자율성. 처음 AI 코딩 툴을 접한다면 Cursor로 시작해 감을 잡고, 더 복잡한 작업을 자동화하고 싶어질 때 Claude Code로 넘어오는 게 자연스러운 경로 같습니다.</p>
+<hr>
+<h2>💡 <strong>핵심 정리</strong></h2>
+<p>Claude Code는 단순한 코딩 어시스턴트를 넘어 <strong>개발 워크플로우 전체를 자동화하는 에이전트 프레임워크</strong>입니다. 레이어를 하나씩 추가해가며 점진적으로 도입하면 됩니다.</p>
+<p><strong>시작 경로 추천:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">CLAUDE.md 작성 → 실제로 써보기 (1~2주)
+→ 자주 반복되는 작업을 Skills로 → Hooks로 실수 방지
+→ 큰 프로젝트에서 Subagents 도입 → 필요시 MCP 연결
+</code></pre>
+<p>가장 중요한 건 <strong>CLAUDE.md</strong>입니다. 나머지 기능들이 얼마나 잘 동작하는지는 Claude가 프로젝트를 얼마나 잘 이해하고 있느냐에 달려 있고, 그 기반이 CLAUDE.md이기 때문입니다.</p></div></div><div class="MuiBox-root css-1cpq4zq"><hr class="MuiDivider-root MuiDivider-fullWidth css-7jtdmc"><h5 class="MuiTypography-root MuiTypography-h5 css-85yo2n">같은 카테고리의 다른 글</h5><div class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-2 css-1eikg3m"><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] Serializable 깊이 파기 — Part 2: 바이트에서 다시 객체로, 그리고 함정들</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">직렬화된 바이트를 ObjectInputStream이 어떤 순서로 읽어 객체로 복원하는지, 그때 생성자가 호출되지 않는다는 점을 확인합니다. | serialVersionUID, transient, 커스텀 readObject·writeObject, 역직렬화 취약점, Java 직렬화의 현재로 마무리합니다.</p><div class="MuiBox-root css-107ld1r"></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 4월 5일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] Serializable 깊이 파기 — Part 1: 객체가 바이트가 되는 과정</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">Python이나 JavaScript와 달리 Java는 왜 Serializable을 선언해야 하는지, 메서드가 하나도 없는 이 인터페이스가 무슨 일을 하는지 묻는 글입니다. | ObjectOutputStream이 만든 실제 바이트를 열어 보고, 참조 객체가 들어 있을 때는 어떻게 되는지 확인합니다.</p><div class="MuiBox-root css-107ld1r"></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 4월 5일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] 주식 거래 엔진 직접 만들기 - Part 3: 오더북을 어떻게 구현할 것인가</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">주식 거래 엔진의 오더북을 TreeMap과 ArrayDeque 조합으로 만든 이유를, PriorityQueue, LinkedList, Skip List와 비교하며 설명합니다. | 주문 취소를 Lazy Removal로 처리한 방법과 Kafka를 연결하며 만난 멱등성 문제를 마지막에 둡니다.</p><div class="MuiBox-root css-107ld1r"></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 27일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] 주식 거래 엔진 직접 만들기 - Part 2: Phase 1 — 모놀리식으로 시작하기</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">단일 JAR 모놀리식 구조인 Phase 1에서 만난 문제를 차례로 다룹니다. | SELECT FOR UPDATE로 동시성을 해결했고, 락 보유 시간을 줄이고, 락 획득 순서를 통일해 데드락 위험을 없앴습니다. @Transactional 원칙과 Lazy Loading 함정도 짚습니다.</p><div class="MuiBox-root css-107ld1r"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Java</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Spring Boot</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">JPA</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">+2</span></div></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 27일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] 주식 거래 엔진 직접 만들기 - Part 1: 왜 주식 거래 엔진인가</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">F-lab 멘토링 프로젝트로 주식 거래 엔진을 직접 설계하고 구현한 과정을 기록하는 시리즈의 첫 글입니다. | 프로젝트를 고른 기준과 멀티모듈 구조, Phase 로드맵, 시리즈 전체에서 답할 질문들을 먼저 밝힙니다.</p><div class="MuiBox-root css-107ld1r"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Java</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Spring Boot</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Kafka</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">+5</span></div></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 27일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">EST AI - YOLO : 객체 탐지 실습 · 세그멘테이션 · 트래킹</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">YOLO로 고양이와 강아지 탐지 모델을 직접 학습하고, 차량 파손 범위를 이미지 세그멘테이션으로 예측하고, 영상에서 객체를 트래킹합니다. | 탐지용 데이터셋 폴더 구조와 바운딩 박스 좌표 형식, Roboflow 사용법도 있습니다.</p><div class="MuiBox-root css-107ld1r"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">YOLO</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Object Detection</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Segmentation</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">+4</span></div></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 9일</span></div></div></div></div><div class="MuiBox-root css-1b94f21"><a class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways css-104ms0" href="/blog/posts" data-discover="true"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowBackIcon"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z"></path></svg>게시글 목록으로 돌아가기</a></div><button class="MuiButtonBase-root MuiFab-root MuiFab-circular MuiFab-sizeMedium MuiFab-primary MuiFab-root MuiFab-circular MuiFab-sizeMedium MuiFab-primary css-1nl6bps" tabindex="0" type="button" aria-label="scroll to top" style="opacity: 0; visibility: hidden;"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="KeyboardArrowUpIcon"><path d="M7.41 15.41 12 10.83l4.59 4.58L18 14l-6-6-6 6z"></path></svg></button></div></div></div></div><footer style="text-align: center; padding: 2rem 0px; color: rgb(0, 0, 0); font-size: 0.9rem; border-top: 1px solid rgb(0, 0, 0); margin-top: auto; background-color: rgb(255, 255, 255);"><p>© 2025 DevTaco Blog. All rights reserved.</p></footer><div class="MuiBox-root css-1hyfx7x"><div class="visitor-counter MuiBox-root css-19midj6"><h6 class="MuiTypography-root MuiTypography-h6 MuiTypography-gutterBottom css-izz7ci">방문자 수</h6><div class="MuiBox-root css-zwd3xv"><h4 class="MuiTypography-root MuiTypography-h4 css-1dg27va">54</h4><p class="MuiTypography-root MuiTypography-body2 css-l6pb42">오늘</p><h6 class="MuiTypography-root MuiTypography-h6 css-kh42wg">총 54명</h6></div></div></div><div class="MuiBox-root css-1y95mt5" data-testid="terminal-navigation"><div class="MuiBox-root css-1kw3y0a"><p class="MuiTypography-root MuiTypography-body2 css-1fktdtb">devtaco@portfolio:~$ navigation</p><div class="MuiBox-root css-j0ozid"><p class="MuiTypography-root MuiTypography-body2 css-1cn40rb">⌘M to close</p><button class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-470314" tabindex="0" type="button" id=":r1:"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeSmall css-vh810p" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="CloseIcon"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg></button></div></div><div class="MuiBox-root css-13t3iqc"><div class="MuiBox-root css-0"><p class="MuiTypography-root MuiTypography-body2 css-cbhj4f">Navigation:</p><div class="MuiBox-root css-1kkt86i"><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">1 → home</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">2 → about</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">3 → posts</p></div></div><div class="MuiBox-root css-0"><p class="MuiTypography-root MuiTypography-body2 css-cbhj4f">External:</p><div class="MuiBox-root css-1kkt86i"><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">g → github</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">e → email</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">l → linkedin</p></div></div></div><p class="MuiTypography-root MuiTypography-body2 css-1e7vt2">Press number keys (1,2,3) or letter keys (g,e,l) to navigate. Use ⌘+M to close.</p></div></div></div></body></html>

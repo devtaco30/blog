@@ -1,0 +1,296 @@
+<!DOCTYPE html><html lang="en"><head><script type="text/javascript">!function(n){if("/"===n.search[1]){var a=n.search.slice(1).split("&").map((function(n){return n.replace(/~and~/g,"&")})).join("?");window.history.replaceState(null,null,n.pathname.slice(0,-1)+a+n.hash)}}(window.location)</script><meta charset="utf-8"><link rel="icon" href="/blog/favicon.ico"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#000000"><meta name="keywords" content="Java, Kotlin, Spring Boot, MSA, 개발, 백엔드, coroutine"><meta name="author" content="DevTaco"><meta property="og:image" content="https://devtaco30.github.io/blog/og-image.png"><meta property="twitter:image" content="https://devtaco30.github.io/blog/og-image.png"><meta property="twitter:url" content="https://devtaco30.github.io/blog/"><link rel="apple-touch-icon" href="/blog/apple-touch-icon.png"><link rel="manifest" href="/blog/manifest.json"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&amp;family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet"><script defer="defer" src="/blog/static/js/main.404b9165.js"></script><link href="/blog/static/css/main.5b86466f.css" rel="stylesheet"><style data-emotion="css" data-s=""></style><title>[6년차 쯤 되면 좀 알자] VM은 알겠어, 그럼 Kernel 은 뭐야? | DevTaco Blog</title><meta name="description" content="가상머신과 하이퍼바이저를 정리하다 보니 자주 나오는 커널이 정확히 무엇인지 궁금해져서 쓴 글입니다. 프로세스, 메모리, 파일 시스템, 장치, 보안 관리와 System Call, 커널 공간과 사용자 공간, 커널의 종류가 나옵니다."><meta property="og:title" content="[6년차 쯤 되면 좀 알자] VM은 알겠어, 그럼 Kernel 은 뭐야?"><meta property="og:description" content="가상머신과 하이퍼바이저를 정리하다 보니 자주 나오는 커널이 정확히 무엇인지 궁금해져서 쓴 글입니다. 프로세스, 메모리, 파일 시스템, 장치, 보안 관리와 System Call, 커널 공간과 사용자 공간, 커널의 종류가 나옵니다."><meta property="og:type" content="article"><meta property="og:url" content="https://devtaco30.github.io/blog/posts/32"><meta name="twitter:card" content="summary"></head><body><noscript>You need to enable JavaScript to run this app.</noscript><div id="root"><div class="App"><div class="MuiBox-root css-kurlqb"><div class="MuiBox-root css-171onha"><button class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-1f6w95t" tabindex="0" type="button" id=":r0:"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="MenuIcon"><path d="M3 18h18v-2H3zm0-5h18v-2H3zm0-7v2h18V6z"></path></svg></button><div class="MuiBox-root css-1szb58x"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-218waq" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowBackIcon"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z"></path></svg><div class="MuiBox-root css-wq4jw1"><span>⌘+M</span></div></div></div></div><div class="MuiContainer-root css-15jb5o1" data-testid="page-container"><div class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-2 MuiGrid-spacing-md-3 css-1ht06td"><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-md-12 css-15j76c0"><div class="MuiBox-root css-15rigdj"><nav class="MuiTypography-root MuiTypography-body1 MuiBreadcrumbs-root css-1v2kxik"><ol class="MuiBreadcrumbs-ol css-51eq8m"><li class="MuiBreadcrumbs-li"><a class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways css-gj78h6" href="/blog/posts" data-discover="true">게시글 목록</a></li><li aria-hidden="true" class="MuiBreadcrumbs-separator css-1nd5pgh">/</li><li class="MuiBreadcrumbs-li"><p class="MuiTypography-root MuiTypography-body1 css-1cr0rz6">[6년차 쯤 되면 좀 알자] VM은 알겠어, 그럼 Kernel 은 뭐야?</p></li></ol></nav><div class="MuiBox-root css-15djlns"><button class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-1y18wdw" tabindex="0" type="button" id=":r9:"><span class="MuiButton-icon MuiButton-startIcon MuiButton-iconSizeMedium css-1ygddt1"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowBackIcon"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z"></path></svg></span><div class="MuiBox-root css-0"><span class="MuiTypography-root MuiTypography-caption css-115rlu8">이전글</span><p class="MuiTypography-root MuiTypography-body2 css-10qk5g4">EST AI - Decision Tree</p></div></button><button class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-1k0z50p" tabindex="0" type="button" id=":ra:"><div class="MuiBox-root css-0"><span class="MuiTypography-root MuiTypography-caption css-115rlu8">다음글</span><p class="MuiTypography-root MuiTypography-body2 css-10qk5g4">EST AI - KNN Algorithm</p></div><span class="MuiButton-icon MuiButton-endIcon MuiButton-iconSizeMedium css-6bt4d2"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowForwardIcon"><path d="m12 4-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"></path></svg></span></button></div><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-10t0qv5" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h4 class="MuiTypography-root MuiTypography-h4 css-k5jvd2">[6년차 쯤 되면 좀 알자] VM은 알겠어, 그럼 Kernel 은 뭐야?</h4><p class="MuiTypography-root MuiTypography-body1 css-104xg3">가상머신과 하이퍼바이저를 정리하다 보니 자주 나오는 커널이 정확히 무엇인지 궁금해져서 쓴 글입니다. | 프로세스, 메모리, 파일 시스템, 장치, 보안 관리와 System Call, 커널 공간과 사용자 공간, 커널의 종류가 나옵니다.</p><div class="MuiBox-root css-1prrn6n"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">kernel</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">operating-system</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">system-call</span></div></div><p class="MuiTypography-root MuiTypography-body2 css-l6pb42">2025년 12월 9일 오후 11:06</p></div><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-1i779yj" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><div class="MuiBox-root css-13lazol"><p>[6년차 쯤 되면 좀 알자]</p>
+<p>가상머신과 하이퍼바이저에 대해 정리하다 보니, "커널"이라는 용어가 자주 나오는데 정확히 무엇인지 궁금해졌습니다. 대충 "시스템 소통 창구" 정도로 이해하고 있었는데, 실제로는 어떤 역할을 하는지 자세히 알아볼게요.</p>
+<h2>커널이란?</h2>
+<p><strong>커널(Kernel)</strong>은 운영체제(OS)의 핵심 구성 요소로, 하드웨어와 소프트웨어 간의 중재자 역할을 해요. 단순히 "소통 창구"라기보다는, 시스템의 모든 리소스를 관리하고 프로그램들이 하드웨어를 안전하게 사용할 수 있도록 보장하는 <strong>운영체제의 엔진</strong>입니다.</p>
+<h3>커널의 핵심 역할</h3>
+<p>커널은 다음과 같은 핵심 역할을 수행해요:</p>
+<ol>
+<li><strong>하드웨어 추상화</strong>: 프로그램이 하드웨어를 직접 다루지 않고도 사용할 수 있도록 표준화된 인터페이스를 제공</li>
+<li><strong>리소스 관리</strong>: CPU, 메모리, 디스크, 네트워크 등 시스템 자원을 효율적으로 할당하고 관리</li>
+<li><strong>보안과 격리</strong>: 프로세스 간 격리와 권한 관리를 통해 시스템의 안정성과 보안을 유지</li>
+</ol>
+<h2>OS와 커널의 관계</h2>
+<p>많은 사람들이 OS와 커널을 혼동하는데, 정확한 관계는 다음과 같아요:</p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">┌─────────────────────────────────┐
+│  사용자 프로그램 (User Space)       │  ← 우리가 만드는 앱들
+├─────────────────────────────────┤
+│  Shell, GUI, 시스템 도구           │  ← OS의 사용자 인터페이스
+│  (bash, zsh, ls, cd, ps 등)      │
+├─────────────────────────────────┤
+│  라이브러리 (libc, stdlib 등)      │  ← OS의 지원 라이브러리
+├─────────────────────────────────┤
+│  커널 (Kernel Space)             │  ← OS의 핵심 엔진!
+│  - 프로세스 관리                   │
+│  - 메모리 관리                     │
+│  - 파일 시스템                     │
+│  - 장치 드라이버                   │
+│  - 네트워크 스택                   │
+├─────────────────────────────────┤
+│  하드웨어                         │
+└─────────────────────────────────┘
+</code></pre>
+<p><strong>OS = 커널 + Shell + 시스템 도구 + 라이브러리</strong></p>
+<ul>
+<li><strong>커널</strong>: OS의 핵심 엔진으로, 하드웨어를 직접 제어하고 리소스를 관리</li>
+<li><strong>Shell</strong>: 사용자와 커널을 연결하는 인터페이스 (터미널에서 사용하는 명령어 해석기)</li>
+<li><strong>시스템 도구</strong>: <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">ls</code>, <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">cd</code>, <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">ps</code>, <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">grep</code> 같은 명령어들</li>
+<li><strong>라이브러리</strong>: 프로그램이 커널 기능을 쉽게 사용할 수 있도록 제공하는 함수들</li>
+</ul>
+<p><strong>비유</strong>:</p>
+<ul>
+<li><strong>하드웨어</strong>: 건물</li>
+<li><strong>커널</strong>: 건물 관리사무소 (리소스 관리, 보안, 접근 제어)</li>
+<li><strong>Shell</strong>: 관리사무소 접수 창구</li>
+<li><strong>프로그램</strong>: 입주자들</li>
+</ul>
+<h2>커널의 주요 기능</h2>
+<h3>1. 프로세스 관리</h3>
+<p>여러 프로그램이 동시에 실행되도록 CPU 시간을 분배해요:</p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">프로그램 A 실행 (10ms)
+    ↓
+커널이 제어권 가져옴 (Context Switch)
+    ↓
+프로그램 B 실행 (10ms)
+    ↓
+커널이 제어권 가져옴
+    ↓
+프로그램 C 실행 (10ms)
+    ↓
+반복...
+</code></pre>
+<p><strong>주요 작업</strong>:</p>
+<ul>
+<li>프로세스 생성, 종료, 일시정지</li>
+<li>CPU 스케줄링 (어떤 프로세스를 언제 실행할지 결정)</li>
+<li>프로세스 간 통신 (IPC: Inter-Process Communication)</li>
+</ul>
+<h3>2. 메모리 관리</h3>
+<p>각 프로세스에 메모리를 할당하고, 프로세스 간 메모리 접근을 제어:</p>
+<p><strong>가상 메모리와 물리 메모리</strong>:</p>
+<p>각 프로세스는 자신만의 **가상 주소 공간(Virtual Address Space)**을 가져요. 프로세스는 물리 메모리를 직접 다루지 않고, 가상 주소를 사용해요. 커널이 이 가상 주소를 물리 주소로 변환해줘요.</p>
+<p><strong>왜 같은 가상 주소인데 물리 주소가 다른가요?</strong></p>
+<p>각 프로세스마다 <strong>독립적인 페이지 테이블(Page Table)</strong>이 있어요. 같은 가상 주소라도 프로세스마다 다른 물리 주소를 가리키도록 매핑돼요:</p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">프로세스 A의 페이지 테이블:
+  가상 주소 0x1000 → 물리 주소 0x5000
+
+프로세스 B의 페이지 테이블:
+  가상 주소 0x1000 → 물리 주소 0x8000
+  (같은 가상 주소지만 다른 물리 메모리!)
+
+프로세스 C의 페이지 테이블:
+  가상 주소 0x1000 → 물리 주소 0x2000
+</code></pre>
+<p><strong>작동 원리</strong>:</p>
+<ol>
+<li>프로세스 A가 가상 주소 0x1000에 접근하려고 해요</li>
+<li>MMU(Memory Management Unit)가 프로세스 A의 페이지 테이블을 참조해요</li>
+<li>페이지 테이블에서 "가상 주소 0x1000 → 물리 주소 0x5000"을 찾아요</li>
+<li>실제로는 물리 주소 0x5000에 접근해요</li>
+</ol>
+<p>프로세스 B가 같은 가상 주소 0x1000에 접근해도:</p>
+<ol>
+<li>MMU가 프로세스 B의 페이지 테이블을 참조해요 (프로세스 A와 다른 테이블!)</li>
+<li>프로세스 B의 페이지 테이블에서 "가상 주소 0x1000 → 물리 주소 0x8000"을 찾아요</li>
+<li>실제로는 물리 주소 0x8000에 접근해요 (프로세스 A와 다른 물리 메모리!)</li>
+</ol>
+<p><strong>메모리 격리</strong>:</p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">프로그램 A: 가상 주소 0x1000 → 물리 주소 0x5000
+프로그램 B: 가상 주소 0x1000 → 물리 주소 0x8000
+           (같은 가상 주소지만 다른 물리 메모리!)
+
+커널이 각 프로세스의 페이지 테이블을 관리하여 메모리를 격리해요.
+</code></pre>
+<p><strong>주요 작업</strong>:</p>
+<ul>
+<li>메모리 할당 및 해제</li>
+<li>가상 메모리 관리 (페이지 테이블 관리)</li>
+<li>메모리 보호 (한 프로세스가 다른 프로세스의 메모리에 접근하지 못하도록)</li>
+</ul>
+<h3>3. 파일 시스템 관리</h3>
+<p>파일의 생성, 읽기, 쓰기, 삭제 등을 관리해요:</p>
+<p><strong>주요 작업</strong>:</p>
+<ul>
+<li>파일 및 디렉토리 관리</li>
+<li>디스크 공간 할당</li>
+<li>파일 권한 관리</li>
+<li>다양한 파일 시스템 지원 (ext4, NTFS, FAT32 등)</li>
+</ul>
+<h3>4. 장치 관리 (I/O 관리)</h3>
+<p>하드웨어 장치와의 통신을 담당해요:</p>
+<p><strong>주요 작업</strong>:</p>
+<ul>
+<li>장치 드라이버 관리</li>
+<li>키보드, 마우스, 디스크, 네트워크 카드 등 다양한 장치와의 통신</li>
+<li>장치 간 충돌 방지</li>
+</ul>
+<h3>5. 보안 및 접근 제어</h3>
+<p>사용자와 프로세스의 권한을 관리해요:</p>
+<p><strong>주요 작업</strong>:</p>
+<ul>
+<li>사용자 인증 및 권한 관리</li>
+<li>파일 및 시스템 리소스 접근 제어</li>
+<li>프로세스 간 격리</li>
+</ul>
+<h2>System Call: 커널과 프로그램의 소통 창구</h2>
+<p>프로그램이 하드웨어에 접근하려면 커널을 거쳐야 해요. 이때 사용하는 것이 <strong>System Call (시스템 호출)</strong>이에요.</p>
+<h3>System Call의 작동 원리</h3>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">1. 프로그램이 System Call 호출
+   예: 파일 읽기 요청
+
+2. CPU가 User Mode → Kernel Mode로 전환
+   (권한 레벨 변경: Ring 3 → Ring 0)
+
+3. 커널이 요청을 처리
+   - 권한 확인
+   - 하드웨어 접근
+   - 데이터 읽기
+
+4. 결과를 프로그램에 반환
+
+5. CPU가 Kernel Mode → User Mode로 전환
+   (권한 레벨 변경: Ring 0 → Ring 3)
+</code></pre>
+<h3>System Call 예시</h3>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-c">// 사용자 프로그램
+FILE *file = fopen("data.txt", "r");  // ← 내부적으로 System Call 호출
+
+// 실제로는:
+// 1. open() System Call 호출
+// 2. 커널이 권한 확인
+// 3. 커널이 디스크에서 파일 읽기
+// 4. 커널이 파일 디스크립터 반환
+</code></pre></pre>
+<p><strong>주요 System Call</strong>:</p>
+<ul>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">open()</code>, <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">read()</code>, <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">write()</code>, <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">close()</code>: 파일 작업</li>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">fork()</code>, <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">exec()</code>, <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">exit()</code>: 프로세스 관리</li>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">malloc()</code>, <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">free()</code>: 메모리 할당</li>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">socket()</code>, <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">bind()</code>, <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">connect()</code>: 네트워크 통신</li>
+</ul>
+<h3>Kernel Space vs User Space</h3>
+<p>커널은 메모리 공간을 두 영역으로 나눠요:</p>
+<p><strong>User Space (사용자 공간)</strong>:</p>
+<ul>
+<li>일반 프로그램이 실행되는 영역</li>
+<li>Ring 3 권한 (제한된 권한)</li>
+<li>하드웨어에 직접 접근 불가</li>
+<li>System Call을 통해서만 커널 기능 사용 가능</li>
+</ul>
+<p><strong>Kernel Space (커널 공간)</strong>:</p>
+<ul>
+<li>커널이 실행되는 영역</li>
+<li>Ring 0 권한 (최고 권한)</li>
+<li>하드웨어에 직접 접근 가능</li>
+<li>모든 시스템 리소스 제어 가능</li>
+</ul>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">┌─────────────────────────────────┐
+│  User Space (Ring 3)            │  ← 프로그램 실행
+│  - 제한된 권한                     │
+│  - System Call로 커널 접근         │
+├─────────────────────────────────┤
+│  Kernel Space (Ring 0)          │  ← 커널 실행
+│  - 최고 권한                      │
+│  - 하드웨어 직접 접근               │
+└─────────────────────────────────┘
+</code></pre>
+<h2>커널의 종류</h2>
+<p>커널은 설계 방식에 따라 여러 종류로 나뉘어요:</p>
+<h3>1. 모놀리식 커널 (Monolithic Kernel)</h3>
+<p>운영체제의 모든 기본 서비스가 하나의 커널 공간에서 실행돼요.</p>
+<p><strong>특징</strong>:</p>
+<ul>
+<li>성능이 우수해요 (함수 호출로 직접 통신)</li>
+<li>커널 크기가 커져요</li>
+<li>한 모듈의 오류가 전체 시스템에 영향을 줄 수 있어요</li>
+</ul>
+<p><strong>예시</strong>: Linux, Unix</p>
+<p><strong>구조</strong>:</p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">┌─────────────────────────────────┐
+│  모든 서비스가 하나의 커널 공간        │
+│  - 파일 시스템                     │
+│  - 메모리 관리                     │
+│  - 프로세스 관리                   │
+│  - 네트워크 스택                   │
+│  - 장치 드라이버                   │
+└─────────────────────────────────┘
+</code></pre>
+<h3>2. 마이크로커널 (Microkernel)</h3>
+<p>기본적인 기능만 커널 공간에서 실행하고, 나머지 서비스는 사용자 공간에서 실행해요.</p>
+<p><strong>특징</strong>:</p>
+<ul>
+<li>안정성이 높아요 (한 서비스의 오류가 커널에 영향을 주지 않음)</li>
+<li>모듈화가 잘 되어 있어요</li>
+<li>성능이 다소 저하될 수 있어요 (프로세스 간 통신 오버헤드)</li>
+</ul>
+<p><strong>예시</strong>: QNX, MINIX</p>
+<p><strong>구조</strong>:</p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">┌─────────────────────────────────┐
+│  커널 공간 (최소 기능만)             │
+│  - 프로세스 관리                   │
+│  - 메모리 관리                     │
+│  - 프로세스 간 통신                 │
+├─────────────────────────────────┤
+│  사용자 공간 (나머지 서비스)          │
+│  - 파일 시스템                     │
+│  - 네트워크 스택                   │
+│  - 장치 드라이버                   │
+└─────────────────────────────────┘
+</code></pre>
+<h3>3. 하이브리드 커널 (Hybrid Kernel)</h3>
+<p>모놀리식 커널과 마이크로커널의 장점을 결합한 형태예요.</p>
+<p><strong>특징</strong>:</p>
+<ul>
+<li>주요 서비스는 커널 공간에서 실행 (성능)</li>
+<li>일부 서비스는 사용자 공간에서 실행 (안정성)</li>
+</ul>
+<p><strong>예시</strong>: Windows, macOS</p>
+<h2>커널과 하이퍼바이저의 관계</h2>
+<p>앞서 다룬 하이퍼바이저와 커널의 관계를 정리하면:</p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">┌─────────────────────────────────┐
+│  Guest OS (VM 내부)              │
+│  ┌───────────────────────────┐  │
+│  │ 사용자 프로그램               │  │
+│  ├───────────────────────────┤  │
+│  │ 커널 (Guest OS의 커널)       │  │  ← VM 내부의 커널
+│  └───────────────────────────┘  │
+├─────────────────────────────────┤
+│  하이퍼바이저                      │  ← VM을 관리하는 "커널의 커널"
+│  (자체 커널 포함)                  │
+├─────────────────────────────────┤
+│  물리 하드웨어                     │
+└─────────────────────────────────┘
+</code></pre>
+<p><strong>비교</strong>:</p>
+<ul>
+<li><strong>커널</strong>: 하나의 OS 내에서 하드웨어를 관리</li>
+<li><strong>하이퍼바이저</strong>: 여러 OS(VM)를 관리하는 "커널의 커널" 같은 역할</li>
+</ul>
+<p>Type 1 하이퍼바이저(예: VMware ESXi, KVM)는 자체 커널을 가지고 있어요.</p>
+<h2>정리</h2>
+<p>커널은:</p>
+<ul>
+<li><strong>"시스템 소통 창구"</strong> 맞아요, 하지만 그 이상이에요</li>
+<li><strong>OS의 핵심 엔진</strong>으로, 하드웨어와 소프트웨어 사이의 중재자이자 리소스 관리자예요</li>
+<li><strong>System Call</strong>을 통해 프로그램이 하드웨어를 안전하게 사용할 수 있게 해줘요</li>
+<li><strong>프로세스, 메모리, 파일 시스템, 장치</strong> 등을 관리하여 시스템의 안정성과 효율성을 유지해요</li>
+</ul>
+<p><strong>OS와 커널의 관계</strong>:</p>
+<ul>
+<li>OS = 커널 + Shell + 시스템 도구 + 라이브러리</li>
+<li>커널은 OS의 핵심이지만, OS 전체는 아니에요</li>
+</ul>
+<p><strong>비유</strong>:</p>
+<ul>
+<li>하드웨어 = 건물</li>
+<li>커널 = 건물 관리사무소 (리소스 관리, 보안, 접근 제어)</li>
+<li>Shell = 관리사무소 접수 창구</li>
+<li>프로그램 = 입주자들</li>
+</ul>
+<p>면접에서 "커널이 무엇인가요?"라는 질문에는 단순히 "시스템 소통 창구"가 아니라, "OS의 핵심 구성 요소로, 하드웨어와 소프트웨어 간의 중재자 역할을 하며, 프로세스 관리, 메모리 관리, 파일 시스템 관리, 장치 관리, 보안 및 접근 제어를 담당한다"고 구체적으로 설명하면 돼요.</p>
+<hr>
+<h2>📚 <strong>참고 자료</strong></h2>
+<ul>
+<li><a href="https://www.redhat.com/ko/topics/linux/what-is-the-linux-kernel">Red Hat: What is the Linux kernel?</a> - Linux 커널에 대한 설명</li>
+<li><a href="https://en.wikipedia.org/wiki/Kernel_(operating_system)">Wikipedia: Kernel (operating system)</a> - 커널의 상세한 기술적 설명</li>
+<li><a href="https://www.geeksforgeeks.org/kernel-in-operating-system/">GeeksforGeeks: Kernel in Operating System</a> - 커널의 구조와 종류</li>
+</ul></div></div><div class="MuiBox-root css-1cpq4zq"><hr class="MuiDivider-root MuiDivider-fullWidth css-7jtdmc"><h5 class="MuiTypography-root MuiTypography-h5 css-85yo2n">같은 카테고리의 다른 글</h5><div class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-2 css-1eikg3m"><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] Serializable 깊이 파기 — Part 2: 바이트에서 다시 객체로, 그리고 함정들</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">직렬화된 바이트를 ObjectInputStream이 어떤 순서로 읽어 객체로 복원하는지, 그때 생성자가 호출되지 않는다는 점을 확인합니다. | serialVersionUID, transient, 커스텀 readObject·writeObject, 역직렬화 취약점, Java 직렬화의 현재로 마무리합니다.</p><div class="MuiBox-root css-107ld1r"></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 4월 5일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] Serializable 깊이 파기 — Part 1: 객체가 바이트가 되는 과정</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">Python이나 JavaScript와 달리 Java는 왜 Serializable을 선언해야 하는지, 메서드가 하나도 없는 이 인터페이스가 무슨 일을 하는지 묻는 글입니다. | ObjectOutputStream이 만든 실제 바이트를 열어 보고, 참조 객체가 들어 있을 때는 어떻게 되는지 확인합니다.</p><div class="MuiBox-root css-107ld1r"></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 4월 5일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] 주식 거래 엔진 직접 만들기 - Part 3: 오더북을 어떻게 구현할 것인가</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">주식 거래 엔진의 오더북을 TreeMap과 ArrayDeque 조합으로 만든 이유를, PriorityQueue, LinkedList, Skip List와 비교하며 설명합니다. | 주문 취소를 Lazy Removal로 처리한 방법과 Kafka를 연결하며 만난 멱등성 문제를 마지막에 둡니다.</p><div class="MuiBox-root css-107ld1r"></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 27일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] 주식 거래 엔진 직접 만들기 - Part 2: Phase 1 — 모놀리식으로 시작하기</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">단일 JAR 모놀리식 구조인 Phase 1에서 만난 문제를 차례로 다룹니다. | SELECT FOR UPDATE로 동시성을 해결했고, 락 보유 시간을 줄이고, 락 획득 순서를 통일해 데드락 위험을 없앴습니다. @Transactional 원칙과 Lazy Loading 함정도 짚습니다.</p><div class="MuiBox-root css-107ld1r"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Java</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Spring Boot</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">JPA</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">+2</span></div></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 27일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] 주식 거래 엔진 직접 만들기 - Part 1: 왜 주식 거래 엔진인가</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">F-lab 멘토링 프로젝트로 주식 거래 엔진을 직접 설계하고 구현한 과정을 기록하는 시리즈의 첫 글입니다. | 프로젝트를 고른 기준과 멀티모듈 구조, Phase 로드맵, 시리즈 전체에서 답할 질문들을 먼저 밝힙니다.</p><div class="MuiBox-root css-107ld1r"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Java</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Spring Boot</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Kafka</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">+5</span></div></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 27일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[개발자가 직접 써봤어요] Claude Code 완전 가이드: 설치부터 멀티에이전트까지</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">Claude Code를 Spring Boot와 Kafka 기반 주식 매매 엔진 프로젝트에 적용해 본 경험을 바탕으로, 설치부터 멀티에이전트까지 소개합니다. | CLAUDE.md, Skills, Subagents, Hooks, MCP, Agent Teams의 여섯 레이어와 Cursor AI와의 비교, 주의사항이 나옵니다.</p><div class="MuiBox-root css-107ld1r"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Claude Code</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">AI</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Developer Tools</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">+4</span></div></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 9일</span></div></div></div></div><div class="MuiBox-root css-1b94f21"><a class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways css-104ms0" href="/blog/posts" data-discover="true"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowBackIcon"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z"></path></svg>게시글 목록으로 돌아가기</a></div><button class="MuiButtonBase-root MuiFab-root MuiFab-circular MuiFab-sizeMedium MuiFab-primary MuiFab-root MuiFab-circular MuiFab-sizeMedium MuiFab-primary css-1nl6bps" tabindex="0" type="button" aria-label="scroll to top" style="opacity: 0; visibility: hidden;"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="KeyboardArrowUpIcon"><path d="M7.41 15.41 12 10.83l4.59 4.58L18 14l-6-6-6 6z"></path></svg></button></div></div></div></div><footer style="text-align: center; padding: 2rem 0px; color: rgb(0, 0, 0); font-size: 0.9rem; border-top: 1px solid rgb(0, 0, 0); margin-top: auto; background-color: rgb(255, 255, 255);"><p>© 2025 DevTaco Blog. All rights reserved.</p></footer><div class="MuiBox-root css-1hyfx7x"><div class="visitor-counter MuiBox-root css-19midj6"><h6 class="MuiTypography-root MuiTypography-h6 MuiTypography-gutterBottom css-izz7ci">방문자 수</h6><div class="MuiBox-root css-zwd3xv"><h4 class="MuiTypography-root MuiTypography-h4 css-1dg27va">83</h4><p class="MuiTypography-root MuiTypography-body2 css-l6pb42">오늘</p><h6 class="MuiTypography-root MuiTypography-h6 css-kh42wg">총 83명</h6></div></div></div><div class="MuiBox-root css-1y95mt5" data-testid="terminal-navigation"><div class="MuiBox-root css-1kw3y0a"><p class="MuiTypography-root MuiTypography-body2 css-1fktdtb">devtaco@portfolio:~$ navigation</p><div class="MuiBox-root css-j0ozid"><p class="MuiTypography-root MuiTypography-body2 css-1cn40rb">⌘M to close</p><button class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-470314" tabindex="0" type="button" id=":r1:"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeSmall css-vh810p" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="CloseIcon"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg></button></div></div><div class="MuiBox-root css-13t3iqc"><div class="MuiBox-root css-0"><p class="MuiTypography-root MuiTypography-body2 css-cbhj4f">Navigation:</p><div class="MuiBox-root css-1kkt86i"><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">1 → home</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">2 → about</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">3 → posts</p></div></div><div class="MuiBox-root css-0"><p class="MuiTypography-root MuiTypography-body2 css-cbhj4f">External:</p><div class="MuiBox-root css-1kkt86i"><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">g → github</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">e → email</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">l → linkedin</p></div></div></div><p class="MuiTypography-root MuiTypography-body2 css-1e7vt2">Press number keys (1,2,3) or letter keys (g,e,l) to navigate. Use ⌘+M to close.</p></div></div></div></body></html>

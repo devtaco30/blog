@@ -1,0 +1,399 @@
+<!DOCTYPE html><html lang="en"><head><script type="text/javascript">!function(n){if("/"===n.search[1]){var a=n.search.slice(1).split("&").map((function(n){return n.replace(/~and~/g,"&")})).join("?");window.history.replaceState(null,null,n.pathname.slice(0,-1)+a+n.hash)}}(window.location)</script><meta charset="utf-8"><link rel="icon" href="/blog/favicon.ico"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#000000"><meta name="keywords" content="Java, Kotlin, Spring Boot, MSA, 개발, 백엔드, coroutine"><meta name="author" content="DevTaco"><meta property="og:image" content="https://devtaco30.github.io/blog/og-image.png"><meta property="twitter:image" content="https://devtaco30.github.io/blog/og-image.png"><meta property="twitter:url" content="https://devtaco30.github.io/blog/"><link rel="apple-touch-icon" href="/blog/apple-touch-icon.png"><link rel="manifest" href="/blog/manifest.json"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&amp;family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet"><script defer="defer" src="/blog/static/js/main.404b9165.js"></script><link href="/blog/static/css/main.5b86466f.css" rel="stylesheet"><style data-emotion="css" data-s=""></style><title>EST AI - Python(list,tuple,condition,loop) | DevTaco Blog</title><meta name="description" content="리스트와 튜플은 수정 가능 여부, 메모리, 용도가 어떻게 다른지 표로 비교합니다. 인덱싱과 슬라이싱, 조건문, 반복문의 기본 사용법도 있습니다."><meta property="og:title" content="EST AI - Python(list,tuple,condition,loop)"><meta property="og:description" content="리스트와 튜플은 수정 가능 여부, 메모리, 용도가 어떻게 다른지 표로 비교합니다. 인덱싱과 슬라이싱, 조건문, 반복문의 기본 사용법도 있습니다."><meta property="og:type" content="article"><meta property="og:url" content="https://devtaco30.github.io/blog/posts/14"><meta name="twitter:card" content="summary"></head><body><noscript>You need to enable JavaScript to run this app.</noscript><div id="root"><div class="App"><div class="MuiBox-root css-kurlqb"><div class="MuiBox-root css-171onha"><button class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-1f6w95t" tabindex="0" type="button" id=":r0:"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="MenuIcon"><path d="M3 18h18v-2H3zm0-5h18v-2H3zm0-7v2h18V6z"></path></svg></button><div class="MuiBox-root css-1szb58x"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-218waq" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowBackIcon"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z"></path></svg><div class="MuiBox-root css-wq4jw1"><span>⌘+M</span></div></div></div></div><div class="MuiContainer-root css-15jb5o1" data-testid="page-container"><div class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-2 MuiGrid-spacing-md-3 css-1ht06td"><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-md-12 css-15j76c0"><div class="MuiBox-root css-15rigdj"><nav class="MuiTypography-root MuiTypography-body1 MuiBreadcrumbs-root css-1v2kxik"><ol class="MuiBreadcrumbs-ol css-51eq8m"><li class="MuiBreadcrumbs-li"><a class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways css-gj78h6" href="/blog/posts" data-discover="true">게시글 목록</a></li><li aria-hidden="true" class="MuiBreadcrumbs-separator css-1nd5pgh">/</li><li class="MuiBreadcrumbs-li"><p class="MuiTypography-root MuiTypography-body1 css-1cr0rz6">EST AI - Python(list,tuple,condition,loop)</p></li></ol></nav><div class="MuiBox-root css-15djlns"><button class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-1y18wdw" tabindex="0" type="button" id=":r7:"><span class="MuiButton-icon MuiButton-startIcon MuiButton-iconSizeMedium css-1ygddt1"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowBackIcon"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z"></path></svg></span><div class="MuiBox-root css-0"><span class="MuiTypography-root MuiTypography-caption css-115rlu8">이전글</span><p class="MuiTypography-root MuiTypography-body2 css-10qk5g4">매일 쓰지만 정확히는 모르는 CLI: 터미널, 셸, CLI의 차이와 개발 효율성</p></div></button><button class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-1k0z50p" tabindex="0" type="button" id=":r8:"><div class="MuiBox-root css-0"><span class="MuiTypography-root MuiTypography-caption css-115rlu8">다음글</span><p class="MuiTypography-root MuiTypography-body2 css-10qk5g4">EST AI - Python(base)</p></div><span class="MuiButton-icon MuiButton-endIcon MuiButton-iconSizeMedium css-6bt4d2"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowForwardIcon"><path d="m12 4-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"></path></svg></span></button></div><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-10t0qv5" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h4 class="MuiTypography-root MuiTypography-h4 css-k5jvd2">EST AI - Python(list,tuple,condition,loop)</h4><p class="MuiTypography-root MuiTypography-body1 css-104xg3">리스트와 튜플은 수정 가능 여부, 메모리, 용도가 어떻게 다른지 표로 비교합니다. | 인덱싱과 슬라이싱, 조건문, 반복문의 기본 사용법도 있습니다.</p><div class="MuiBox-root css-1prrn6n"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Python</span></div></div><p class="MuiTypography-root MuiTypography-body2 css-l6pb42">2025년 11월 24일 오후 08:30</p></div><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-1i779yj" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><div class="MuiBox-root css-13lazol"><h2>📚 오늘의 학습 내용</h2>
+<h3>📋 리스트와 튜플 (List &amp; Tuple)</h3>
+<p><strong>리스트와 튜플이란?</strong></p>
+<ul>
+<li><strong>리스트</strong>: 순서가 있는 수정 가능한 객체의 집합</li>
+<li><strong>튜플</strong>: 순서가 있는 수정 불가능한 객체의 집합</li>
+</ul>
+<p><strong>비교표:</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>특징</th><th>List</th><th>Tuple</th></tr></thead><tbody><tr><td><strong>문법</strong></td><td><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">[]</code> (대괄호)</td><td><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">()</code> (소괄호)</td></tr><tr><td><strong>가변성</strong></td><td>Mutable (수정 가능)</td><td>Immutable (수정 불가능)</td></tr><tr><td><strong>추가/수정/삭제</strong></td><td>가능</td><td>불가능</td></tr><tr><td><strong>메모리</strong></td><td>상대적으로 더 많이 사용</td><td>메모리 절약</td></tr><tr><td><strong>용도</strong></td><td>동적으로 변경되는 데이터</td><td>수정되면 안 되는 데이터</td></tr></tbody></table>
+<h4>리스트 (List)</h4>
+<p><strong>기본 특징:</strong></p>
+<ul>
+<li>대괄호 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">[]</code>로 작성, 리스트 내부는 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">,</code>로 구분</li>
+<li>하나의 리스트에 <strong>다양한 자료형</strong>을 포함할 수 있음</li>
+<li>비어있는 리스트도 작성 가능</li>
+<li>요소로 다른 리스트를 넣을 수 있음 (중첩 리스트)</li>
+</ul>
+<p><strong>인덱싱과 슬라이싱:</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python"># 인덱싱: 특정 위치의 요소 접근
+my_list = [10, 20, 30, 40, 50]
+print(my_list[0])   # 10 (첫 번째 요소)
+print(my_list[-1])  # 50 (마지막 요소)
+
+# 슬라이싱: 범위의 요소 접근
+print(my_list[1:4])  # [20, 30, 40] (인덱스 1부터 3까지)
+print(my_list[:3])   # [10, 20, 30] (처음부터 인덱스 2까지)
+print(my_list[2:])   # [30, 40, 50] (인덱스 2부터 끝까지)
+</code></pre></pre>
+<blockquote>
+<p>💡 <strong>궁금해서 찾아본 내용: 인덱싱과 슬라이싱에 생긴 의문점</strong></p>
+<p><strong>왜 인덱스는 0부터 시작하는가?</strong></p>
+<ul>
+<li>C 언어의 영향: 대부분의 현대 언어들이 C 언어의 관례를 따름</li>
+<li>메모리 주소 계산의 단순성: 베이스 주소 + (인덱스 × 요소 크기)</li>
+<li>범위 표현의 직관성: <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">[0, len(list))</code> 형식으로 표현 가능</li>
+<li>수학적 모델링: 길이가 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">n</code>일 때, 유효한 인덱스는 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">0</code>부터 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">n-1</code>까지</li>
+</ul>
+<p><strong>왜 슬라이싱은 end를 포함하지 않는가? (Half-Open Interval)</strong></p>
+<ul>
+<li>길이 계산의 단순성: <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">end - start</code>로 간단하게 계산 가능</li>
+<li>연속된 슬라이싱의 자연스러움: 구간을 나눌 때 겹침 없이 분할 가능</li>
+<li>범위 표현의 일관성: <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">[0:len(list)]</code> 형식으로 자연스럽게 표현</li>
+<li>빈 슬라이싱의 명확성: 같은 인덱스로 슬라이싱하면 빈 리스트</li>
+</ul>
+</blockquote>
+<p><strong>리스트 연산:</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python"># 덧셈: 두 리스트를 연결
+list1 = [1, 2, 3]
+list2 = [4, 5]
+print(list1 + list2)  # [1, 2, 3, 4, 5]
+
+# 곱셈: 리스트를 반복
+print(list1 * 3)  # [1, 2, 3, 1, 2, 3, 1, 2, 3]
+</code></pre></pre>
+<p><strong>리스트 메서드:</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>메서드</th><th>설명</th><th>예시</th></tr></thead><tbody><tr><td><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">append(x)</code></td><td>마지막에 요소 추가</td><td><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">lst.append(6)</code></td></tr><tr><td><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">extend(iterable)</code></td><td>여러 요소 추가</td><td><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">lst.extend([7,8])</code></td></tr><tr><td><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">insert(i, x)</code></td><td>인덱스 i 위치에 요소 삽입</td><td><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">lst.insert(2, 9)</code></td></tr><tr><td><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">remove(x)</code></td><td>첫 번째 x 요소 삭제</td><td><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">lst.remove(23)</code></td></tr><tr><td><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">clear()</code></td><td>리스트 전체 비우기</td><td><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">lst.clear()</code></td></tr><tr><td><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">index(x)</code></td><td>요소 x의 인덱스 반환</td><td><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">lst.index(23)</code></td></tr><tr><td><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">count(x)</code></td><td>요소 x의 개수 반환</td><td><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">lst.count(23)</code></td></tr><tr><td><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">sort()</code></td><td>오름차순 정렬</td><td><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">lst.sort()</code></td></tr><tr><td><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">sort(reverse=True)</code></td><td>내림차순 정렬</td><td><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">lst.sort(reverse=True)</code></td></tr><tr><td><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">reverse()</code></td><td>순서 뒤집기</td><td><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">lst.reverse()</code></td></tr></tbody></table>
+<p><strong>참고:</strong> <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">del lst[i]</code>는 메서드가 아닌 Python 키워드로, 인덱스 i 위치의 요소를 삭제합니다. (<code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">del lst[2]</code>)</p>
+<p><strong>슬라이싱 할당:</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python">list6 = [0, 1, 2, 3, 4, 5, 6]
+list6[2:5] = [283, 'a']     # 정석: 리스트 사용
+list6[2:5] = (283, 'a')     # 가능: 튜플도 iterable
+list6[2:5] = 283, 'a'       # 가능: 튜플 자동 생성
+list6[2:5] = "abc"          # 가능: 문자열도 iterable
+# list6[2:5] = 283          # 에러: iterable이 아님 (TypeError)
+</code></pre></pre>
+<ul>
+<li>단일 값은 불가능 (TypeError 발생)</li>
+</ul>
+<blockquote>
+<p>💡 <strong>궁금해서 찾아본 내용</strong></p>
+<ul>
+<li>슬라이싱 할당은 **반복 가능한 객체(iterable)**를 요구함</li>
+<li>리스트, 튜플, 문자열 등 iterable 객체 사용 가능</li>
+</ul>
+</blockquote>
+<p><strong>중첩 리스트 접근:</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python">list3 = [1, 2, 3, ['a', 'b', 'c']]
+print(list3[3][1])  # 'b'
+# list3[3]의 결과가 리스트이므로, 다시 인덱싱 가능
+</code></pre></pre>
+<blockquote>
+<p>💡 <strong>궁금해서 찾아본 내용: 참조(Reference) 개념</strong></p>
+<ul>
+<li>Python은 참조를 사용하여 객체를 가리킴</li>
+<li>내부적으로는 주소값을 가리키지만, 프로그래머가 직접 주소 연산 불가능</li>
+<li>포인터와의 차이: 안전한 포인터 개념 (직접 메모리 조작 불가)</li>
+</ul>
+</blockquote>
+<p><strong>멤버십 연산자:</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python">my_list = [1, 2, 3, 'a', 'b']
+print(2 in my_list)      # True
+print('c' not in my_list)  # True
+</code></pre></pre>
+<ul>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">in</code>: 요소가 iterable에 있는지 확인</li>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">not in</code>: 요소가 iterable에 없는지 확인</li>
+</ul>
+<h4>튜플 (Tuple)</h4>
+<p><strong>기본 특징:</strong></p>
+<ul>
+<li>소괄호 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">()</code>로 작성 (리스트와 거의 동일하나 수정 불가능)</li>
+<li><strong>Immutable</strong> 자료구조 (추가, 수정, 삭제 불가능)</li>
+<li>메모리 효율: List보다 메모리를 절약</li>
+<li>수정되면 안 되는 데이터에 사용</li>
+</ul>
+<p><strong>예시:</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python">my_tuple = (1, 2, 'hello', 3.14)
+# my_tuple[0] = 10  # 에러 발생! 수정 불가능
+</code></pre></pre>
+<hr>
+<h3>🔀 조건문 (Conditional Statement)</h3>
+<p><strong>조건문이란?</strong></p>
+<ul>
+<li>상황에 따라 실행 흐름을 다르게 하는 문법</li>
+<li>분기가 나뉘고, 상황에 따라 실행하거나 다음 조건으로 넘어감</li>
+</ul>
+<p><strong>기본 문법:</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python">if 조건식:
+    실행문장
+elif 조건식:
+    실행문장
+else:
+    실행문장
+</code></pre></pre>
+<p><strong>실행 흐름:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">시작
+  ↓
+if 조건식 평가
+  ├─ True  → 실행문장 실행 → 종료
+  └─ False → 다음 조건으로 이동
+            ↓
+        elif 조건식 평가 (있을 경우)
+          ├─ True  → 실행문장 실행 → 종료
+          └─ False → 다음 조건으로 이동
+                    ↓
+                else (있을 경우)
+                  → 실행문장 실행 → 종료
+</code></pre>
+<p><strong>핵심 포인트:</strong></p>
+<ul>
+<li>조건식이 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">True</code>이면 해당 블록 실행 후 <strong>즉시 종료</strong> (다음 조건은 평가하지 않음)</li>
+<li>조건식이 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">False</code>이면 다음 조건(<code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">elif</code> 또는 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">else</code>)으로 넘어감</li>
+<li>모든 조건이 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">False</code>이고 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">else</code>가 있으면 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">else</code> 블록 실행</li>
+</ul>
+<p><strong>실전 예제:</strong></p>
+<ul>
+<li>점수 입력 및 학점 부여 (0-100 범위 검증)</li>
+<li>좌표 입력 및 사분면 판별 (원점 처리 포함)</li>
+<li>자판기 프로그램 (Enum 활용, 함수 분리, 잔액 부족 시 추가 금액 입력)</li>
+</ul>
+<hr>
+<h3>🔁 반복문 (Loop)</h3>
+<p><strong>반복문이란?</strong></p>
+<ul>
+<li>프로그램 내에서 동일한 명령을 일정 횟수만큼 반복하여 수행하도록 제어하는 명령문</li>
+</ul>
+<p><strong>반복문의 종류:</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>종류</th><th>사용 시기</th><th>특징</th></tr></thead><tbody><tr><td><strong>while</strong></td><td>반복 횟수가 명확하지 않을 때</td><td>조건식이 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">True</code>인 동안 반복, 조건 변화 필요</td></tr><tr><td><strong>for</strong></td><td>반복 횟수가 명확할 때</td><td>시퀀스(리스트, 튜플 등)를 순회하며 반복</td></tr></tbody></table>
+<hr>
+<h4>1. while 문</h4>
+<p><strong>기본 문법:</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python">while 조건식:
+    실행문장
+</code></pre></pre>
+<p><strong>특징:</strong></p>
+<ul>
+<li>조건식이 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">True</code>인 동안 반복 실행</li>
+<li>조건식이 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">False</code>가 되면 루프 종료</li>
+<li><strong>조건식이 변화하지 않으면 무한 루프에 빠질 수 있음</strong></li>
+</ul>
+<p><strong>예제:</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python"># 1부터 3까지 출력
+number = 1
+while number &lt;= 3:  # 조건식
+    print(number)
+    number += 1  # 조건 변화 (없으면 무한 루프)
+</code></pre></pre>
+<hr>
+<h4>2. for 문</h4>
+<p><strong>기본 문법:</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python">for 변수 in iterable:
+    실행문장
+</code></pre></pre>
+<p><strong>특징:</strong></p>
+<ul>
+<li>문자열, 리스트, 튜플 등 iterable 객체 내 요소를 하나씩 반복</li>
+<li>반복 횟수가 명확할 때 사용</li>
+</ul>
+<p><strong>예제:</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python"># 리스트 순회
+fruits = ['사과', '바나나', '오렌지']
+for fruit in fruits:
+    print(fruit)
+
+# 문자열 순회
+for char in "Python":
+    print(char)
+</code></pre></pre>
+<hr>
+<h4>3. 반복문 제어 (break)</h4>
+<p><strong>기본 문법:</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python">while True:
+    if 조건:
+        break  # 반복문 강제 종료
+</code></pre></pre>
+<p><strong>특징:</strong></p>
+<ul>
+<li>반복문을 강제로 종료하는 기능</li>
+<li>조건문과 함께 사용하여 특정 조건에서 루프를 빠져나올 수 있음</li>
+</ul>
+<p><strong>예제:</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python"># while True: 루프에서 사용자 입력이 'q'일 때 break로 종료
+while True:
+    user_input = input('입력 (종료: q) &gt;&gt; ')
+    if user_input == 'q':
+        break
+    print(user_input)
+</code></pre></pre>
+<hr>
+<h4>4. range() 함수</h4>
+<p><strong>기본 문법:</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python">range(시작, 종료, 증가량)  # 종료 값은 포함하지 않음 (Half-open interval)
+</code></pre></pre>
+<p><strong>특징:</strong></p>
+<ul>
+<li>필요한 만큼의 숫자를 만들어 내는 유용한 기능</li>
+<li>종료 값은 포함하지 않음 (Half-open interval)</li>
+<li>주로 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">for</code> 문과 함께 사용</li>
+</ul>
+<p><strong>예제:</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python"># 기본 사용법
+range(0, 10, 1)   # 0부터 9까지 1씩 증가
+range(1, 100, 3)  # 1부터 97까지 3씩 증가 (1, 4, 7, ..., 97)
+
+# for 문과 함께 사용
+for i in range(5):
+    print(i)  # 0, 1, 2, 3, 4 출력
+</code></pre></pre>
+<hr>
+<h2>💡 핵심 정리</h2>
+<h3>📖 배운 것</h3>
+<ul>
+<li>리스트와 튜플의 차이점 (가변성, 메모리 효율)</li>
+<li>인덱싱과 슬라이싱의 원리 (0-based indexing, Half-open interval)</li>
+<li>중첩 리스트 접근 및 참조 개념</li>
+<li>리스트의 다양한 메서드와 연산</li>
+<li>조건문 (<code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">if</code>, <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">elif</code>, <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">else</code>)의 실행 흐름과 활용법</li>
+<li>반복문 (<code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">while</code>, <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">for</code>)의 사용 시기와 특징</li>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">range()</code> 함수의 활용</li>
+</ul>
+<h3>💭 인사이트</h3>
+<ul>
+<li>리스트와 튜플의 가변성 차이는 메모리 효율과 데이터 안정성에 중요한 요소</li>
+<li>0-based indexing과 Half-open interval은 일관성 있는 코드 작성에 도움</li>
+<li>슬라이싱 할당은 iterable 객체를 요구하는 이유는 다중 요소 교체 연산이기 때문</li>
+<li>조건문의 실행 흐름을 이해하면 코드의 논리적 흐름을 파악하기 쉬움</li>
+<li>반복문에서 조건 변화가 없으면 무한 루프에 빠질 수 있으므로 주의 필요</li>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">range()</code> 함수는 반복 횟수가 명확할 때 유용한 도구</li>
+</ul>
+<h3>⚠️ 주의사항</h3>
+<ul>
+<li>⚠️ 리스트는 수정 가능하지만, 튜플은 수정 불가능 (Immutable)</li>
+<li>⚠️ 슬라이싱 할당은 반복 가능한 객체(iterable)를 요구함</li>
+<li>⚠️ <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">remove()</code> 메서드는 첫 번째 요소만 삭제 (모두 삭제하려면 반복 필요)</li>
+<li>⚠️ 조건문에서 조건식이 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">True</code>이면 해당 블록 실행 후 즉시 종료 (다음 조건 평가 안 함)</li>
+<li>⚠️ <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">while</code> 문에서 조건식이 변화하지 않으면 무한 루프 발생 가능</li>
+<li>✅ 조건문은 중첩 구조로 코드 중복을 줄일 수 있음</li>
+<li>✅ 리스트 메서드는 각각의 특성을 이해하고 적절히 활용</li>
+<li>✅ 반복문은 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">break</code>로 조기 종료 가능</li>
+</ul>
+<hr>
+<h2>📝 실습/과제</h2>
+<h3>✅ 완료한 것</h3>
+<ul>
+<li>리스트 인덱싱, 슬라이싱 실습</li>
+<li>중첩 리스트 접근 실습</li>
+<li>리스트 메서드 활용 실습 (append, extend, insert, remove, sort 등)</li>
+<li>조건문을 활용한 점수 입력 및 학점 부여 프로그램</li>
+<li>좌표 입력 및 사분면 판별 프로그램 (원점 처리 포함)</li>
+<li>Enum과 함수를 활용한 자판기 프로그램</li>
+<li>반복문 (<code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">while</code>, <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">for</code>) 실습</li>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">range()</code> 함수 활용 실습</li>
+</ul>
+<hr></div></div><div class="MuiBox-root css-1cpq4zq"><hr class="MuiDivider-root MuiDivider-fullWidth css-7jtdmc"><h5 class="MuiTypography-root MuiTypography-h5 css-85yo2n">같은 카테고리의 다른 글</h5><div class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-2 css-1eikg3m"><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] Serializable 깊이 파기 — Part 2: 바이트에서 다시 객체로, 그리고 함정들</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">직렬화된 바이트를 ObjectInputStream이 어떤 순서로 읽어 객체로 복원하는지, 그때 생성자가 호출되지 않는다는 점을 확인합니다. | serialVersionUID, transient, 커스텀 readObject·writeObject, 역직렬화 취약점, Java 직렬화의 현재로 마무리합니다.</p><div class="MuiBox-root css-107ld1r"></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 4월 5일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] Serializable 깊이 파기 — Part 1: 객체가 바이트가 되는 과정</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">Python이나 JavaScript와 달리 Java는 왜 Serializable을 선언해야 하는지, 메서드가 하나도 없는 이 인터페이스가 무슨 일을 하는지 묻는 글입니다. | ObjectOutputStream이 만든 실제 바이트를 열어 보고, 참조 객체가 들어 있을 때는 어떻게 되는지 확인합니다.</p><div class="MuiBox-root css-107ld1r"></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 4월 5일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] 주식 거래 엔진 직접 만들기 - Part 3: 오더북을 어떻게 구현할 것인가</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">주식 거래 엔진의 오더북을 TreeMap과 ArrayDeque 조합으로 만든 이유를, PriorityQueue, LinkedList, Skip List와 비교하며 설명합니다. | 주문 취소를 Lazy Removal로 처리한 방법과 Kafka를 연결하며 만난 멱등성 문제를 마지막에 둡니다.</p><div class="MuiBox-root css-107ld1r"></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 27일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] 주식 거래 엔진 직접 만들기 - Part 2: Phase 1 — 모놀리식으로 시작하기</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">단일 JAR 모놀리식 구조인 Phase 1에서 만난 문제를 차례로 다룹니다. | SELECT FOR UPDATE로 동시성을 해결했고, 락 보유 시간을 줄이고, 락 획득 순서를 통일해 데드락 위험을 없앴습니다. @Transactional 원칙과 Lazy Loading 함정도 짚습니다.</p><div class="MuiBox-root css-107ld1r"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Java</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Spring Boot</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">JPA</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">+2</span></div></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 27일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] 주식 거래 엔진 직접 만들기 - Part 1: 왜 주식 거래 엔진인가</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">F-lab 멘토링 프로젝트로 주식 거래 엔진을 직접 설계하고 구현한 과정을 기록하는 시리즈의 첫 글입니다. | 프로젝트를 고른 기준과 멀티모듈 구조, Phase 로드맵, 시리즈 전체에서 답할 질문들을 먼저 밝힙니다.</p><div class="MuiBox-root css-107ld1r"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Java</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Spring Boot</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Kafka</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">+5</span></div></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 27일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[개발자가 직접 써봤어요] Claude Code 완전 가이드: 설치부터 멀티에이전트까지</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">Claude Code를 Spring Boot와 Kafka 기반 주식 매매 엔진 프로젝트에 적용해 본 경험을 바탕으로, 설치부터 멀티에이전트까지 소개합니다. | CLAUDE.md, Skills, Subagents, Hooks, MCP, Agent Teams의 여섯 레이어와 Cursor AI와의 비교, 주의사항이 나옵니다.</p><div class="MuiBox-root css-107ld1r"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Claude Code</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">AI</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Developer Tools</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">+4</span></div></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 9일</span></div></div></div></div><div class="MuiBox-root css-1b94f21"><a class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways css-104ms0" href="/blog/posts" data-discover="true"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowBackIcon"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z"></path></svg>게시글 목록으로 돌아가기</a></div><button class="MuiButtonBase-root MuiFab-root MuiFab-circular MuiFab-sizeMedium MuiFab-primary MuiFab-root MuiFab-circular MuiFab-sizeMedium MuiFab-primary css-1nl6bps" tabindex="0" type="button" aria-label="scroll to top" style="opacity: 0; visibility: hidden;"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="KeyboardArrowUpIcon"><path d="M7.41 15.41 12 10.83l4.59 4.58L18 14l-6-6-6 6z"></path></svg></button></div></div></div></div><footer style="text-align: center; padding: 2rem 0px; color: rgb(0, 0, 0); font-size: 0.9rem; border-top: 1px solid rgb(0, 0, 0); margin-top: auto; background-color: rgb(255, 255, 255);"><p>© 2025 DevTaco Blog. All rights reserved.</p></footer><div class="MuiBox-root css-1hyfx7x"><div class="visitor-counter MuiBox-root css-19midj6"><h6 class="MuiTypography-root MuiTypography-h6 MuiTypography-gutterBottom css-izz7ci">방문자 수</h6><div class="MuiBox-root css-zwd3xv"><h4 class="MuiTypography-root MuiTypography-h4 css-1dg27va">101</h4><p class="MuiTypography-root MuiTypography-body2 css-l6pb42">오늘</p><h6 class="MuiTypography-root MuiTypography-h6 css-kh42wg">총 101명</h6></div></div></div><div class="MuiBox-root css-1y95mt5" data-testid="terminal-navigation"><div class="MuiBox-root css-1kw3y0a"><p class="MuiTypography-root MuiTypography-body2 css-1fktdtb">devtaco@portfolio:~$ navigation</p><div class="MuiBox-root css-j0ozid"><p class="MuiTypography-root MuiTypography-body2 css-1cn40rb">⌘M to close</p><button class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-470314" tabindex="0" type="button" id=":r1:"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeSmall css-vh810p" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="CloseIcon"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg></button></div></div><div class="MuiBox-root css-13t3iqc"><div class="MuiBox-root css-0"><p class="MuiTypography-root MuiTypography-body2 css-cbhj4f">Navigation:</p><div class="MuiBox-root css-1kkt86i"><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">1 → home</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">2 → about</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">3 → posts</p></div></div><div class="MuiBox-root css-0"><p class="MuiTypography-root MuiTypography-body2 css-cbhj4f">External:</p><div class="MuiBox-root css-1kkt86i"><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">g → github</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">e → email</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">l → linkedin</p></div></div></div><p class="MuiTypography-root MuiTypography-body2 css-1e7vt2">Press number keys (1,2,3) or letter keys (g,e,l) to navigate. Use ⌘+M to close.</p></div></div></div></body></html>

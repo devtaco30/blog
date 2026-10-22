@@ -1,0 +1,245 @@
+<!DOCTYPE html><html lang="en"><head><script type="text/javascript">!function(n){if("/"===n.search[1]){var a=n.search.slice(1).split("&").map((function(n){return n.replace(/~and~/g,"&")})).join("?");window.history.replaceState(null,null,n.pathname.slice(0,-1)+a+n.hash)}}(window.location)</script><meta charset="utf-8"><link rel="icon" href="/blog/favicon.ico"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#000000"><meta name="keywords" content="Java, Kotlin, Spring Boot, MSA, 개발, 백엔드, coroutine"><meta name="author" content="DevTaco"><meta property="og:image" content="https://devtaco30.github.io/blog/og-image.png"><meta property="twitter:image" content="https://devtaco30.github.io/blog/og-image.png"><meta property="twitter:url" content="https://devtaco30.github.io/blog/"><link rel="apple-touch-icon" href="/blog/apple-touch-icon.png"><link rel="manifest" href="/blog/manifest.json"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&amp;family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet"><script defer="defer" src="/blog/static/js/main.404b9165.js"></script><link href="/blog/static/css/main.5b86466f.css" rel="stylesheet"><style data-emotion="css" data-s=""></style><title>Go로 CLI 도구 만들기: Cobra 라이브러리 활용 | DevTaco Blog</title><meta name="description" content="CLI 개념을 정리하면서 직접 CLI 도구를 만들어보기"><meta property="og:title" content="Go로 CLI 도구 만들기: Cobra 라이브러리 활용"><meta property="og:description" content="CLI 개념을 정리하면서 직접 CLI 도구를 만들어보기"><meta property="og:type" content="article"><meta property="og:url" content="https://devtaco30.github.io/blog/posts/19"><meta name="twitter:card" content="summary"></head><body><noscript>You need to enable JavaScript to run this app.</noscript><div id="root"><div class="App"><div class="MuiBox-root css-kurlqb"><div class="MuiBox-root css-171onha"><button class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-1f6w95t" tabindex="0" type="button" id=":r0:"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="MenuIcon"><path d="M3 18h18v-2H3zm0-5h18v-2H3zm0-7v2h18V6z"></path></svg></button><div class="MuiBox-root css-1szb58x"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-218waq" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowBackIcon"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z"></path></svg><div class="MuiBox-root css-wq4jw1"><span>⌘+M</span></div></div></div></div><div class="MuiContainer-root css-15jb5o1" data-testid="page-container"><div class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-2 MuiGrid-spacing-md-3 css-1ht06td"><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-md-12 css-15j76c0"><div class="MuiBox-root css-15rigdj"><nav class="MuiTypography-root MuiTypography-body1 MuiBreadcrumbs-root css-1v2kxik"><ol class="MuiBreadcrumbs-ol css-51eq8m"><li class="MuiBreadcrumbs-li"><a class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways css-gj78h6" href="/blog/posts" data-discover="true">게시글 목록</a></li><li aria-hidden="true" class="MuiBreadcrumbs-separator css-1nd5pgh">/</li><li class="MuiBreadcrumbs-li"><p class="MuiTypography-root MuiTypography-body1 css-1cr0rz6">Go로 CLI 도구 만들기: Cobra 라이브러리 활용</p></li></ol></nav><div class="MuiBox-root css-15djlns"><button class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-1y18wdw" tabindex="0" type="button" id=":r7:"><span class="MuiButton-icon MuiButton-startIcon MuiButton-iconSizeMedium css-1ygddt1"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowBackIcon"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z"></path></svg></span><div class="MuiBox-root css-0"><span class="MuiTypography-root MuiTypography-caption css-115rlu8">이전글</span><p class="MuiTypography-root MuiTypography-body2 css-10qk5g4">EST AI - Python(numpy)</p></div></button><button class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-1k0z50p" tabindex="0" type="button" id=":r8:"><div class="MuiBox-root css-0"><span class="MuiTypography-root MuiTypography-caption css-115rlu8">다음글</span><p class="MuiTypography-root MuiTypography-body2 css-10qk5g4">EST AI - 기초통계</p></div><span class="MuiButton-icon MuiButton-endIcon MuiButton-iconSizeMedium css-6bt4d2"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowForwardIcon"><path d="m12 4-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"></path></svg></span></button></div><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-10t0qv5" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h4 class="MuiTypography-root MuiTypography-h4 css-k5jvd2">Go로 CLI 도구 만들기: Cobra 라이브러리 활용</h4><p class="MuiTypography-root MuiTypography-body1 css-104xg3">CLI 개념을 정리하면서 직접 CLI 도구를 만들어보기</p><div class="MuiBox-root css-1prrn6n"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">CLI</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Cobra</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Command Line</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Go</span></div></div><p class="MuiTypography-root MuiTypography-body2 css-l6pb42">2025년 11월 27일 오후 04:19</p></div><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-1i779yj" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><div class="MuiBox-root css-13lazol"><p>안녕하세요! 오늘은 Go로 CLI 도구를 만들어보면서 배운 내용들을 정리해보려고 합니다.</p>
+<p>최근에 CLI의 개념을 정리하면서, 직접 CLI 도구를 만들어보면 더 잘 이해할 수 있지 않을까 하는 생각이 들었습니다. 처음엔 뭐로 만들어야 할지 감도 못 잡았는데, 조사해보니 Go로 만든 CLI 도구들이 훨씬 가볍고 배포가 간단하더라구요.</p>
+<p>이 글에서는 Go로 CLI 도구를 처음 만들어본 경험과 배운 점들을 공유합니다.</p>
+<h2>🎯 <strong>왜 Go로 CLI를 만들게 되었나?</strong></h2>
+<h3>왜 Go를 선택했나?</h3>
+<p>CLI 도구를 만들 때 어떤 언어를 써야 할지 고민이 많았습니다. 여러 옵션을 비교해보니 Go가 가장 적합해 보였어요.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>구분</th><th>다른 언어들</th><th>Go</th></tr></thead><tbody><tr><td><strong>📦 배포</strong></td><td>런타임 또는 JVM 필요</td><td>단일 실행 파일</td></tr><tr><td><strong>⚡ 실행 속도</strong></td><td>런타임 시작 시간 필요</td><td>즉시 실행</td></tr><tr><td><strong>💾 파일 크기</strong></td><td>런타임 포함 시 크거나 의존성 많음</td><td>실행 파일만 (~5-10MB)</td></tr><tr><td><strong>🌐 배포 편의성</strong></td><td>런타임 설치 필요</td><td>플랫폼별 빌드만 필요</td></tr><tr><td><strong>🔧 의존성 관리</strong></td><td>복잡한 설정 필요</td><td>go.mod로 간단</td></tr></tbody></table>
+<p>특히 배포 측면에서 Go가 가장 유리합니다. 다른 언어들은 런타임 설치가 필요하지만, Go는 빌드된 실행 파일 하나만 있으면 바로 실행할 수 있어요.</p>
+<h3>Go CLI의 장점</h3>
+<p>실제로 많은 유명한 CLI 도구들이 Go로 만들어져 있습니다:</p>
+<ul>
+<li><strong>Docker CLI</strong>: 컨테이너 관리 도구</li>
+<li><strong>Kubernetes (kubectl)</strong>: 쿠버네티스 클러스터 관리</li>
+<li><strong>Terraform</strong>: 인프라 코드 관리</li>
+<li><strong>GitHub CLI (gh)</strong>: GitHub 작업 자동화</li>
+</ul>
+<p>이런 도구들이 Go를 선택한 이유는 배포의 편리함과 실행 속도 때문입니다.</p>
+<h2>🚀 <strong>프로젝트 시작하기</strong></h2>
+<h3>1. 프로젝트 구조 설계</h3>
+<p>Go 프로젝트는 명확한 구조를 가지고 있습니다. 처음엔 main.go 하나만 있으면 되지 않나 싶었는데, 확장성을 고려하면 구조를 잡는 게 좋을 것 같았습니다.</p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">my-go-cli/
+├── cmd/
+│   └── gotool/
+│       └── main.go          # 실행 진입점
+├── internal/
+│   └── commands/            # 각 커맨드 로직
+│       ├── port.go
+│       ├── uuid.go
+│       ├── base64.go
+│       ├── time.go
+│       └── ip.go
+├── go.mod
+└── go.sum
+</code></pre>
+<p><strong>구조 설명:</strong></p>
+<ul>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">cmd/gotool/</code>: 실행 가능한 애플리케이션 진입점</li>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">internal/commands/</code>: 외부에서 import 불가능한 내부 패키지 (프로젝트 내부 전용)</li>
+</ul>
+<img alt="이미지" src="https://bimuiyejfcapaxqlgkre.supabase.co/storage/v1/object/public/blog-images/posts/19/1764232368391.png" style="max-width: 60%; height: auto; display: block; margin: 20px auto; cursor: pointer; transition: opacity 0.2s ease-in-out;">
+<div align="center">
+*프로젝트 디렉토리 구조 - cmd와 internal 폴더로 명확하게 분리*
+</div>
+<h3>2. Cobra 라이브러리 선택</h3>
+<p>Go에서 CLI를 만들 때 가장 많이 사용하는 라이브러리는 <strong>Cobra</strong>입니다. Kubernetes, Docker, GitHub CLI 등 많은 도구들이 Cobra를 사용해요.</p>
+<p><strong>Cobra의 장점:</strong></p>
+<ul>
+<li>서브커맨드 지원</li>
+<li>플래그(옵션) 관리</li>
+<li>자동 도움말 생성</li>
+<li>명령어 자동완성 지원</li>
+</ul>
+<div align="center">
+*Cobra 라이브러리 설치 - go get 명령어로 의존성 추가*
+</div>
+<h2>🛠️ <strong>기본 구조 이해하기</strong></h2>
+<h3>Cobra Command 구조</h3>
+<p>Cobra의 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">Command</code>는 다음과 같습니다:</p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-go">var rootCmd = &amp;cobra.Command{
+    Use:   "gotool",                    // 명령어 이름
+    Short: "개발자용 유틸리티 CLI 도구",  // 짧은 설명
+    Long:  "Go로 만든 개발자용 유틸리티 CLI 도구입니다.", // 긴 설명
+    Version: "1.0.0",                  // 버전 정보
+}
+</code></pre></pre>
+<p><strong>포인터 이해하기:</strong></p>
+<ul>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">&amp;cobra.Command{...}</code>: 구조체의 포인터를 만듦</li>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">cmd *cobra.Command</code>: 포인터 타입 파라미터</li>
+</ul>
+<p>Go는 포인터를 명시적으로 사용하는데, 처음엔 헷갈렸지만 익숙해지니 오히려 메모리 관리가 명확해서 좋았습니다.</p>
+<h3>서브커맨드 구현</h3>
+<p>각 기능을 서브커맨드로 구현했습니다:</p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-go">func main() {
+    var rootCmd = &amp;cobra.Command{
+        Use:     "gotool",
+        Short:   "개발자용 유틸리티 CLI 도구",
+        Version: version,
+    }
+
+    rootCmd.AddCommand(commands.PortCmd())      // 포트 체크
+    rootCmd.AddCommand(commands.UuidCmd())      // UUID 생성
+    rootCmd.AddCommand(commands.Base64Cmd())    // Base64 인코딩/디코딩
+    rootCmd.AddCommand(commands.TimeCmd())      // 타임스탬프 변환
+    rootCmd.AddCommand(commands.IpCmd())         // IP 확인
+}
+</code></pre></pre>
+<p>각 커맨드는 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">internal/commands/</code> 폴더에 별도 파일로 분리하여 유지보수성을 높였습니다.</p>
+<img alt="이미지" src="https://bimuiyejfcapaxqlgkre.supabase.co/storage/v1/object/public/blog-images/posts/19/1764226179637.png" style="max-width: 60%; height: auto; display: block; margin: 20px auto; cursor: pointer; transition: opacity 0.2s ease-in-out;">
+<div align="center">
+*gotool --help 실행 화면 - 모든 서브커맨드가 표시됨*
+</div>
+<h2>📦 <strong>구현한 기능들</strong></h2>
+<h3>1. 포트 체크 (<code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">gotool port [포트번호]</code>)</h3>
+<p>특정 포트가 사용 중인지 확인하는 기능입니다. 개발 중에 포트 충돌을 확인할 때 유용해요.</p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-go">func PortCmd() *cobra.Command {
+    return &amp;cobra.Command{
+        Use:   "port [포트번호]",
+        Short: "포트 사용 여부 확인",
+        Run: func(cmd *cobra.Command, args []string) {
+            // 포트 체크 로직
+        },
+    }
+}
+</code></pre></pre>
+<p><strong>사용 예시:</strong></p>
+<img alt="이미지" src="https://bimuiyejfcapaxqlgkre.supabase.co/storage/v1/object/public/blog-images/posts/19/1764227625595.png" style="max-width: 60%; height: auto; display: block; margin: 20px auto; cursor: pointer; transition: opacity 0.2s ease-in-out;">
+<div align="center">
+*포트 체크 기능 실행 화면 - 사용 중인 포트와 사용 가능한 포트 확인*
+</div>
+<h3>2. UUID 생성 (<code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">gotool uuid</code>)</h3>
+<p>새로운 UUID v4를 생성합니다. 테스트 데이터 생성이나 임시 ID가 필요할 때 사용해요.</p>
+<img alt="이미지" src="https://bimuiyejfcapaxqlgkre.supabase.co/storage/v1/object/public/blog-images/posts/19/1764227638167.png" style="max-width: 60%; height: auto; display: block; margin: 20px auto; cursor: pointer; transition: opacity 0.2s ease-in-out;">
+<div align="center">
+*UUID 생성 기능 실행 화면 - 새로운 UUID v4 출력*
+</div>
+<h3>3. Base64 인코딩/디코딩 (<code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">gotool base64 encode/decode</code>)</h3>
+<p>텍스트를 Base64로 인코딩하거나 디코딩합니다. API 테스트나 데이터 변환이 필요할 때 유용해요.</p>
+<img alt="이미지" src="https://bimuiyejfcapaxqlgkre.supabase.co/storage/v1/object/public/blog-images/posts/19/1764227413650.png" style="max-width: 60%; height: auto; display: block; margin: 20px auto; cursor: pointer; transition: opacity 0.2s ease-in-out;">
+<div align="center">
+*Base64 인코딩/디코딩 기능 실행 화면 - 텍스트 변환 결과*
+</div>
+<h3>4. 타임스탬프 변환 (<code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">gotool time [타임스탬프]</code>)</h3>
+<p>Unix 타임스탬프를 읽기 쉬운 날짜 형식으로 변환합니다. 로그 분석이나 디버깅 시 유용해요.</p>
+<img alt="이미지" src="https://bimuiyejfcapaxqlgkre.supabase.co/storage/v1/object/public/blog-images/posts/19/1764226237652.png" style="max-width: 60%; height: auto; display: block; margin: 20px auto; cursor: pointer; transition: opacity 0.2s ease-in-out;">
+ight: 80%; max-width: 100%;" /&gt;
+<div align="center">
+*타임스탬프 변환 기능 실행 화면 - Unix 타임스탬프를 날짜 형식으로 변환*
+</div>
+<h3>5. IP 확인 (<code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">gotool ip</code>)</h3>
+<p>로컬 네트워크 인터페이스의 IP 주소를 확인합니다. 네트워크 설정 확인 시 유용해요.</p>
+<img alt="이미지" src="https://bimuiyejfcapaxqlgkre.supabase.co/storage/v1/object/public/blog-images/posts/19/1764227306949.png" style="max-width: 60%; height: auto; display: block; margin: 20px auto; cursor: pointer; transition: opacity 0.2s ease-in-out;">
+<div align="center">
+*IP 확인 기능 실행 화면 - 로컬 네트워크 인터페이스의 IP 주소 목록*
+</div>
+<h2>🔨 <strong>빌드 및 배포</strong></h2>
+<h3>로컬 빌드</h3>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-bash">go build -o gotool cmd/gotool/main.go
+</code></pre></pre>
+<p>이 명령어 하나로 모든 의존성이 포함된 실행 파일이 생성됩니다. 별도의 패키징 과정이 필요 없어요.</p>
+<h3>PATH에 등록 (macOS)</h3>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-bash"># 빌드
+go build -o gotool cmd/gotool/main.go
+
+# PATH에 등록
+sudo cp gotool /usr/local/bin/
+
+# 실행
+gotool --version
+</code></pre></pre>
+<p>이제 어디서든 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">gotool</code> 명령어를 사용할 수 있어요!</p>
+<img alt="이미지" src="https://bimuiyejfcapaxqlgkre.supabase.co/storage/v1/object/public/blog-images/posts/19/1764227716054.png" style="max-width: 60%; height: auto; display: block; margin: 20px auto; cursor: pointer; transition: opacity 0.2s ease-in-out;">
+<div align="center">
+*버전 확인 - gotool --version 실행 화면*
+</div>
+<h3>제거</h3>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-bash">sudo rm /usr/local/bin/gotool
+</code></pre></pre>
+<h2>💡 <strong>Go를 배우면서 느낀 점</strong></h2>
+<h3>1. 타입 시스템</h3>
+<p>Go는 정적 타입 언어지만 타입 추론을 지원해요:</p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-go">// 명시적 타입 선언
+var name string = "값"
+
+// 타입 추론 (:= 사용)
+name := "값"  // 타입이 자동으로 추론됨
+</code></pre></pre>
+<p>타입 추론을 지원하면서도 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">:=</code>를 사용해서 선언과 할당을 동시에 할 수 있어요.</p>
+<h3>2. 에러 처리</h3>
+<p>Go는 예외(Exception) 대신 에러를 일반 반환값으로 처리해요:</p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-go">result, err := someFunction()
+if err != nil {
+    // 에러 처리
+    return err
+}
+</code></pre></pre>
+<p>처음엔 "에러를 매번 체크해야 하네?" 싶었지만, 명시적인 에러 처리가 오히려 코드를 더 명확하게 만들어줍니다.</p>
+<h3>3. 포인터</h3>
+<p>Go는 포인터를 명시적으로 사용합니다:</p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-go">var rootCmd = &amp;cobra.Command{...}  // &amp; = 주소를 만들어서 저장
+func run(cmd *cobra.Command) {    // * = 포인터 타입 선언
+    // ...
+}
+</code></pre></pre>
+<p>처음엔 헷갈렸지만, 메모리 관리가 명확해서 좋았습니다.</p>
+<h3>4. 패키지 구조</h3>
+<p>Go는 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">internal/</code> 패키지를 통해 외부에서 import를 막을 수 있습니다. 내부 구현을 숨기고 API를 명확하게 관리할 수 있어요.</p>
+<h2>🎯 <strong>결과 및 개선점</strong></h2>
+<h3>1. 개발 편의성</h3>
+<ul>
+<li><strong>빠른 빌드</strong>: Go의 컴파일 속도가 정말 빠름</li>
+<li><strong>간단한 배포</strong>: 단일 실행 파일로 배포 가능</li>
+<li><strong>명확한 구조</strong>: 프로젝트 구조가 직관적</li>
+</ul>
+<h3>2. 성능</h3>
+<ul>
+<li><strong>즉시 실행</strong>: 런타임 시작 시간 없이 바로 실행</li>
+<li><strong>작은 파일 크기</strong>: 실행 파일만 5-10MB 정도</li>
+</ul>
+<h3>3. 확장성</h3>
+<ul>
+<li><strong>모듈화</strong>: 각 커맨드를 별도 파일로 분리하여 유지보수 용이</li>
+<li><strong>의존성 관리</strong>: <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">go.mod</code>로 간단한 의존성 관리</li>
+</ul>
+<h2>📋 <strong>결론</strong></h2>
+<p>CLI 도구를 만들어보면서 Go가 CLI 개발에 꽤 편하다는 걸 느꼈습니다. 특히 단일 실행 파일로 빌드되는 점과 간단한 의존성 관리가 인상적이었어요. 물론 용도에 따라 다른 언어를 선택할 수도 있지만, 이번 프로젝트에는 Go가 잘 맞았어요.</p>
+<p>이번에 간단한 CLI 도구만 만들어봤지만, Go의 기본적인 문법과 구조를 이해할 수 있었습니다. 더 복잡한 프로젝트를 만들면 더 많은 걸 배울 수 있을 것 같아요.</p>
+<hr>
+<p>솔직히 말하면, 처음에는 "Go를 또 배워야 하나?" 하는 생각이 들었습니다. 하지만 실제로 CLI 도구를 만들어보니, Go가 이 용도에는 정말 적합하다는 걸 알게 되었어요.</p>
+<p>간단한 도구 하나 만들면서 Go의 기본 문법과 구조를 익힐 수 있었고, 앞으로 더 복잡한 프로젝트를 만들 때도 도움이 될 것 같습니다.</p></div></div><div class="MuiBox-root css-1cpq4zq"><hr class="MuiDivider-root MuiDivider-fullWidth css-7jtdmc"><h5 class="MuiTypography-root MuiTypography-h5 css-85yo2n">같은 카테고리의 다른 글</h5><div class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-2 css-1eikg3m"><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] Serializable 깊이 파기 — Part 2: 바이트에서 다시 객체로, 그리고 함정들</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">직렬화된 바이트를 ObjectInputStream이 어떤 순서로 읽어 객체로 복원하는지, 그때 생성자가 호출되지 않는다는 점을 확인합니다. | serialVersionUID, transient, 커스텀 readObject·writeObject, 역직렬화 취약점, Java 직렬화의 현재로 마무리합니다.</p><div class="MuiBox-root css-107ld1r"></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 4월 5일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] Serializable 깊이 파기 — Part 1: 객체가 바이트가 되는 과정</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">Python이나 JavaScript와 달리 Java는 왜 Serializable을 선언해야 하는지, 메서드가 하나도 없는 이 인터페이스가 무슨 일을 하는지 묻는 글입니다. | ObjectOutputStream이 만든 실제 바이트를 열어 보고, 참조 객체가 들어 있을 때는 어떻게 되는지 확인합니다.</p><div class="MuiBox-root css-107ld1r"></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 4월 5일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] 주식 거래 엔진 직접 만들기 - Part 3: 오더북을 어떻게 구현할 것인가</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">주식 거래 엔진의 오더북을 TreeMap과 ArrayDeque 조합으로 만든 이유를, PriorityQueue, LinkedList, Skip List와 비교하며 설명합니다. | 주문 취소를 Lazy Removal로 처리한 방법과 Kafka를 연결하며 만난 멱등성 문제를 마지막에 둡니다.</p><div class="MuiBox-root css-107ld1r"></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 27일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] 주식 거래 엔진 직접 만들기 - Part 2: Phase 1 — 모놀리식으로 시작하기</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">단일 JAR 모놀리식 구조인 Phase 1에서 만난 문제를 차례로 다룹니다. | SELECT FOR UPDATE로 동시성을 해결했고, 락 보유 시간을 줄이고, 락 획득 순서를 통일해 데드락 위험을 없앴습니다. @Transactional 원칙과 Lazy Loading 함정도 짚습니다.</p><div class="MuiBox-root css-107ld1r"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Java</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Spring Boot</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">JPA</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">+2</span></div></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 27일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] 주식 거래 엔진 직접 만들기 - Part 1: 왜 주식 거래 엔진인가</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">F-lab 멘토링 프로젝트로 주식 거래 엔진을 직접 설계하고 구현한 과정을 기록하는 시리즈의 첫 글입니다. | 프로젝트를 고른 기준과 멀티모듈 구조, Phase 로드맵, 시리즈 전체에서 답할 질문들을 먼저 밝힙니다.</p><div class="MuiBox-root css-107ld1r"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Java</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Spring Boot</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Kafka</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">+5</span></div></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 27일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[개발자가 직접 써봤어요] Claude Code 완전 가이드: 설치부터 멀티에이전트까지</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">Claude Code를 Spring Boot와 Kafka 기반 주식 매매 엔진 프로젝트에 적용해 본 경험을 바탕으로, 설치부터 멀티에이전트까지 소개합니다. | CLAUDE.md, Skills, Subagents, Hooks, MCP, Agent Teams의 여섯 레이어와 Cursor AI와의 비교, 주의사항이 나옵니다.</p><div class="MuiBox-root css-107ld1r"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Claude Code</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">AI</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Developer Tools</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">+4</span></div></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 9일</span></div></div></div></div><div class="MuiBox-root css-1b94f21"><a class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways css-104ms0" href="/blog/posts" data-discover="true"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowBackIcon"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z"></path></svg>게시글 목록으로 돌아가기</a></div><button class="MuiButtonBase-root MuiFab-root MuiFab-circular MuiFab-sizeMedium MuiFab-primary MuiFab-root MuiFab-circular MuiFab-sizeMedium MuiFab-primary css-1nl6bps" tabindex="0" type="button" aria-label="scroll to top" style="opacity: 0; visibility: hidden;"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="KeyboardArrowUpIcon"><path d="M7.41 15.41 12 10.83l4.59 4.58L18 14l-6-6-6 6z"></path></svg></button></div></div></div></div><footer style="text-align: center; padding: 2rem 0px; color: rgb(0, 0, 0); font-size: 0.9rem; border-top: 1px solid rgb(0, 0, 0); margin-top: auto; background-color: rgb(255, 255, 255);"><p>© 2025 DevTaco Blog. All rights reserved.</p></footer><div class="MuiBox-root css-1hyfx7x"><div class="visitor-counter MuiBox-root css-19midj6"><h6 class="MuiTypography-root MuiTypography-h6 MuiTypography-gutterBottom css-izz7ci">방문자 수</h6><div class="MuiBox-root css-zwd3xv"><h4 class="MuiTypography-root MuiTypography-h4 css-1dg27va">96</h4><p class="MuiTypography-root MuiTypography-body2 css-l6pb42">오늘</p><h6 class="MuiTypography-root MuiTypography-h6 css-kh42wg">총 96명</h6></div></div></div><div class="MuiBox-root css-1y95mt5" data-testid="terminal-navigation"><div class="MuiBox-root css-1kw3y0a"><p class="MuiTypography-root MuiTypography-body2 css-1fktdtb">devtaco@portfolio:~$ navigation</p><div class="MuiBox-root css-j0ozid"><p class="MuiTypography-root MuiTypography-body2 css-1cn40rb">⌘M to close</p><button class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-470314" tabindex="0" type="button" id=":r1:"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeSmall css-vh810p" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="CloseIcon"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg></button></div></div><div class="MuiBox-root css-13t3iqc"><div class="MuiBox-root css-0"><p class="MuiTypography-root MuiTypography-body2 css-cbhj4f">Navigation:</p><div class="MuiBox-root css-1kkt86i"><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">1 → home</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">2 → about</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">3 → posts</p></div></div><div class="MuiBox-root css-0"><p class="MuiTypography-root MuiTypography-body2 css-cbhj4f">External:</p><div class="MuiBox-root css-1kkt86i"><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">g → github</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">e → email</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">l → linkedin</p></div></div></div><p class="MuiTypography-root MuiTypography-body2 css-1e7vt2">Press number keys (1,2,3) or letter keys (g,e,l) to navigate. Use ⌘+M to close.</p></div></div></div></body></html>

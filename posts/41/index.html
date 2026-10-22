@@ -1,0 +1,853 @@
+<!DOCTYPE html><html lang="en"><head><script type="text/javascript">!function(n){if("/"===n.search[1]){var a=n.search.slice(1).split("&").map((function(n){return n.replace(/~and~/g,"&")})).join("?");window.history.replaceState(null,null,n.pathname.slice(0,-1)+a+n.hash)}}(window.location)</script><meta charset="utf-8"><link rel="icon" href="/blog/favicon.ico"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#000000"><meta name="keywords" content="Java, Kotlin, Spring Boot, MSA, 개발, 백엔드, coroutine"><meta name="author" content="DevTaco"><meta property="og:image" content="https://devtaco30.github.io/blog/og-image.png"><meta property="twitter:image" content="https://devtaco30.github.io/blog/og-image.png"><meta property="twitter:url" content="https://devtaco30.github.io/blog/"><link rel="apple-touch-icon" href="/blog/apple-touch-icon.png"><link rel="manifest" href="/blog/manifest.json"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&amp;family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet"><script defer="defer" src="/blog/static/js/main.404b9165.js"></script><link href="/blog/static/css/main.5b86466f.css" rel="stylesheet"><style data-emotion="css" data-s=""></style><title>[6년차 쯤 되면 좀 알자] 그럼 GC 는 뭔데? - 1부 - | DevTaco Blog</title><meta name="description" content="G1GC가 힙을 Region 단위로 나누는 이유와 Freelist, RSet, CSet, SATB, TAMS, Tri-Color Marking의 역할을 설명합니다. STW(Stop-The-World)가 왜 생기는지, G1GC가 그 시간을 어떻게 줄이는지도 있습니다."><meta property="og:title" content="[6년차 쯤 되면 좀 알자] 그럼 GC 는 뭔데? - 1부 -"><meta property="og:description" content="G1GC가 힙을 Region 단위로 나누는 이유와 Freelist, RSet, CSet, SATB, TAMS, Tri-Color Marking의 역할을 설명합니다. STW(Stop-The-World)가 왜 생기는지, G1GC가 그 시간을 어떻게 줄이는지도 있습니다."><meta property="og:type" content="article"><meta property="og:url" content="https://devtaco30.github.io/blog/posts/41"><meta name="twitter:card" content="summary"></head><body><noscript>You need to enable JavaScript to run this app.</noscript><div id="root"><div class="App"><div class="MuiBox-root css-kurlqb"><div class="MuiBox-root css-171onha"><button class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-1f6w95t" tabindex="0" type="button" id=":r0:"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="MenuIcon"><path d="M3 18h18v-2H3zm0-5h18v-2H3zm0-7v2h18V6z"></path></svg></button><div class="MuiBox-root css-1szb58x"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-218waq" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowBackIcon"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z"></path></svg><div class="MuiBox-root css-wq4jw1"><span>⌘+M</span></div></div></div></div><div class="MuiContainer-root css-15jb5o1" data-testid="page-container"><div class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-2 MuiGrid-spacing-md-3 css-1ht06td"><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-md-12 css-15j76c0"><div class="MuiBox-root css-15rigdj"><nav class="MuiTypography-root MuiTypography-body1 MuiBreadcrumbs-root css-1v2kxik"><ol class="MuiBreadcrumbs-ol css-51eq8m"><li class="MuiBreadcrumbs-li"><a class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways css-gj78h6" href="/blog/posts" data-discover="true">게시글 목록</a></li><li aria-hidden="true" class="MuiBreadcrumbs-separator css-1nd5pgh">/</li><li class="MuiBreadcrumbs-li"><p class="MuiTypography-root MuiTypography-body1 css-1cr0rz6">[6년차 쯤 되면 좀 알자] 그럼 GC 는 뭔데? - 1부 -</p></li></ol></nav><div class="MuiBox-root css-15djlns"><button class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-1y18wdw" tabindex="0" type="button" id=":r7:"><span class="MuiButton-icon MuiButton-startIcon MuiButton-iconSizeMedium css-1ygddt1"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowBackIcon"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z"></path></svg></span><div class="MuiBox-root css-0"><span class="MuiTypography-root MuiTypography-caption css-115rlu8">이전글</span><p class="MuiTypography-root MuiTypography-body2 css-10qk5g4">[6년차 쯤 되면 좀 알자] 그럼 GC 는 뭔데? - 2부 -</p></div></button><button class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-1k0z50p" tabindex="0" type="button" id=":r8:"><div class="MuiBox-root css-0"><span class="MuiTypography-root MuiTypography-caption css-115rlu8">다음글</span><p class="MuiTypography-root MuiTypography-body2 css-10qk5g4">[6년차 쯤 되면 좀 알자] Application 이 실행될 때 JVM 에선 어떤일이 일어날까?</p></div><span class="MuiButton-icon MuiButton-endIcon MuiButton-iconSizeMedium css-6bt4d2"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowForwardIcon"><path d="m12 4-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"></path></svg></span></button></div><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-10t0qv5" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h4 class="MuiTypography-root MuiTypography-h4 css-k5jvd2">[6년차 쯤 되면 좀 알자] 그럼 GC 는 뭔데? - 1부 -</h4><p class="MuiTypography-root MuiTypography-body1 css-104xg3">G1GC가 힙을 Region 단위로 나누는 이유와 Freelist, RSet, CSet, SATB, TAMS, Tri-Color Marking의 역할을 설명합니다. | STW(Stop-The-World)가 왜 생기는지, G1GC가 그 시간을 어떻게 줄이는지도 있습니다.</p><div class="MuiBox-root css-1prrn6n"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">JVM</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">GC</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">G1GC</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Garbage Collection</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Java</span></div></div><p class="MuiTypography-root MuiTypography-body2 css-l6pb42">2025년 12월 22일 오후 11:35</p></div><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-1i779yj" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><div class="MuiBox-root css-13lazol"><p>안녕하세요. Java/Kotlin 백엔드 개발자로서 G1GC(Garbage-First Garbage Collector)를 완벽하게 이해하는 것은 대규모 애플리케이션의 성능 최적화에 필수적입니다.</p>
+<p>본 포스팅(1부)에서는 G1GC의 기본 개념과 핵심 원리를 다룹니다. Region 구조, Freelist, RSet, CSet, SATB, TAMS, tri-color marking, Root Set, STW 등 핵심 개념들을 심층적으로 설명합니다.</p>
+<p><strong>2부에서는 실제 동작 과정(Young GC, Mixed GC, Full GC)과 실무 활용 방법을 다룹니다.</strong></p>
+<hr>
+<h2>🎯 <strong>1. G1GC가 뭔가요?</strong></h2>
+<h3>기존 GC의 문제점</h3>
+<p><strong>기존 GC (Serial, Parallel GC)는 이렇게 동작했습니다:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">전체 힙을 한 번에 수집
+  ↓
+STW 시간이 길어짐 (수백 ms ~ 수초)
+  ↓
+애플리케이션이 멈춤
+  ↓
+사용자 경험 저하
+</code></pre>
+<p><strong>예시:</strong></p>
+<ul>
+<li>힙이 8GB면 전체를 스캔해야 함</li>
+<li>살아있는 객체가 많으면 STW가 길어짐</li>
+<li>큰 힙에서는 예측 불가능한 지연 발생</li>
+</ul>
+<h3>기존 GC vs G1GC</h3>
+<p><strong>기존 GC (Serial, Parallel GC):</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">힙 구조:
+  Young Generation (연속된 메모리)
+  Old Generation (연속된 메모리)
+  
+수집 방식:
+  전체 세대를 한 번에 수집
+  → STW 시간이 길어짐 (수백 ms ~ 수초)
+</code></pre>
+<p><strong>G1GC:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">힙 구조:
+  Region 0, Region 1, Region 2, ... (작은 조각들)
+  각 Region은 Eden/Survivor/Old 역할
+  
+수집 방식:
+  쓰레기 많은 Region부터 선택적으로 수집
+  → STW 시간이 짧음 (수십 ms)
+</code></pre>
+<p><strong>비유:</strong></p>
+<ul>
+<li>기존 GC: 집 전체를 한 번에 청소 (오래 걸림)</li>
+<li>G1GC: 방별로 나눠서, 쓰레기 많은 방부터 청소 (빠름)</li>
+</ul>
+<h3>왜 Region으로 나누나요?</h3>
+<p><strong>Region으로 나누면:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">1. 작은 단위로 수집
+   → 빠른 수집 가능
+   
+2. 우선순위 정하기 쉬움
+   → 쓰레기 많은 Region부터
+   
+3. 예측 가능한 STW
+   → Region 크기만큼만 STW
+   
+4. 확장성
+   → 힙이 커져도 Region 단위로 처리
+</code></pre>
+<p><strong>예시:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">힙 크기: 8GB
+Region 크기: 2MB
+Region 개수: 약 4000개
+
+기존 GC:
+  전체 8GB 수집 → STW 수백 ms ~ 수초
+  
+G1GC:
+  Region 10개만 수집 (20MB) → STW 수십 ms
+  쓰레기 많은 Region부터 우선 수집
+</code></pre>
+<hr>
+<h2>🏗️ <strong>2. Region이 뭔가요?</strong></h2>
+<h3>Region = 힙을 나눈 작은 조각</h3>
+<p><strong>⚠️ Region은 G1GC의 핵심입니다!</strong></p>
+<p><strong>힙을 작은 조각으로 나눕니다:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">전체 힙 (예: 8GB)
+  ↓
+Region으로 분할 (각 Region: 2MB)
+  ↓
+Region 0, Region 1, Region 2, ... Region 4000개
+</code></pre>
+<p><strong>기존 GC와의 차이:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">기존 GC (Serial, Parallel):
+  힙 = Young Generation (연속) + Old Generation (연속)
+  → 세대별로 연속된 메모리 공간
+  
+G1GC:
+  힙 = Region 0 + Region 1 + Region 2 + ...
+  → 작은 조각들로 나눔
+  → 각 Region이 Eden/Survivor/Old 역할 가능
+</code></pre>
+<p><strong>⚠️ 핵심: Eden, Survivor, Old는 Region의 '상태'입니다!</strong></p>
+<p><strong>Region은 물리적인 메모리 조각이고, Eden/Survivor/Old는 그 Region의 현재 역할(상태)입니다.</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">┌─────────────────────────────────────┐
+│  Region의 상태 (역할)                 │
+├─────────────────────────────────────┤
+│  1. Eden 상태                       │
+│     → 새로 만든 객체가 들어감        │
+│     (예: new A(), new B())          │
+│                                     │
+│  2. Survivor 상태                   │
+│     → GC에서 살아남은 객체가 이동    │
+│                                     │
+│  3. Old 상태                        │
+│     → 오래 살아남은 객체가 이동      │
+│                                     │
+│  4. Humongous 상태                  │
+│     → 엄청 큰 객체 (Region 크기의    │
+│        50% 이상)                     │
+│                                     │
+│  5. Free 상태                       │
+│     → 빈 Region (Freelist에 있음)    │
+└─────────────────────────────────────┘
+</code></pre>
+<p><strong>⚠️ 중요한 점: Region의 상태는 계속 바뀝니다!</strong></p>
+<p><strong>Region의 생명주기:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">1. Free 상태 (빈 Region)
+   ↓
+2. Eden 상태로 변경 (새 객체 할당)
+   ↓
+3. GC 발생 → 살아있는 객체는 Survivor로 이동
+   ↓
+4. 빈 Region이 됨 (Free 상태)
+   ↓
+5. 다시 Eden 상태로 사용
+   ↓
+6. 여러 번 GC에서 살아남으면 Old 상태로 변경
+   ↓
+7. Old Region 수집 → 다시 Free 상태
+   ↓
+8. 다시 Eden 상태로 사용 가능
+</code></pre>
+<p><strong>비유:</strong></p>
+<ul>
+<li>Region = 방</li>
+<li>Eden/Survivor/Old = 방의 용도 (거실, 침실, 서재)</li>
+<li>방의 용도는 필요에 따라 바뀜!</li>
+</ul>
+<p><strong>실제 예시:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">시작:
+  Region 0: Free 상태
+  
+객체 할당:
+  Region 0: Eden 상태 (A 객체 할당)
+  Region 1: Eden 상태 (B 객체 할당)
+  
+GC 발생:
+  A 객체 살아있음 → Region 2 (Survivor 상태)로 이동
+  B 객체 가비지 → 수집
+  Region 0: Free 상태 (다시 사용 가능)
+  Region 1: Free 상태
+  
+다시 객체 할당:
+  Region 0: Eden 상태 (C 객체 할당)
+  
+여러 번 GC에서 살아남:
+  Region 2: Old 상태로 변경
+</code></pre>
+<p><strong>기존 GC와의 차이:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">기존 GC:
+  Eden 영역 = 고정된 메모리 공간
+  Old 영역 = 고정된 메모리 공간
+  → 물리적으로 분리됨
+  
+G1GC:
+  Eden Region = 현재 Eden 상태인 Region들
+  Old Region = 현재 Old 상태인 Region들
+  → 물리적으로 분리되지 않음
+  → Region의 상태만 다름
+</code></pre>
+<h3>⚠️ Region이 흩어져 있는데 찾는 게 느리지 않나요?</h3>
+<p><strong>걱정하지 마세요! G1GC는 Region들을 상태별로 연결 리스트로 관리합니다.</strong></p>
+<p><strong>핵심: 탐색이 아니라 리스트 순회입니다!</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">물리적: Region들이 메모리에 흩어져 있음
+논리적: 상태별 연결 리스트로 관리
+  - Eden Region 리스트
+  - Survivor Region 리스트  
+  - Old Region 리스트
+  - Freelist (Free Region 리스트)
+
+GC 시: 리스트를 순회하면서 처리 (빠름)
+</code></pre>
+<p><strong>왜 Region으로 나눌까요?</strong></p>
+<ol>
+<li><strong>빠른 수집</strong>: 작은 Region만 수집하면 빠름</li>
+<li><strong>예측 가능</strong>: Region 크기만큼만 STW 발생</li>
+<li><strong>우선순위</strong>: 쓰레기 많은 Region부터 수집 (Garbage-First!)</li>
+<li><strong>확장성</strong>: 힙이 커져도 Region 단위로 처리</li>
+</ol>
+<hr>
+<h2>🔑 <strong>3. 핵심 개념들 이해하기</strong></h2>
+<h3>3-1. Freelist (빈 Region 목록)</h3>
+<p><strong>Freelist는 "사용 가능한 빈 Region들의 연결 리스트"입니다.</strong></p>
+<p><strong>비유:</strong></p>
+<ul>
+<li>아파트의 빈 방 목록</li>
+<li>새 입주자가 오면 목록에서 방 배정</li>
+</ul>
+<p><strong>동작:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">1. 새 객체 생성
+   ↓
+2. Freelist에서 빈 Region 찾기
+   ↓
+3. Region을 Eden 상태로 변경하고 객체 할당
+   ↓
+4. GC 후 Region이 비면 Freelist에 다시 추가
+</code></pre>
+<p><strong>예시:</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-java">A a = new A();  // Freelist에서 Region 가져와서 할당
+B b = new B();  // 또 다른 Region에서 할당
+</code></pre></pre>
+<h3>3-2. RSet (Remembered Set) - 가장 중요!</h3>
+<p><strong>⚠️ RSet은 "다른 Region에서 나를 참조하는 객체를 기억하는 메모장"입니다!</strong></p>
+<p><strong>왜 필요한가요?</strong></p>
+<p><strong>문제 상황:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">Region A (Old)에 객체 A가 있음
+  ↓
+객체 A가 Region B (Eden)의 객체 B를 참조함
+  ↓
+Region B만 GC하면?
+  → 객체 B는 가비지인가요? 살아있나요?
+</code></pre>
+<p><strong>답: 살아있어요!</strong> Region A의 객체 A가 참조하고 있으니까요.</p>
+<p><strong>하지만 문제:</strong></p>
+<ul>
+<li>Region B만 스캔하면 Region A의 참조를 모름</li>
+<li>객체 B를 잘못 수집할 수 있음</li>
+</ul>
+<p><strong>해결책: RSet</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">Region B의 RSet:
+  "Region A의 객체 A가 나를 참조하고 있어요!"
+  
+Region B GC 시:
+  1. Region B 내부 객체 확인
+  2. RSet 확인 → Region A의 객체 A가 참조 중
+  3. 객체 B는 살아있음으로 판단
+</code></pre>
+<p><strong>비유:</strong></p>
+<ul>
+<li>RSet = "누가 나를 좋아하는지 기록한 메모장"</li>
+<li>GC 시 이 메모장을 확인해서 잘못 수집하지 않음</li>
+</ul>
+<p><strong>실제 예시:</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-java">// Region A (Old)에 저장됨
+static A a = new A();
+
+// main 메서드에서
+A localA = a;  // Region A의 객체를 참조
+
+// Region A만 GC하면?
+// → Stack의 localA가 참조하고 있으니 살아있음
+// → RSet에 이 정보가 기록됨
+</code></pre></pre>
+<h3>3-3. CSet (Collection Set)</h3>
+<p><strong>CSet은 "이번에 수집할 Region 목록"입니다.</strong></p>
+<p><strong>비유:</strong></p>
+<ul>
+<li>오늘 청소할 방 목록</li>
+<li>쓰레기 많은 방부터 우선순위 정함</li>
+</ul>
+<p><strong>선택 기준:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">1. 쓰레기(가비지) 비율이 높은 Region
+2. STW 시간 내에 수집 가능한 Region
+3. 살아있는 객체가 적은 Region (복사 비용 적음)
+</code></pre>
+<p><strong>예시:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">Region 0: 가비지 80% → CSet에 포함
+Region 1: 가비지 20% → CSet에 제외 (나중에)
+Region 2: 가비지 90% → CSet에 포함 (우선순위 높음)
+</code></pre>
+<h3>3-4. SATB (Snapshot-At-The-Beginning)</h3>
+<p><strong>⚠️ SATB는 "Marking 시작할 때의 상태를 사진으로 찍어두는 것"입니다!</strong></p>
+<p><strong>왜 필요한가요?</strong></p>
+<p><strong>문제 상황:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">Marking 시작:
+  A → B → C (모두 살아있음)
+  
+Marking 중 (애플리케이션도 실행 중):
+  A → B 참조 제거 (애플리케이션이 변경)
+  B는 이제 가비지가 되어야 함
+  
+하지만 이미 B를 마킹했음
+→ B를 수집하지 않음
+→ Floating Garbage (일시적 가비지)
+</code></pre>
+<p><strong>⚠️ SATB의 트레이드오프:</strong></p>
+<p><strong>SATB는 안전성을 위해 정확성을 포기합니다:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">1. Marking 시작 시점 스냅샷 찍기
+   "이 시점에 A → B → C 모두 살아있어요"
+   
+2. Marking 중 참조 변경 발생
+   → 변경 전 상태를 SATB Queue에 기록
+   
+3. Marking 완료 후
+   → 스냅샷 시점에 살아있던 객체는 모두 마킹
+   → 실제로는 가비지가 된 객체도 살려둠
+   → Floating Garbage 발생
+</code></pre>
+<p><strong>⚠️ 왜 공간 낭비를 허용하나요?</strong></p>
+<p><strong>핵심: 두 가지 선택지가 있습니다:</strong></p>
+<p><strong>선택 1: SATB (현재 방식) - 안전성 우선</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">Floating Garbage 허용
+  → 일시적 메모리 낭비 (비치명적)
+  → 다음 GC에서 수집됨
+  → 프로그램 안정성 보장
+</code></pre>
+<p><strong>선택 2: 정확하게 수집하려면?</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">살아있는 객체를 잘못 수집
+  → 프로그램 크래시 💥 (치명적)
+  → 데이터 손실
+  → 서비스 중단
+</code></pre>
+<p><strong>비유:</strong></p>
+<ul>
+<li><strong>SATB</strong>: "의심스러운 물건은 일단 보관" (안전)</li>
+<li><strong>정확하게 수집</strong>: "의심스러운 물건도 버림" (위험)</li>
+</ul>
+<p><strong>왜 이렇게 하나요?</strong></p>
+<p><strong>1. 치명적 오류 vs 일시적 낭비:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">살아있는 객체 수집 → 프로그램 크래시 💥
+  vs
+Floating Garbage → 메모리 일시적 낭비 (다음 GC에서 수집)
+</code></pre>
+<p><strong>2. 다음 GC에서 수집됨:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">이번 GC:
+  B는 Floating Garbage로 남음 (일시적)
+  
+다음 GC:
+  B는 마킹되지 않음
+  → 정상적으로 수집됨
+</code></pre>
+<p><strong>3. 실제로는 큰 문제 아님:</strong></p>
+<ul>
+<li>Floating Garbage는 보통 전체 힙의 작은 비율</li>
+<li>다음 GC에서 바로 수집됨</li>
+<li>메모리 부족 문제는 거의 발생하지 않음</li>
+</ul>
+<p><strong>비유:</strong></p>
+<ul>
+<li>사진 찍을 때: "찍는 순간의 모습을 기록"</li>
+<li>나중에 변경되어도: "사진 속 모습은 그대로"</li>
+<li>일부는 이미 버려진 물건이지만, 안전하게 보관</li>
+<li>다음 정리 때 버리면 됨</li>
+</ul>
+<p><strong>실제 동작:</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-java">// Marking 시작 시점
+A a = new A();
+B b = new B();
+a.ref = b;  // A가 B 참조
+
+// Marking 중
+a.ref = null;  // 참조 제거
+// → 이전 참조(a.ref = b)를 SATB Queue에 기록
+
+// Marking 완료 후
+// → SATB Queue 처리: B는 살아있음으로 마킹
+// → 하지만 실제로는 B는 가비지 (Floating Garbage)
+// → 다음 GC에서 수집됨
+</code></pre></pre>
+<p><strong>⚠️ 중요한 점:</strong></p>
+<ul>
+<li><strong>Floating Garbage는 정상적인 현상입니다</strong></li>
+<li><strong>안전성을 위한 트레이드오프입니다</strong></li>
+<li><strong>다음 GC에서 수집되므로 문제 없습니다</strong></li>
+</ul>
+<h3>3-5. TAMS (Top-At-Mark-Start)</h3>
+<p><strong>⚠️ TAMS는 "Marking 시작할 때의 Region 메모리 위치(포인터)를 기록하는 것"입니다!</strong></p>
+<p><strong>핵심:</strong></p>
+<ul>
+<li><strong>시간이 아니라 메모리 주소를 기록합니다!</strong></li>
+<li>객체 자체에 시간이 기록되는 게 아니라, Region의 TAMS 포인터와 객체의 메모리 주소를 비교합니다.</li>
+</ul>
+<p><strong>왜 필요한가요?</strong></p>
+<p><strong>문제:</strong></p>
+<ul>
+<li>Marking 중에도 새 객체가 계속 생성됨</li>
+<li>새 객체는 자동으로 살아있음 (방금 만들었으니까)</li>
+<li>새 객체를 일일이 마킹할 필요 없음</li>
+</ul>
+<p><strong>해결책: TAMS</strong></p>
+<p><strong>⚠️ Region 내부는 연속된 메모리 공간입니다!</strong></p>
+<p><strong>Region 내부 메모리 구조:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">Region (연속된 메모리 공간, 예: 2MB)
+┌─────────────────────────────────────┐
+│  [기존 객체들]                        │
+│  주소: 0x1000 → 0x1500 → 0x2000    │
+│  (오름차순, 낮은 주소부터 할당)       │
+│  ← TAMS = 0x2000 (Marking 시작 시점) │
+│  [Marking 중 새로 만든 객체들]        │
+│  주소: 0x2000 → 0x2500 → 0x3000    │
+│  (오름차순, 계속 증가)                │
+│  ← Top = 0x3000 (현재 할당 위치)      │
+└─────────────────────────────────────┘
+
+메모리 주소: 오름차순 (낮은 주소 → 높은 주소)
+할당 순서: 먼저 할당된 객체가 낮은 주소
+</code></pre>
+<p><strong>⚠️ 핵심:</strong></p>
+<ul>
+<li><strong>Region 내부는 연속된 메모리 공간</strong></li>
+<li><strong>메모리 주소는 오름차순 (낮은 주소 → 높은 주소)</strong></li>
+<li><strong>새 객체 할당 시 Top 포인터가 증가 (주소가 커짐)</strong></li>
+<li><strong>TAMS는 특정 주소 위치를 기록</strong></li>
+</ul>
+<p><strong>비교 방식:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">객체 주소 &lt; TAMS → Marking 대상 (기존 객체)
+객체 주소 &gt;= TAMS → 자동 살아있음 (새 객체)
+</code></pre>
+<p><strong>왜 이렇게 동작하나요?</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">1. Region은 연속된 메모리 공간
+2. 객체 할당 시 낮은 주소부터 순차적으로 할당
+3. Top 포인터가 증가하면서 주소가 커짐
+4. TAMS는 Marking 시작 시점의 Top 위치 기록
+5. 이후 할당된 객체는 주소가 TAMS보다 큼
+</code></pre>
+<p><strong>⚠️ 중요한 점:</strong></p>
+<ol>
+<li>
+<p><strong>TAMS는 메모리 주소(포인터)입니다</strong></p>
+<ul>
+<li>시간이 아니라 메모리 위치를 기록</li>
+<li>Region 내부의 할당 위치를 가리키는 포인터</li>
+</ul>
+</li>
+<li>
+<p><strong>객체에 시간이 기록되지 않습니다</strong></p>
+<ul>
+<li>객체 자체에는 시간 정보 없음</li>
+<li>객체의 메모리 주소와 TAMS 포인터를 비교</li>
+</ul>
+</li>
+<li>
+<p><strong>비교 방식:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">객체 주소 &lt; TAMS → Marking 대상 (기존 객체)
+객체 주소 &gt;= TAMS → 자동 살아있음 (새 객체)
+</code></pre>
+</li>
+</ol>
+<p><strong>비유:</strong></p>
+<ul>
+<li>책상 정리 시작 시점에 <strong>위치에 선 긋기</strong> (시간이 아니라 위치)</li>
+<li>그 선 이후에 올려둔 물건은 "최근 것"이라 자동으로 살아있음</li>
+<li>물건 자체에 시간이 기록되는 게 아니라, 위치로 판단</li>
+</ul>
+<p><strong>예시:</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-java">// Marking 시작 (TAMS = 현재 Top 위치 기록)
+// 예: TAMS = 0x2000
+
+A a = new A();  
+// 객체 주소: 0x1000
+// 0x1000 &lt; 0x2000 (TAMS 이전)
+// → Marking 대상 (기존 객체)
+
+// Marking 중
+B b = new B();  
+// 객체 주소: 0x2500
+// 0x2500 &gt;= 0x2000 (TAMS 이후)
+// → 자동으로 살아있음 (마킹 불필요, 새 객체)
+</code></pre></pre>
+<p><strong>⚠️ TAMS는 모든 Region 타입에 적용됩니다:</strong></p>
+<ul>
+<li><strong>Eden Region</strong>: 새 객체 할당 시 TAMS 이후</li>
+<li><strong>Survivor Region</strong>: 객체 복사 시 TAMS 이후</li>
+<li><strong>Old Region</strong>: 객체 승격 시 TAMS 이후</li>
+</ul>
+<p><strong>핵심 정리:</strong></p>
+<ul>
+<li>TAMS = 메모리 주소(포인터), 시간 아님</li>
+<li>객체 주소와 TAMS 비교로 새/기존 객체 구분</li>
+<li>TAMS 이후 객체 = 자동 살아있음 (마킹 불필요)</li>
+</ul>
+<h3>3-6. Tri-Color Marking (3색 마킹)</h3>
+<p><strong>⚠️ 마킹은 "살아있는 객체를 표시하는 것"입니다! (살리는 마킹)</strong></p>
+<p><strong>⚠️ 핵심: 마킹된 객체는 모두 살아있습니다!</strong></p>
+<p><strong>마킹의 의미:</strong></p>
+<ul>
+<li><strong>마킹된 객체 (Gray, Black) = 살아있음 = 수집 안됨</strong></li>
+<li><strong>마킹되지 않은 객체 (White) = 가비지 = 수집 대상</strong></li>
+</ul>
+<p><strong>Tri-Color Marking은 객체를 3가지 색으로 구분합니다:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">┌─────────────────────────────────────┐
+│  White (흰색)                        │
+│  → 아직 확인 안함                    │
+│  → 가비지 후보 (마킹 안됨)            │
+│  → 수집됨                            │
+│                                     │
+│  Gray (회색)                         │
+│  → 확인했는데 자식은 아직 안봄       │
+│  → 처리 대기 중 (마킹 중)            │
+│  → 살아있음, 수집 안됨               │
+│                                     │
+│  Black (검은색)                     │
+│  → 확인했고 자식도 다 확인함          │
+│  → 살아있음 확정 (마킹 완료)          │
+│  → 살아있음, 수집 안됨               │
+└─────────────────────────────────────┘
+</code></pre>
+<p><strong>⚠️ 중요한 점:</strong></p>
+<ol>
+<li>
+<p><strong>Gray와 Black은 모두 살아있습니다</strong></p>
+<ul>
+<li>Gray: 마킹 중이지만 살아있음 (수집 안됨)</li>
+<li>Black: 마킹 완료, 살아있음 확정 (수집 안됨)</li>
+</ul>
+</li>
+<li>
+<p><strong>White만 수집됩니다</strong></p>
+<ul>
+<li>White: 마킹 안됨, 가비지 (수집됨)</li>
+</ul>
+</li>
+<li>
+<p><strong>마킹 = 살아있음 보장</strong></p>
+<ul>
+<li>마킹된 객체는 절대 수집되지 않음</li>
+<li>안전성 보장</li>
+</ul>
+</li>
+</ol>
+<p><strong>Marking 과정 (살아있는 객체 찾기):</strong></p>
+<p><strong>⚠️ Root Set이 뭔가요?</strong></p>
+<p><strong>Root Set은 "GC의 시작점이 되는 참조들의 집합"입니다!</strong></p>
+<p><strong>Root Set의 구성:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">┌─────────────────────────────────────┐
+│  Root Set (GC의 시작점)               │
+├─────────────────────────────────────┤
+│  1. Stack의 지역 변수                │
+│     예: main 메서드의 A a = new A() │
+│                                     │
+│  2. Static 변수                     │
+│     예: A.STR = "ABC"               │
+│                                     │
+│  3. JNI 참조                        │
+│     네이티브 코드에서 참조하는 객체   │
+│                                     │
+│  4. 활성 스레드                     │
+│     실행 중인 스레드가 참조하는 객체 │
+└─────────────────────────────────────┘
+</code></pre>
+<p><strong>왜 Root Set이 필요한가요?</strong></p>
+<p><strong>⚠️ 핵심: Root Set에서 도달 가능한 객체 = 살아있는 객체</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">Root Set
+  ↓
+객체 A (도달 가능, 살아있음)
+  ↓
+객체 B (도달 가능, 살아있음)
+  ↓
+객체 C (도달 가능, 살아있음)
+
+객체 D (도달 불가능, 가비지) ← 수집됨
+객체 E (도달 불가능, 가비지) ← 수집됨
+</code></pre>
+<p><strong>⚠️ 중요한 점:</strong></p>
+<ol>
+<li><strong>Root Set에서 도달 가능 = 마킹됨 = 살아있음 = 수집 안됨</strong></li>
+<li><strong>Root Set에서 도달 불가능 = 마킹 안됨 = 가비지 = 수집됨</strong></li>
+</ol>
+<p><strong>비유:</strong></p>
+<ul>
+<li>Root Set = 책장 정리의 시작점</li>
+<li>시작점에서 연결된 책 = 살아있는 책 (마킹됨, 수집 안됨)</li>
+<li>연결 안 된 책 = 버릴 책 (마킹 안됨, 수집됨)</li>
+</ul>
+<p><strong>⚠️ 혼동하기 쉬운 부분:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">❌ 잘못된 이해:
+  "참조가 안되면 수집 안됨"
+  
+✅ 올바른 이해:
+  "참조가 안되면 가비지 = 수집됨"
+  "참조가 되면 살아있음 = 수집 안됨"
+</code></pre>
+<p><strong>Marking 과정:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">1. 시작: 모든 객체 = White (마킹 안됨)
+
+2. Root Set 확인:
+   Root Set에서 참조하는 객체들 = Gray (마킹 시작, 살아있음)
+
+3. 반복:
+   - Gray 객체 하나 선택
+   - 자식 객체들 확인
+     * White → Gray로 변경 (마킹, 살아있음)
+   - 현재 객체 = Black (마킹 완료, 살아있음 확정)
+
+4. 완료:
+   - White = 가비지 (Root Set에서 도달 불가능, 마킹 안됨, 수집됨)
+   - Gray, Black = 살아있음 (Root Set에서 도달 가능, 마킹됨, 수집 안됨)
+</code></pre>
+<p><strong>⚠️ 핵심 정리:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">Root Set에서 도달 가능
+  → 마킹됨 (Gray 또는 Black)
+  → 살아있음
+  → 수집 안됨 ✅
+
+Root Set에서 도달 불가능
+  → 마킹 안됨 (White)
+  → 가비지
+  → 수집됨 ✅
+</code></pre>
+<p><strong>비유:</strong></p>
+<ul>
+<li>White: 아직 안 본 책 (마킹 안됨, 수집됨)</li>
+<li>Gray: 읽는 중인 책 (마킹 중, 살아있음, 수집 안됨)</li>
+<li>Black: 다 읽은 책 (마킹 완료, 살아있음, 수집 안됨)</li>
+</ul>
+<p><strong>예시:</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-java">public static void main(String[] args) {
+    A a = new A();  // White (마킹 안됨)
+    B b = new B();  // White (마킹 안됨)
+    C c = new C();  // White (마킹 안됨, 참조 없음)
+    a.ref = b;      // A가 B 참조
+}
+
+// Root Set 확인:
+// 1. Stack의 지역 변수: a (main 메서드)
+// 2. Static 변수: A.STR, A.l, A.c 등
+
+// Root Set에서 발견:
+a = Gray (Root Set에서 발견, 마킹 시작, 살아있음)
+  ↓
+a의 자식 확인: a.ref = b
+b = Gray (White → Gray, 마킹, 살아있음)
+a = Black (마킹 완료, 살아있음 확정)
+  ↓
+b의 자식 확인: 없음
+b = Black (마킹 완료, 살아있음 확정)
+  ↓
+결과: 
+  - a: Black (Root Set에서 도달 가능, 마킹됨, 살아있음, 수집 안됨)
+  - b: Black (Root Set에서 도달 가능, 마킹됨, 살아있음, 수집 안됨)
+  - c: White (Root Set에서 도달 불가능, 마킹 안됨, 가비지, 수집됨)
+</code></pre></pre>
+<p><strong>⚠️ 최종 정리:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">Root Set에서 도달 가능
+  → 마킹됨 (Gray 또는 Black)
+  → 살아있음
+  → 수집 안됨 ✅
+
+Root Set에서 도달 불가능
+  → 마킹 안됨 (White)
+  → 가비지
+  → 수집됨 ✅
+</code></pre>
+<p><strong>비유:</strong></p>
+<ul>
+<li>Root Set = 책장 정리의 시작점</li>
+<li>시작점에서 연결된 책 = 살아있는 책 (마킹됨, 수집 안됨)</li>
+<li>연결 안 된 책 = 버릴 책 (마킹 안됨, 수집됨)</li>
+</ul>
+<p><strong>⚠️ 핵심 정리:</strong></p>
+<ul>
+<li><strong>마킹된 객체 (Gray, Black) = 모두 살아있음, 수집 안됨</strong></li>
+<li><strong>마킹 안된 객체 (White) = 가비지, 수집됨</strong></li>
+<li><strong>마킹 = 살아있음 보장</strong></li>
+</ul>
+<hr>
+<h2>🛑 <strong>4. STW가 뭔가요? 왜 생기나요?</strong></h2>
+<h3>STW란?</h3>
+<p><strong>STW(Stop-the-World)는 GC가 실행되는 동안 애플리케이션 스레드를 모두 일시 정지시키는 현상입니다.</strong></p>
+<p><strong>쉽게 말하면:</strong></p>
+<ul>
+<li>GC가 일할 때 애플리케이션이 잠시 멈춤</li>
+<li>사용자 요청 처리 중단</li>
+<li>모든 스레드가 일시 정지</li>
+</ul>
+<p><strong>비유:</strong></p>
+<ul>
+<li>도서관 정리 시간에 모든 사람이 나가야 함</li>
+<li>정리하는 동안에는 책을 빌리거나 반납할 수 없음</li>
+<li>정리 끝나면 다시 이용 가능</li>
+</ul>
+<p><strong>실제로는:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">애플리케이션 실행 중...
+  ↓
+GC 시작 (STW 발생)
+  ↓
+모든 스레드 일시 정지 ⏸️
+  ↓
+GC 작업 수행
+  ↓
+GC 완료 (STW 해제)
+  ↓
+애플리케이션 재개 ▶️
+</code></pre>
+<h3>왜 멈춰야 하나요? (왜 STW가 생기나요?)</h3>
+<p><strong>핵심 이유: GC가 메모리를 안전하게 수집하려면 애플리케이션이 메모리를 변경하면 안 되기 때문입니다!</strong></p>
+<h4>이유 1: 객체 그래프 일관성 보장</h4>
+<p><strong>문제 상황 - STW 없이 GC를 하면:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">시나리오:
+1. GC가 객체 A를 확인 중
+   A → B 참조 확인
+   "B는 살아있네요"
+   
+2. 동시에 애플리케이션이 실행 중
+   A → B 참조 제거
+   C → B 참조 추가
+   
+3. GC는 A → B만 봤으니
+   "B는 가비지네요" (잘못된 판단!)
+   
+4. 실제로는 C → B로 살아있는데
+   B를 수집해버림
+   → 프로그램 오류! 💥
+</code></pre>
+<p><strong>해결책: STW</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">1. 애플리케이션 멈춤 (STW)
+2. 객체 그래프가 변경되지 않음
+3. GC가 안전하게 확인
+4. GC 완료 후 애플리케이션 재개
+</code></pre>
+<p><strong>비유:</strong></p>
+<ul>
+<li>사진 찍을 때: 움직이면 흐릿해짐</li>
+<li>GC도 마찬가지: 메모리가 변경되면 잘못된 판단</li>
+</ul>
+<h4>이유 2: Root Set 안정성</h4>
+<p><strong>Root Set은 GC의 시작점입니다:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">Root Set (살아있는 객체의 출발점):
+  - Stack의 지역 변수
+    예: main 메서드의 A a = new A();
+  - Static 변수
+    예: A.STR = "ABC"
+  - JNI 참조
+</code></pre>
+<p><strong>STW 없이 하면:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">GC가 Root Set 확인 중:
+  Stack: a → A 객체 확인
+  
+동시에 애플리케이션 실행:
+  메서드 종료 → Stack에서 a 제거
+  새 메서드 시작 → Stack에 b 추가
+  
+GC는 혼란:
+  "어? a는 없어졌는데?"
+  "b는 뭐지?"
+  → 잘못된 가비지 판단
+</code></pre>
+<p><strong>해결책: STW</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">1. 애플리케이션 멈춤
+2. Stack이 변경되지 않음
+3. Root Set이 안정적
+4. GC가 정확하게 판단
+</code></pre>
+<p><strong>비유:</strong></p>
+<ul>
+<li>책장 정리 시작점이 계속 바뀌면 정리 불가능</li>
+<li>Root Set도 마찬가지로 안정적이어야 함</li>
+</ul>
+<h4>이유 3: 메모리 할당 안전성</h4>
+<p><strong>GC 중 메모리 할당 시 문제:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">GC가 Region A를 수집 중:
+  1. Region A의 객체들 확인
+  2. 가비지 수집 준비
+  
+동시에 애플리케이션 실행:
+  new C() 호출
+  → Region A에 할당 시도
+  
+결과:
+  수집 중인 Region에 할당
+  → 메모리 오류! 💥
+  → 프로그램 크래시
+</code></pre>
+<p><strong>해결책: STW</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">1. 애플리케이션 멈춤
+2. 메모리 할당 중단
+3. GC가 안전하게 수집
+4. 수집 완료 후 할당 재개
+</code></pre>
+<p><strong>비유:</strong></p>
+<ul>
+<li>집 수리 중에 가구를 옮기면 위험</li>
+<li>GC도 마찬가지로 수집 중 할당하면 위험</li>
+</ul>
+<h3>STW가 없으면 어떻게 될까요?</h3>
+<p><strong>만약 STW가 없다면:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">1. GC가 객체 확인 중
+2. 애플리케이션이 객체 변경
+3. GC가 잘못된 정보로 판단
+4. 살아있는 객체를 수집
+5. 프로그램 오류 발생 💥
+</code></pre>
+<p><strong>결론: STW는 필수입니다!</strong></p>
+<ul>
+<li>안전한 GC를 위해 반드시 필요</li>
+<li>다만 시간을 최소화하는 것이 중요</li>
+</ul>
+<h3>G1GC는 STW를 최소화합니다</h3>
+<p><strong>STW는 필수지만, 시간을 최소화할 수 있습니다!</strong></p>
+<p><strong>G1GC의 STW 최소화 전략:</strong></p>
+<h4>1. 동시 Marking (Concurrent Marking)</h4>
+<p><strong>대부분의 작업을 애플리케이션과 동시에 실행:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">STW 단계 (짧음):
+  Initial Mark: Root Set만 확인 (수 ms)
+  
+동시 실행 (STW 없음):
+  Concurrent Marking: 객체 그래프 탐색
+  → 애플리케이션이 계속 실행됨
+  
+STW 단계 (짧음):
+  Remark: 최종 확인 (수 ms)
+  Evacuation: 객체 복사 (수십 ms)
+</code></pre>
+<p><strong>비유:</strong></p>
+<ul>
+<li>기존 GC: 도서관 전체를 닫고 정리 (오래 걸림)</li>
+<li>G1GC: 도서관 열어두고 조용히 정리 (빠름)</li>
+</ul>
+<h4>2. Region 단위 수집</h4>
+<p><strong>전체 힙을 한 번에 수집하지 않음:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">기존 GC:
+  전체 힙 수집 (8GB) → STW 수백 ms ~ 수초
+  
+G1GC:
+  Region 단위 수집 (2MB씩) → STW 수십 ms
+</code></pre>
+<p><strong>비유:</strong></p>
+<ul>
+<li>기존 GC: 집 전체를 한 번에 청소</li>
+<li>G1GC: 방별로 조금씩 청소</li>
+</ul>
+<h4>3. 예측 가능한 STW</h4>
+<p><strong>목표 시간을 설정할 수 있음:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">-XX:MaxGCPauseMillis=200
+
+→ STW 시간을 200ms 이하로 유지하려고 노력
+→ 목표 시간 내에 수집 가능한 Region만 선택
+</code></pre>
+<p><strong>하지만 완전히 없앨 수는 없어요:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">반드시 STW가 필요한 단계:
+1. Initial Mark: Root Set 확인 (STW 필요)
+   → 시작점을 안정적으로 잡아야 함
+   
+2. Remark: 최종 확인 (STW 필요)
+   → 동시 Marking 중 변경사항 최종 확인
+   
+3. Evacuation: 객체 복사 (STW 필요)
+   → 객체 이동 중 참조 변경하면 안 됨
+</code></pre>
+<p><strong>STW 시간 비교:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">Serial GC:     수백 ms ~ 수초
+Parallel GC:   수십 ms ~ 수백 ms
+G1GC:          수 ms ~ 수십 ms (목표 설정 가능)
+ZGC/Shenandoah: 수 ms 이하 (거의 동시)
+</code></pre>
+<p><strong>결론:</strong></p>
+<ul>
+<li>STW는 안전한 GC를 위해 필수</li>
+<li>G1GC는 STW 시간을 최소화</li>
+<li>하지만 완전히 제거할 수는 없음</li>
+</ul>
+<hr></div></div><div class="MuiBox-root css-1cpq4zq"><hr class="MuiDivider-root MuiDivider-fullWidth css-7jtdmc"><h5 class="MuiTypography-root MuiTypography-h5 css-85yo2n">같은 카테고리의 다른 글</h5><div class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-2 css-1eikg3m"><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] Serializable 깊이 파기 — Part 2: 바이트에서 다시 객체로, 그리고 함정들</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">직렬화된 바이트를 ObjectInputStream이 어떤 순서로 읽어 객체로 복원하는지, 그때 생성자가 호출되지 않는다는 점을 확인합니다. | serialVersionUID, transient, 커스텀 readObject·writeObject, 역직렬화 취약점, Java 직렬화의 현재로 마무리합니다.</p><div class="MuiBox-root css-107ld1r"></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 4월 5일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] Serializable 깊이 파기 — Part 1: 객체가 바이트가 되는 과정</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">Python이나 JavaScript와 달리 Java는 왜 Serializable을 선언해야 하는지, 메서드가 하나도 없는 이 인터페이스가 무슨 일을 하는지 묻는 글입니다. | ObjectOutputStream이 만든 실제 바이트를 열어 보고, 참조 객체가 들어 있을 때는 어떻게 되는지 확인합니다.</p><div class="MuiBox-root css-107ld1r"></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 4월 5일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] 주식 거래 엔진 직접 만들기 - Part 3: 오더북을 어떻게 구현할 것인가</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">주식 거래 엔진의 오더북을 TreeMap과 ArrayDeque 조합으로 만든 이유를, PriorityQueue, LinkedList, Skip List와 비교하며 설명합니다. | 주문 취소를 Lazy Removal로 처리한 방법과 Kafka를 연결하며 만난 멱등성 문제를 마지막에 둡니다.</p><div class="MuiBox-root css-107ld1r"></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 27일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] 주식 거래 엔진 직접 만들기 - Part 2: Phase 1 — 모놀리식으로 시작하기</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">단일 JAR 모놀리식 구조인 Phase 1에서 만난 문제를 차례로 다룹니다. | SELECT FOR UPDATE로 동시성을 해결했고, 락 보유 시간을 줄이고, 락 획득 순서를 통일해 데드락 위험을 없앴습니다. @Transactional 원칙과 Lazy Loading 함정도 짚습니다.</p><div class="MuiBox-root css-107ld1r"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Java</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Spring Boot</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">JPA</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">+2</span></div></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 27일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] 주식 거래 엔진 직접 만들기 - Part 1: 왜 주식 거래 엔진인가</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">F-lab 멘토링 프로젝트로 주식 거래 엔진을 직접 설계하고 구현한 과정을 기록하는 시리즈의 첫 글입니다. | 프로젝트를 고른 기준과 멀티모듈 구조, Phase 로드맵, 시리즈 전체에서 답할 질문들을 먼저 밝힙니다.</p><div class="MuiBox-root css-107ld1r"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Java</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Spring Boot</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Kafka</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">+5</span></div></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 27일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[개발자가 직접 써봤어요] Claude Code 완전 가이드: 설치부터 멀티에이전트까지</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">Claude Code를 Spring Boot와 Kafka 기반 주식 매매 엔진 프로젝트에 적용해 본 경험을 바탕으로, 설치부터 멀티에이전트까지 소개합니다. | CLAUDE.md, Skills, Subagents, Hooks, MCP, Agent Teams의 여섯 레이어와 Cursor AI와의 비교, 주의사항이 나옵니다.</p><div class="MuiBox-root css-107ld1r"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Claude Code</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">AI</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Developer Tools</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">+4</span></div></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 9일</span></div></div></div></div><div class="MuiBox-root css-1b94f21"><a class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways css-104ms0" href="/blog/posts" data-discover="true"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowBackIcon"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z"></path></svg>게시글 목록으로 돌아가기</a></div><button class="MuiButtonBase-root MuiFab-root MuiFab-circular MuiFab-sizeMedium MuiFab-primary MuiFab-root MuiFab-circular MuiFab-sizeMedium MuiFab-primary css-1nl6bps" tabindex="0" type="button" aria-label="scroll to top" style="opacity: 0; visibility: hidden;"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="KeyboardArrowUpIcon"><path d="M7.41 15.41 12 10.83l4.59 4.58L18 14l-6-6-6 6z"></path></svg></button></div></div></div></div><footer style="text-align: center; padding: 2rem 0px; color: rgb(0, 0, 0); font-size: 0.9rem; border-top: 1px solid rgb(0, 0, 0); margin-top: auto; background-color: rgb(255, 255, 255);"><p>© 2025 DevTaco Blog. All rights reserved.</p></footer><div class="MuiBox-root css-1hyfx7x"><div class="visitor-counter MuiBox-root css-19midj6"><h6 class="MuiTypography-root MuiTypography-h6 MuiTypography-gutterBottom css-izz7ci">방문자 수</h6><div class="MuiBox-root css-zwd3xv"><h4 class="MuiTypography-root MuiTypography-h4 css-1dg27va">75</h4><p class="MuiTypography-root MuiTypography-body2 css-l6pb42">오늘</p><h6 class="MuiTypography-root MuiTypography-h6 css-kh42wg">총 75명</h6></div></div></div><div class="MuiBox-root css-1y95mt5" data-testid="terminal-navigation"><div class="MuiBox-root css-1kw3y0a"><p class="MuiTypography-root MuiTypography-body2 css-1fktdtb">devtaco@portfolio:~$ navigation</p><div class="MuiBox-root css-j0ozid"><p class="MuiTypography-root MuiTypography-body2 css-1cn40rb">⌘M to close</p><button class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-470314" tabindex="0" type="button" id=":r1:"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeSmall css-vh810p" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="CloseIcon"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg></button></div></div><div class="MuiBox-root css-13t3iqc"><div class="MuiBox-root css-0"><p class="MuiTypography-root MuiTypography-body2 css-cbhj4f">Navigation:</p><div class="MuiBox-root css-1kkt86i"><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">1 → home</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">2 → about</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">3 → posts</p></div></div><div class="MuiBox-root css-0"><p class="MuiTypography-root MuiTypography-body2 css-cbhj4f">External:</p><div class="MuiBox-root css-1kkt86i"><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">g → github</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">e → email</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">l → linkedin</p></div></div></div><p class="MuiTypography-root MuiTypography-body2 css-1e7vt2">Press number keys (1,2,3) or letter keys (g,e,l) to navigate. Use ⌘+M to close.</p></div></div></div></body></html>

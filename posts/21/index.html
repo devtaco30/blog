@@ -1,0 +1,285 @@
+<!DOCTYPE html><html lang="en"><head><script type="text/javascript">!function(n){if("/"===n.search[1]){var a=n.search.slice(1).split("&").map((function(n){return n.replace(/~and~/g,"&")})).join("?");window.history.replaceState(null,null,n.pathname.slice(0,-1)+a+n.hash)}}(window.location)</script><meta charset="utf-8"><link rel="icon" href="/blog/favicon.ico"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#000000"><meta name="keywords" content="Java, Kotlin, Spring Boot, MSA, 개발, 백엔드, coroutine"><meta name="author" content="DevTaco"><meta property="og:image" content="https://devtaco30.github.io/blog/og-image.png"><meta property="twitter:image" content="https://devtaco30.github.io/blog/og-image.png"><meta property="twitter:url" content="https://devtaco30.github.io/blog/"><link rel="apple-touch-icon" href="/blog/apple-touch-icon.png"><link rel="manifest" href="/blog/manifest.json"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&amp;family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet"><script defer="defer" src="/blog/static/js/main.404b9165.js"></script><link href="/blog/static/css/main.5b86466f.css" rel="stylesheet"><style data-emotion="css" data-s=""></style><title>EST AI - Python(numpy-advenced, data analysis ) | DevTaco Blog</title><meta name="description" content="reshape()로 배열 형태를 바꾸는 방법과 인덱싱·슬라이싱이 결과의 차원을 어떻게 다르게 만드는지 확인합니다. 불리언 인덱싱, &amp; 와 and의 차이, 통계 함수, 파일 입출력을 거쳐 실제 데이터 분석 예제까지 갑니다."><meta property="og:title" content="EST AI - Python(numpy-advenced, data analysis )"><meta property="og:description" content="reshape()로 배열 형태를 바꾸는 방법과 인덱싱·슬라이싱이 결과의 차원을 어떻게 다르게 만드는지 확인합니다. 불리언 인덱싱, &amp; 와 and의 차이, 통계 함수, 파일 입출력을 거쳐 실제 데이터 분석 예제까지 갑니다."><meta property="og:type" content="article"><meta property="og:url" content="https://devtaco30.github.io/blog/posts/21"><meta name="twitter:card" content="summary"></head><body><noscript>You need to enable JavaScript to run this app.</noscript><div id="root"><div class="App"><div class="MuiBox-root css-kurlqb"><div class="MuiBox-root css-171onha"><button class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-1f6w95t" tabindex="0" type="button" id=":r0:"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="MenuIcon"><path d="M3 18h18v-2H3zm0-5h18v-2H3zm0-7v2h18V6z"></path></svg></button><div class="MuiBox-root css-1szb58x"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-218waq" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowBackIcon"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z"></path></svg><div class="MuiBox-root css-wq4jw1"><span>⌘+M</span></div></div></div></div><div class="MuiContainer-root css-15jb5o1" data-testid="page-container"><div class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-2 MuiGrid-spacing-md-3 css-1ht06td"><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-md-12 css-15j76c0"><div class="MuiBox-root css-15rigdj"><nav class="MuiTypography-root MuiTypography-body1 MuiBreadcrumbs-root css-1v2kxik"><ol class="MuiBreadcrumbs-ol css-51eq8m"><li class="MuiBreadcrumbs-li"><a class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways css-gj78h6" href="/blog/posts" data-discover="true">게시글 목록</a></li><li aria-hidden="true" class="MuiBreadcrumbs-separator css-1nd5pgh">/</li><li class="MuiBreadcrumbs-li"><p class="MuiTypography-root MuiTypography-body1 css-1cr0rz6">EST AI - Python(numpy-advenced, data analysis )</p></li></ol></nav><div class="MuiBox-root css-15djlns"><button class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-1y18wdw" tabindex="0" type="button" id=":r7:"><span class="MuiButton-icon MuiButton-startIcon MuiButton-iconSizeMedium css-1ygddt1"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowBackIcon"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z"></path></svg></span><div class="MuiBox-root css-0"><span class="MuiTypography-root MuiTypography-caption css-115rlu8">이전글</span><p class="MuiTypography-root MuiTypography-body2 css-10qk5g4">EST AI - Python(pandas)</p></div></button><button class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-1k0z50p" tabindex="0" type="button" id=":r8:"><div class="MuiBox-root css-0"><span class="MuiTypography-root MuiTypography-caption css-115rlu8">다음글</span><p class="MuiTypography-root MuiTypography-body2 css-10qk5g4">EST AI - Python(numpy)</p></div><span class="MuiButton-icon MuiButton-endIcon MuiButton-iconSizeMedium css-6bt4d2"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowForwardIcon"><path d="m12 4-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"></path></svg></span></button></div><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-10t0qv5" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h4 class="MuiTypography-root MuiTypography-h4 css-k5jvd2">EST AI - Python(numpy-advenced, data analysis )</h4><p class="MuiTypography-root MuiTypography-body1 css-104xg3">reshape()로 배열 형태를 바꾸는 방법과 인덱싱·슬라이싱이 결과의 차원을 어떻게 다르게 만드는지 확인합니다. | 불리언 인덱싱, &amp; 와 and의 차이, 통계 함수, 파일 입출력을 거쳐 실제 데이터 분석 예제까지 갑니다.</p><div class="MuiBox-root css-1prrn6n"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Python</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Programming</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Numpy</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Array</span></div></div><p class="MuiTypography-root MuiTypography-body2 css-l6pb42">2025년 12월 2일 오전 12:04</p></div><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-1i779yj" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><div class="MuiBox-root css-13lazol"><h2>📚 오늘의 학습 내용</h2>
+<h3>📋 배열 형태 변경: reshape()</h3>
+<p><strong>기능:</strong></p>
+<ul>
+<li>기존 배열의 형태를 변경하여 새로운 차원의 배열 생성</li>
+<li><strong>중요</strong>: 기존 배열의 원소 개수와 맞아떨어지는 형태로만 변경 가능</li>
+</ul>
+<p><strong>사용법:</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python">arr = np.arange(12)           # 1차원: [0, 1, 2, ..., 11]
+arr = arr.reshape(3, 4)       # 2차원: 3행 4열로 재배치
+</code></pre></pre>
+<p><strong>주의사항:</strong></p>
+<ul>
+<li>원소 개수가 맞지 않으면 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">ValueError</code> 발생</li>
+<li>예: 12개 원소를 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">reshape(3, 5)</code>로 변경 불가 (3×5=15개 필요)</li>
+</ul>
+<hr>
+<h3>📋 Indexing과 Slicing</h3>
+<p><strong>Indexing (인덱싱):</strong></p>
+<ul>
+<li>특정 위치의 <strong>요소만</strong> 가져옴</li>
+<li>결과: 해당 요소의 값 (차원이 감소)</li>
+</ul>
+<p><strong>Slicing (슬라이싱):</strong></p>
+<ul>
+<li>특정 범위의 <strong>배열 형태</strong>로 가져옴</li>
+<li>결과: 배열의 형태를 유지 (차원 유지)</li>
+</ul>
+<p><strong>예시:</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python">arr = np.array([[1, 2, 3], [4, 5, 6]])
+
+arr[0]        # indexing: [1, 2, 3] (1차원 배열)
+arr[0:1]      # slicing: [[1, 2, 3]] (2차원 배열 유지)
+</code></pre></pre>
+<p><strong>스칼라 값 대입:</strong></p>
+<ul>
+<li>배열의 특정 부분에 스칼라 값을 대입하면 자동으로 확장되어 적용됨</li>
+<li>예: <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">arr[0] = 1</code> → 첫 번째 행이 모두 1로 변경 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">[[1, 1, 1], [4, 5, 6]]</code></li>
+<li><strong>제약</strong>: 대입하는 배열의 크기가 맞아야 함 (기존 개수와 일치해야 함)</li>
+</ul>
+<hr>
+<h3>📋 2차원 배열에서의 데이터 접근</h3>
+<p><strong>행과 열 구분:</strong></p>
+<ul>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">arr[행, 열]</code> 형태로 접근</li>
+<li>콤마(<code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">,</code>)로 행과 열을 구분</li>
+</ul>
+<p><strong>다양한 접근 방법:</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python">arr = np.arange(50).reshape(5, 10)
+
+arr[:2, :6]        # 처음 2행, 처음 6열
+arr[:, 0]          # 모든 행의 0번 열 (1차원 배열)
+arr[:, 0:1]        # 모든 행의 0번 열 (2차원 배열 유지)
+arr[0::2, 0]       # 0번 열에서 0부터 2칸씩 (0, 2, 4행)
+arr[[0, 2, 4], 0]  # 0, 2, 4행의 0번 열 (fancy indexing)
+</code></pre></pre>
+<p><strong>Slicing 방법:</strong></p>
+<ul>
+<li>리스트 형태: <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">arr[1:, [1, 3, 5]]</code></li>
+<li>range 형태: <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">arr[1:, range(1, 6, 2)]</code></li>
+<li>슬라이싱 형태: <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">arr[1:, 1:6:2]</code></li>
+<li>slice 객체: <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">arr[1:, slice(1, 6, 2)]</code></li>
+</ul>
+<p><strong>전치 (Transpose):</strong></p>
+<ul>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">arr.T</code>: 행과 열을 바꾸는 전치 연산</li>
+<li>예: <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">(3, 6)</code> 형태 → <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">(6, 3)</code> 형태로 변경</li>
+</ul>
+<hr>
+<h3>📋 랜덤 배열 생성</h3>
+<p><strong>np.random.randint():</strong></p>
+<ul>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">np.random.randint(start, end, size=크기)</code>: 지정 범위의 랜덤 정수 배열 생성</li>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">start</code> 이상 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">end</code> 미만의 정수 중 랜덤 선택</li>
+</ul>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python">np.random.randint(0, 10, size=8)  # 0 이상 10 미만의 정수 8개
+</code></pre></pre>
+<hr>
+<h3>📋 Boolean Indexing (불리언 인덱싱)</h3>
+<p><strong>개념:</strong></p>
+<ul>
+<li>특정 조건에 맞는 값들을 찾아내고 싶을 때 사용</li>
+<li>인덱스 번호 대신 <strong>조건식</strong>을 입력</li>
+</ul>
+<p><strong>사용법:</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python">arr = np.array([21, 31, 41, 51, 61, 70])
+
+# 조건식 생성
+arr &gt;= 50                    # [False, False, False, True, True, True]
+arr % 2 == 0                 # [False, False, False, False, False, True]
+
+# Boolean indexing으로 값 가져오기
+arr[arr &gt;= 50]               # 조건에 맞는 값만 추출: [51, 61, 70]
+</code></pre></pre>
+<p><strong>다중 조건:</strong></p>
+<ul>
+<li>여러 조건을 결합할 때는 <strong><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">&amp;</code> (비트 연산자)</strong> 사용</li>
+<li><strong>주의</strong>: <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">and</code>는 사용 불가 (에러 발생)</li>
+</ul>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python"># 30 이상이고 60 이하인 값 찾기
+(arr &gt;= 30) &amp; (arr &lt;= 60)    # ✅ 올바른 방법
+(arr &gt;= 30) and (arr &lt;= 60)  # ❌ ValueError 발생
+</code></pre></pre>
+<p><strong>값 변경:</strong></p>
+<ul>
+<li>Boolean indexing으로 찾은 위치에 직접 값을 대입 가능</li>
+</ul>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python">arr = np.array([[6, 9, 6, 8, 7], [2, 3, 5, 4, 1]])
+
+# 짝수를 0으로 변경
+arr[arr % 2 == 0] = 0
+# 결과: [[0, 9, 0, 0, 7], [0, 3, 5, 0, 1]]
+</code></pre></pre>
+<hr>
+<h3>📋 &amp; vs and 차이점</h3>
+<blockquote>
+<p>💡 <strong>궁금해서 찾아본 내용: &amp; vs and 차이점</strong></p>
+</blockquote>
+<p><strong>핵심 정리:</strong></p>
+<ul>
+<li><strong>NumPy 배열</strong>: <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">&amp;</code>, <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">|</code> 사용 (요소별 연산)</li>
+<li><strong>일반 Python 조건문</strong>: <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">and</code>, <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">or</code> 사용 (단일 값 반환)</li>
+</ul>
+<p><strong>NumPy 배열에서 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">and</code> 사용 시 에러:</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python">(arr &gt;= 30) and (arr &lt;= 60)  # ❌ ValueError 발생
+# ValueError: The truth value of an array with more than one element is ambiguous.
+</code></pre></pre>
+<p><strong>올바른 사용:</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python">(arr &gt;= 30) &amp; (arr &lt;= 60)    # ✅ NumPy 배열 boolean indexing
+if x &gt; 5 and y &lt; 10:         # ✅ 일반 Python 조건문
+</code></pre></pre>
+<hr>
+<h3>📋 통계 함수</h3>
+<p><strong>기본 통계 함수:</strong></p>
+<ul>
+<li>배열 메서드와 NumPy 함수 두 가지 방식 모두 사용 가능</li>
+</ul>
+<p><strong>합계:</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python">arr.sum()      # 배열 메서드
+np.sum(arr)    # NumPy 함수
+</code></pre></pre>
+<p><strong>평균:</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python">arr.mean()     # 배열 메서드
+np.mean(arr)   # NumPy 함수
+</code></pre></pre>
+<p><strong>최소값:</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python">arr.min()      # 배열 메서드
+np.min(arr)    # NumPy 함수
+</code></pre></pre>
+<p><strong>특징:</strong></p>
+<ul>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">range()</code> 객체에도 직접 적용 가능: <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">np.mean(range(10))</code></li>
+<li>다차원 배열의 경우 전체 원소에 대해 계산</li>
+</ul>
+<hr>
+<h3>📋 NumPy 파일 입출력</h3>
+<p><strong>파일 읽기: <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">np.genfromtxt()</code></strong></p>
+<ul>
+<li>텍스트 파일을 배열로 읽어오는 함수</li>
+<li>구분자(delimiter)와 데이터 타입(dtype) 지정 가능</li>
+</ul>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python">data = np.genfromtxt('파일경로', delimiter='::', dtype='int')
+</code></pre></pre>
+<p><strong>파일 저장: <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">np.savetxt()</code></strong></p>
+<ul>
+<li>배열을 텍스트 파일로 저장</li>
+<li>구분자와 출력 형식(fmt) 지정 가능</li>
+</ul>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python">np.savetxt('파일경로', data, delimiter='::', fmt='%d')
+</code></pre></pre>
+<p><strong>출력 형식 설정: <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">np.set_printoptions()</code></strong></p>
+<ul>
+<li>배열 출력 시 형식 조정</li>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">suppress=True</code>: 과학적 표기법 억제</li>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">precision=2</code>: 소수점 자리수 지정</li>
+</ul>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python">np.set_printoptions(suppress=True, precision=2)
+</code></pre></pre>
+<hr>
+<h3>📋 NumPy 실전 데이터 분석</h3>
+<blockquote>
+<p>💡 <strong>실제 데이터를 불러와서 분석하는 첫 실습</strong> - 데이터 불러오기부터 인덱싱, 필터링, 집계까지 전체 흐름을 경험</p>
+</blockquote>
+<p><strong>1. 데이터 불러오기 및 구조 파악</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python"># 파일에서 데이터 읽기
+movie = np.genfromtxt('../data/ratings.dat', delimiter='::', dtype='int')
+
+# 데이터 구조: [사용자ID, 영화ID, 평점, 시간]
+# 각 열의 의미를 명확히 이해하는 것이 중요
+</code></pre></pre>
+<p><strong>2. 데이터 속성 확인</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python">movie.shape   # (1000209, 4) - 행과 열의 개수
+movie.ndim    # 2 - 차원 수
+movie.size    # 4000836 - 전체 요소 수
+</code></pre></pre>
+<p><strong>3. 2차원 배열에서 특정 열 추출</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python"># 모든 행의 특정 열만 가져오기
+ratings = movie[:, 2]  # 모든 행의 2번 열 (평점 데이터)
+
+# 특정 행의 특정 열
+user_data = movie[movie[:, 0] == 1]  # 사용자 ID가 1인 모든 행
+user_ratings = user_data[:, 2]       # 해당 사용자의 평점만
+</code></pre></pre>
+<p><strong>4. Boolean Indexing으로 조건부 데이터 추출</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python"># 특정 사용자의 평점 추출
+user_ratings = movie[movie[:, 0] == user_id][:, 2]
+
+# 특정 영화의 평점 추출
+movie_ratings = movie[movie[:, 1] == movie_id][:, 2]
+
+# 조건에 맞는 행만 추출
+high_rating_users = avg_ratings[avg_ratings[:, 1] &gt;= 4]
+</code></pre></pre>
+<p><strong>5. 그룹별 집계 (Grouping)</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python"># 각 사용자별 평균 평점 계산
+ids = np.unique(movie[:, 0])  # 중복 제거된 사용자 ID 목록
+
+avg_ratings = []
+for id in ids:
+    user_ratings = movie[movie[:, 0] == id][:, 2]
+    avg_ratings.append([id, user_ratings.mean()])
+avg_ratings = np.array(avg_ratings)
+
+# 각 영화별 평균 평점 계산 (동일한 패턴)
+movie_ids = np.unique(movie[:, 1])
+each_movie_avg = []
+for movie_id in movie_ids:
+    movie_ratings = movie[movie[:, 1] == movie_id][:, 2]
+    each_movie_avg.append([movie_id, movie_ratings.mean()])
+</code></pre></pre>
+<p><strong>6. 중복 제거: <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">np.unique()</code></strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python"># 배열에서 중복된 값을 제거한 배열 반환 (정렬됨)
+unique_ids = np.unique(movie[:, 0])  # 고유한 사용자 ID 목록
+unique_movies = np.unique(movie[:, 1])  # 고유한 영화 ID 목록
+</code></pre></pre>
+<p><strong>7. 조건부 결과 필터링</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-python"># 평균 평점이 4점 이상인 사용자만 추출
+high_rating_users = avg_ratings[avg_ratings[:, 1] &gt;= 4][:, 0]
+</code></pre></pre>
+<p><strong>핵심 학습 포인트:</strong></p>
+<ul>
+<li>2차원 배열에서 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">[행, 열]</code> 형태로 접근하는 방법</li>
+<li>Boolean indexing으로 조건에 맞는 데이터만 추출</li>
+<li>반복문과 Boolean indexing을 결합한 그룹별 집계</li>
+<li>데이터 구조를 이해하고 적절한 인덱싱으로 원하는 데이터 추출</li>
+</ul>
+<hr>
+<h2>💡 핵심 정리</h2>
+<h3>📖 주요 포인트</h3>
+<ul>
+<li><strong>reshape()</strong>: 배열 형태 변경 시 원소 개수가 맞아야 함</li>
+<li><strong>Indexing vs Slicing</strong>: indexing은 요소만, slicing은 배열 형태 유지</li>
+<li><strong>2차원 접근</strong>: <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">arr[행, 열]</code> 형태로 콤마로 구분</li>
+<li><strong>Boolean Indexing</strong>: 조건식으로 원하는 값만 추출하거나 변경 가능</li>
+<li><strong>&amp; vs and</strong>: NumPy 배열에서는 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">&amp;</code> 필수, 일반 조건문에서는 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">and</code> 사용</li>
+<li><strong>통계 함수</strong>: 메서드와 함수 두 가지 방식 모두 지원</li>
+<li><strong>파일 입출력</strong>: <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">genfromtxt()</code>, <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">savetxt()</code>로 데이터 읽기/쓰기</li>
+<li><strong>중복 제거</strong>: <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">np.unique()</code>로 고유값 추출</li>
+<li><strong>실전 분석</strong>: 데이터 불러오기부터 집계까지 전체 흐름 이해</li>
+</ul>
+<h3>⚠️ 주의사항</h3>
+<ul>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">reshape()</code> 시 원소 개수가 맞지 않으면 에러 발생</li>
+<li>Boolean indexing에서 다중 조건은 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">&amp;</code> 사용 (<code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">and</code> 사용 불가)</li>
+<li>Broadcasting 시 대입하는 배열의 크기가 맞아야 함</li>
+<li>Indexing은 차원이 감소하고, Slicing은 차원이 유지됨</li>
+</ul>
+<h3>✅ 권장 사항</h3>
+<ul>
+<li>Boolean indexing으로 조건에 맞는 데이터를 효율적으로 처리</li>
+<li>2차원 이상 배열 접근 시 콤마로 행/열 구분하여 명확하게 표현</li>
+<li>NumPy 배열 연산 시 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">&amp;</code>, <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">|</code> 사용 (논리 연산자와 구분)</li>
+<li>통계 함수는 상황에 맞게 메서드 또는 함수 선택</li>
+<li>데이터 구조를 먼저 파악한 후 적절한 인덱싱 방법 선택</li>
+</ul>
+<hr>
+<h2>🔍 추가 학습 필요 사항</h2>
+<ul class="contains-task-list">
+<li class="task-list-item"><input disabled="" type="checkbox"> Fancy indexing 자세히 학습</li>
+<li class="task-list-item"><input disabled="" type="checkbox"> Broadcasting 규칙 심화 학습</li>
+<li class="task-list-item"><input disabled="" type="checkbox"> NumPy의 고급 인덱싱 기법</li>
+<li class="task-list-item"><input disabled="" type="checkbox"> 메모리 효율적인 배열 연산 방법</li>
+<li class="task-list-item"><input disabled="" type="checkbox"> 대용량 데이터 처리 최적화 기법</li>
+</ul>
+<hr></div></div><div class="MuiBox-root css-1cpq4zq"><hr class="MuiDivider-root MuiDivider-fullWidth css-7jtdmc"><h5 class="MuiTypography-root MuiTypography-h5 css-85yo2n">같은 카테고리의 다른 글</h5><div class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-2 css-1eikg3m"><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] Serializable 깊이 파기 — Part 2: 바이트에서 다시 객체로, 그리고 함정들</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">직렬화된 바이트를 ObjectInputStream이 어떤 순서로 읽어 객체로 복원하는지, 그때 생성자가 호출되지 않는다는 점을 확인합니다. | serialVersionUID, transient, 커스텀 readObject·writeObject, 역직렬화 취약점, Java 직렬화의 현재로 마무리합니다.</p><div class="MuiBox-root css-107ld1r"></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 4월 5일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] Serializable 깊이 파기 — Part 1: 객체가 바이트가 되는 과정</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">Python이나 JavaScript와 달리 Java는 왜 Serializable을 선언해야 하는지, 메서드가 하나도 없는 이 인터페이스가 무슨 일을 하는지 묻는 글입니다. | ObjectOutputStream이 만든 실제 바이트를 열어 보고, 참조 객체가 들어 있을 때는 어떻게 되는지 확인합니다.</p><div class="MuiBox-root css-107ld1r"></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 4월 5일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] 주식 거래 엔진 직접 만들기 - Part 3: 오더북을 어떻게 구현할 것인가</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">주식 거래 엔진의 오더북을 TreeMap과 ArrayDeque 조합으로 만든 이유를, PriorityQueue, LinkedList, Skip List와 비교하며 설명합니다. | 주문 취소를 Lazy Removal로 처리한 방법과 Kafka를 연결하며 만난 멱등성 문제를 마지막에 둡니다.</p><div class="MuiBox-root css-107ld1r"></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 27일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] 주식 거래 엔진 직접 만들기 - Part 2: Phase 1 — 모놀리식으로 시작하기</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">단일 JAR 모놀리식 구조인 Phase 1에서 만난 문제를 차례로 다룹니다. | SELECT FOR UPDATE로 동시성을 해결했고, 락 보유 시간을 줄이고, 락 획득 순서를 통일해 데드락 위험을 없앴습니다. @Transactional 원칙과 Lazy Loading 함정도 짚습니다.</p><div class="MuiBox-root css-107ld1r"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Java</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Spring Boot</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">JPA</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">+2</span></div></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 27일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] 주식 거래 엔진 직접 만들기 - Part 1: 왜 주식 거래 엔진인가</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">F-lab 멘토링 프로젝트로 주식 거래 엔진을 직접 설계하고 구현한 과정을 기록하는 시리즈의 첫 글입니다. | 프로젝트를 고른 기준과 멀티모듈 구조, Phase 로드맵, 시리즈 전체에서 답할 질문들을 먼저 밝힙니다.</p><div class="MuiBox-root css-107ld1r"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Java</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Spring Boot</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Kafka</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">+5</span></div></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 27일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[개발자가 직접 써봤어요] Claude Code 완전 가이드: 설치부터 멀티에이전트까지</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">Claude Code를 Spring Boot와 Kafka 기반 주식 매매 엔진 프로젝트에 적용해 본 경험을 바탕으로, 설치부터 멀티에이전트까지 소개합니다. | CLAUDE.md, Skills, Subagents, Hooks, MCP, Agent Teams의 여섯 레이어와 Cursor AI와의 비교, 주의사항이 나옵니다.</p><div class="MuiBox-root css-107ld1r"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Claude Code</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">AI</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Developer Tools</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">+4</span></div></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 9일</span></div></div></div></div><div class="MuiBox-root css-1b94f21"><a class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways css-104ms0" href="/blog/posts" data-discover="true"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowBackIcon"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z"></path></svg>게시글 목록으로 돌아가기</a></div><button class="MuiButtonBase-root MuiFab-root MuiFab-circular MuiFab-sizeMedium MuiFab-primary MuiFab-root MuiFab-circular MuiFab-sizeMedium MuiFab-primary css-1nl6bps" tabindex="0" type="button" aria-label="scroll to top" style="opacity: 0; visibility: hidden;"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="KeyboardArrowUpIcon"><path d="M7.41 15.41 12 10.83l4.59 4.58L18 14l-6-6-6 6z"></path></svg></button></div></div></div></div><footer style="text-align: center; padding: 2rem 0px; color: rgb(0, 0, 0); font-size: 0.9rem; border-top: 1px solid rgb(0, 0, 0); margin-top: auto; background-color: rgb(255, 255, 255);"><p>© 2025 DevTaco Blog. All rights reserved.</p></footer><div class="MuiBox-root css-1hyfx7x"><div class="visitor-counter MuiBox-root css-19midj6"><h6 class="MuiTypography-root MuiTypography-h6 MuiTypography-gutterBottom css-izz7ci">방문자 수</h6><div class="MuiBox-root css-zwd3xv"><h4 class="MuiTypography-root MuiTypography-h4 css-1dg27va">94</h4><p class="MuiTypography-root MuiTypography-body2 css-l6pb42">오늘</p><h6 class="MuiTypography-root MuiTypography-h6 css-kh42wg">총 94명</h6></div></div></div><div class="MuiBox-root css-1y95mt5" data-testid="terminal-navigation"><div class="MuiBox-root css-1kw3y0a"><p class="MuiTypography-root MuiTypography-body2 css-1fktdtb">devtaco@portfolio:~$ navigation</p><div class="MuiBox-root css-j0ozid"><p class="MuiTypography-root MuiTypography-body2 css-1cn40rb">⌘M to close</p><button class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-470314" tabindex="0" type="button" id=":r1:"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeSmall css-vh810p" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="CloseIcon"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg></button></div></div><div class="MuiBox-root css-13t3iqc"><div class="MuiBox-root css-0"><p class="MuiTypography-root MuiTypography-body2 css-cbhj4f">Navigation:</p><div class="MuiBox-root css-1kkt86i"><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">1 → home</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">2 → about</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">3 → posts</p></div></div><div class="MuiBox-root css-0"><p class="MuiTypography-root MuiTypography-body2 css-cbhj4f">External:</p><div class="MuiBox-root css-1kkt86i"><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">g → github</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">e → email</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">l → linkedin</p></div></div></div><p class="MuiTypography-root MuiTypography-body2 css-1e7vt2">Press number keys (1,2,3) or letter keys (g,e,l) to navigate. Use ⌘+M to close.</p></div></div></div></body></html>

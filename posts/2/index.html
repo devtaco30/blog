@@ -1,0 +1,450 @@
+<!DOCTYPE html><html lang="en"><head><script type="text/javascript">!function(n){if("/"===n.search[1]){var a=n.search.slice(1).split("&").map((function(n){return n.replace(/~and~/g,"&")})).join("?");window.history.replaceState(null,null,n.pathname.slice(0,-1)+a+n.hash)}}(window.location)</script><meta charset="utf-8"><link rel="icon" href="/blog/favicon.ico"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#000000"><meta name="keywords" content="Java, Kotlin, Spring Boot, MSA, 개발, 백엔드, coroutine"><meta name="author" content="DevTaco"><meta property="og:image" content="https://devtaco30.github.io/blog/og-image.png"><meta property="twitter:image" content="https://devtaco30.github.io/blog/og-image.png"><meta property="twitter:url" content="https://devtaco30.github.io/blog/"><link rel="apple-touch-icon" href="/blog/apple-touch-icon.png"><link rel="manifest" href="/blog/manifest.json"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""><link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&amp;family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet"><script defer="defer" src="/blog/static/js/main.404b9165.js"></script><link href="/blog/static/css/main.5b86466f.css" rel="stylesheet"><style data-emotion="css" data-s=""></style><title>왜 금융에서는 부동소수점 오류를 예방해야만 하는가? | DevTaco Blog</title><meta name="description" content="금융 시스템에서 부동소수점 연산의 위험성과 정확한 계산을 위한 해결 방법을 알아봅니다. Backend 개발자를 위한 실무 가이드입니다."><meta property="og:title" content="왜 금융에서는 부동소수점 오류를 예방해야만 하는가?"><meta property="og:description" content="금융 시스템에서 부동소수점 연산의 위험성과 정확한 계산을 위한 해결 방법을 알아봅니다. Backend 개발자를 위한 실무 가이드입니다."><meta property="og:type" content="article"><meta property="og:url" content="https://devtaco30.github.io/blog/posts/2"><meta name="twitter:card" content="summary"></head><body><noscript>You need to enable JavaScript to run this app.</noscript><div id="root"><div class="App"><div class="MuiBox-root css-kurlqb"><div class="MuiBox-root css-171onha"><button class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-1f6w95t" tabindex="0" type="button" id=":r0:"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="MenuIcon"><path d="M3 18h18v-2H3zm0-5h18v-2H3zm0-7v2h18V6z"></path></svg></button><div class="MuiBox-root css-1szb58x"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-218waq" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowBackIcon"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z"></path></svg><div class="MuiBox-root css-wq4jw1"><span>⌘+M</span></div></div></div></div><div class="MuiContainer-root css-15jb5o1" data-testid="page-container"><div class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-2 MuiGrid-spacing-md-3 css-1ht06td"><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-md-12 css-15j76c0"><div class="MuiBox-root css-15rigdj"><nav class="MuiTypography-root MuiTypography-body1 MuiBreadcrumbs-root css-1v2kxik"><ol class="MuiBreadcrumbs-ol css-51eq8m"><li class="MuiBreadcrumbs-li"><a class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways css-gj78h6" href="/blog/posts" data-discover="true">게시글 목록</a></li><li aria-hidden="true" class="MuiBreadcrumbs-separator css-1nd5pgh">/</li><li class="MuiBreadcrumbs-li"><p class="MuiTypography-root MuiTypography-body1 css-1cr0rz6">왜 금융에서는 부동소수점 오류를 예방해야만 하는가?</p></li></ol></nav><div class="MuiBox-root css-15djlns"><button class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-1y18wdw" tabindex="0" type="button" id=":r9:"><span class="MuiButton-icon MuiButton-startIcon MuiButton-iconSizeMedium css-1ygddt1"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowBackIcon"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z"></path></svg></span><div class="MuiBox-root css-0"><span class="MuiTypography-root MuiTypography-caption css-115rlu8">이전글</span><p class="MuiTypography-root MuiTypography-body2 css-10qk5g4">Cursor AI와 함께하는 페어 프로그래밍: Backend 개발자의 생산성 혁신</p></div></button><button class="MuiButtonBase-root MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary MuiButton-root MuiButton-outlined MuiButton-outlinedPrimary MuiButton-sizeMedium MuiButton-outlinedSizeMedium MuiButton-colorPrimary css-1k0z50p" tabindex="0" type="button" id=":ra:"><div class="MuiBox-root css-0"><span class="MuiTypography-root MuiTypography-caption css-115rlu8">다음글</span><p class="MuiTypography-root MuiTypography-body2 css-10qk5g4">압도적인 퍼포먼스, Quarkus, 과연 Spring Boot의 대안이 될까?</p></div><span class="MuiButton-icon MuiButton-endIcon MuiButton-iconSizeMedium css-6bt4d2"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowForwardIcon"><path d="m12 4-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"></path></svg></span></button></div><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-10t0qv5" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h4 class="MuiTypography-root MuiTypography-h4 css-k5jvd2">왜 금융에서는 부동소수점 오류를 예방해야만 하는가?</h4><p class="MuiTypography-root MuiTypography-body1 css-104xg3">금융 시스템에서 부동소수점 연산의 위험성과 정확한 계산을 위한 해결 방법을 알아봅니다. | Backend 개발자를 위한 실무 가이드입니다.</p><div class="MuiBox-root css-1prrn6n"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Java</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Kotlin</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Backend</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Finance</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Floating Point</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Precision</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1cl908c"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">BigDecimal</span></div></div><p class="MuiTypography-root MuiTypography-body2 css-l6pb42">2025년 8월 20일 오전 09:00</p></div><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-1i779yj" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><div class="MuiBox-root css-13lazol"><p>안녕하세요. 오늘은 백엔드 개발자분들이 반드시 알아야 할 중요한 주제, <strong>부동소수점 오류</strong>에 대해 다루어보겠습니다.</p>
+<p>특히 금융 시스템을 개발하는 개발자라면, 이 문제를 제대로 이해하고 해결하지 않으면 <strong>심각한 버그</strong>와 <strong>금전적 손실</strong>을 초래할 수 있습니다.</p>
+<p><strong>가상자산 시장에서는 더욱 중요합니다.</strong></p>
+<ul>
+<li>비트코인은 <strong>8자리 소수점</strong>까지 거래 (1 satoshi = 0.00000001 BTC)</li>
+<li>이더리움은 <strong>wei 단위까지 분할 가능</strong> (1 wei = 0.000000000000000001 ETH)</li>
+<li><strong>0.00000001 BTC</strong> 같은 극소량 거래도 빈번</li>
+<li>부동소수점 오류로 인한 <strong>거래 오류</strong>는 즉시 <strong>수백만원 손실</strong>로 이어질 수 있음</li>
+</ul>
+<p>본 포스팅에서는 부동소수점의 근본 원리부터 실제 발생할 수 있는 문제들, 그리고 해결 방법까지 심층적으로 다루어 보겠습니다.</p>
+<h2>🚨 <strong>부동소수점 오류가 왜 위험한가?</strong></h2>
+<h3>부동소수점이란 무엇인가?</h3>
+<p><strong>부동소수점(Floating Point)</strong> 은 컴퓨터에서 실수를 표현하는 방식입니다. "부동"이라는 말은 소수점의 위치가 고정되지 않고 <strong>떠다닌다</strong>는 의미입니다.</p>
+<p><strong>기본 원리:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">123.456 = 1.23456 × 10²
+0.00123 = 1.23 × 10⁻³
+</code></pre>
+<p><strong>핵심: 부동소수점은 실제 소수점을 사용하지 않고, 거듭제곱 형태로 표현합니다!</strong></p>
+<p><strong>10진수 부동소수점:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">123.456 = 1.23456 × 10²
+0.00123 = 1.23 × 10⁻³
+1000000 = 1.0 × 10⁶
+</code></pre>
+<p><strong>2진수 부동소수점 (컴퓨터 내부):</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">10진수 6.25 = 2진수 110.01 = 1.1001 × 2²
+10진수 0.1 = 2진수 0.0001100110011... = 1.1001100110011... × 2⁻⁴
+</code></pre>
+<p><strong>IEEE 754 표준 (가장 일반적):</strong></p>
+<ul>
+<li><strong>부호</strong>: 양수/음수 구분</li>
+<li><strong>지수</strong>: 2의 거듭제곱 (소수점 위치)</li>
+<li><strong>가수</strong>: 실제 숫자 부분</li>
+</ul>
+<h3>왜 문제가 발생하는가?</h3>
+<p><strong>1. 2진수 표현의 한계:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">10진수 0.1 = 1/10 = 1/2 × 1/5
+2진수로는 무한 반복: 0.0001100110011...
+컴퓨터는 유한한 비트로만 저장 → 정확한 값 표현 불가
+</code></pre>
+<p><strong>실제 메모리 구조 (64비트 double):</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">┌─────────┬─────────┬─────────────────────────┐
+│ 부호(1) │ 지수(11)│        가수(52)         │
+└─────────┴─────────┴─────────────────────────┘
+
+0.1을 저장할 때:
+부호: 0 (양수)
+지수: 1019 (2⁻⁴을 나타냄)
+가수: 1.1001100110011001100110011001100110011001100110011010
+</code></pre>
+<p><strong>2. 정밀도 손실:</strong></p>
+<ul>
+<li>64비트 double: 약 15-17자리 정밀도</li>
+<li>극소량이나 극대량 계산 시 오차 발생</li>
+<li>반복 연산 시 오차 누적</li>
+</ul>
+<h3>간단한 예시로 확인해보기</h3>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-java">// Java에서 발생하는 부동소수점 오류
+public class FloatingPointError {
+    public static void main(String[] args) {
+        double a = 0.1;
+        double b = 0.2;
+        double result = a + b;
+        
+        System.out.println("0.1 + 0.2 = " + result);
+        System.out.println("예상 결과: 0.3");
+        System.out.println("실제 결과: " + result);
+        System.out.println("결과가 0.3인가? " + (result == 0.3));
+    }
+}
+</code></pre></pre>
+<p><strong>실행 결과:</strong></p>
+<pre><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">0.1 + 0.2 = 0.30000000000000004
+예상 결과: 0.3
+실제 결과: 0.30000000000000004
+결과가 0.3인가? false
+</code></pre>
+<p><strong>이게 왜 문제가 될까요?</strong></p>
+<p><strong>부동소수점 오류의 핵심:</strong></p>
+<ul>
+<li>컴퓨터는 2진수로만 계산</li>
+<li>10진수 0.1을 2진수로 정확히 표현할 수 없음</li>
+<li>유한한 비트로 무한 소수를 근사값으로 저장</li>
+<li>연산할 때마다 작은 오차가 발생</li>
+</ul>
+<p><strong>정리:</strong></p>
+<ul>
+<li>❌ <strong>실제 소수점을 사용하지 않음</strong></li>
+<li>✅ <strong>거듭제곱 형태로 표현: <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">가수 × 기수^지수</code></strong></li>
+<li>✅ <strong>10진수: <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">가수 × 10^지수</code></strong></li>
+<li>✅ <strong>2진수: <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">가수 × 2^지수</code></strong></li>
+</ul>
+<p><strong>금융 시스템에서 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">0.1 + 0.2 = 0.3</code>이 <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">false</code>라면:</strong></p>
+<ul>
+<li><strong>이자 계산 오류</strong></li>
+<li><strong>수수료 계산 오류</strong></li>
+<li><strong>잔액 계산 오류</strong></li>
+<li><strong>세금 계산 오류</strong></li>
+</ul>
+<p>이런 문제들이 발생할 수 있습니다.</p>
+<h2>💰 <strong>실제 발생할 수 있는 문제들</strong></h2>
+<h3>1. 이자 계산 오류</h3>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-java">// 잘못된 이자 계산 (부동소수점 사용)
+public class InterestCalculator {
+    public double calculateInterest(double principal, double rate, int days) {
+        double dailyRate = rate / 365.0;
+        double interest = principal * Math.pow(1 + dailyRate, days) - principal;
+        return interest;
+    }
+}
+
+// 테스트
+InterestCalculator calc = new InterestCalculator();
+double interest = calc.calculateInterest(10000.0, 0.05, 30);
+
+System.out.println("이자: " + interest);
+// 예상: 41.09... (정확한 값)
+// 실제: 41.09000000000001 (부동소수점 오류)
+</code></pre></pre>
+<h3>2. 수수료 계산 오류</h3>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-java">// 잘못된 수수료 계산
+public class FeeCalculator {
+    public double calculateFee(double amount, double feeRate) {
+        double fee = amount * feeRate;
+        
+        // 반올림 처리
+        return Math.round(fee * 100.0) / 100.0;
+    }
+}
+
+// 테스트
+FeeCalculator feeCalc = new FeeCalculator();
+double fee1 = feeCalc.calculateFee(100.0, 0.025); // 2.5% 수수료
+double fee2 = feeCalc.calculateFee(100.0, 0.025);
+
+System.out.println("수수료1: " + fee1);
+System.out.println("수수료2: " + fee2);
+System.out.println("두 수수료가 같은가? " + (fee1 == fee2));
+
+// 예상: true
+// 실제: false (부동소수점 오류로 인해)
+</code></pre></pre>
+<h3>3. 잔액 계산 오류</h3>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-java">// 잘못된 잔액 계산
+public class BalanceCalculator {
+    private double balance = 1000.0;
+    
+    public void deposit(double amount) {
+        balance += amount;
+    }
+    
+    public void withdraw(double amount) {
+        balance -= amount;
+    }
+    
+    public double getBalance() {
+        return balance;
+    }
+}
+
+// 테스트
+BalanceCalculator calc = new BalanceCalculator();
+
+// 0.1씩 10번 입금
+for (int i = 0; i &lt; 10; i++) {
+    calc.deposit(0.1);
+}
+
+System.out.println("예상 잔액: " + (1000.0 + 10 * 0.1));
+System.out.println("실제 잔액: " + calc.getBalance());
+System.out.println("정확한가? " + (calc.getBalance() == 1001.0));
+
+// 예상: 1001.0
+// 실제: 1000.9999999999999
+// 정확한가? false
+</code></pre></pre>
+<h3>4. 가상자산 거래 오류</h3>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-java">// 잘못된 가상자산 거래 계산 (부동소수점 사용)
+public class CryptoTrader {
+    private double btcBalance = 1.0; // 1 BTC
+    
+    public void tradeBTC(double amount) {
+        // 0.00000001 BTC (1 satoshi) 단위 거래
+        if (amount &lt; 0.00000001) {
+            throw new IllegalArgumentException("최소 거래 단위 미달");
+        }
+        
+        // 부동소수점 오류로 인해 정확하지 않은 계산
+        btcBalance -= amount;
+        
+        // 거래 후 잔액 확인
+        System.out.println("거래 후 BTC 잔액: " + btcBalance);
+        System.out.println("예상 잔액: " + (1.0 - amount));
+        System.out.println("정확한가? " + (btcBalance == (1.0 - amount)));
+    }
+}
+
+// 테스트
+CryptoTrader trader = new CryptoTrader();
+trader.tradeBTC(0.00000001);
+
+// 결과: 부동소수점 오류로 인해 거래 금액이 정확하지 않음
+// 실제 거래에서는 수백만원 손실 가능!
+</code></pre></pre>
+<h2>✅ <strong>해결 방법: BigDecimal 사용하기</strong></h2>
+<h3>BigDecimal이란 무엇인가?</h3>
+<p><strong>BigDecimal</strong>은 Java에서 제공하는 <strong>임의 정밀도 부동소수점 연산</strong>을 지원하는 클래스입니다.</p>
+<p><strong>BigDecimal의 장점:</strong></p>
+<ul>
+<li><strong>10진수 기반</strong>: 사람이 생각하는 방식과 동일</li>
+<li><strong>임의 정밀도</strong>: 필요한 만큼의 소수점 자리수 지원</li>
+<li><strong>정확한 연산</strong>: 오차 없이 정확한 계산</li>
+<li><strong>반올림 제어</strong>: 다양한 반올림 방식 지원</li>
+<li><strong>불변 객체</strong>: 연산 후 새로운 객체 생성</li>
+</ul>
+<p><strong>왜 BigDecimal이 정확한가?</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-java">// double (부동소수점) - IEEE 754 표준
+double a = 0.1;
+double b = 0.2;
+double result = a + b;
+// 결과: 0.30000000000000004 (부정확)
+
+// BigDecimal - 10진수 기반 정확한 계산
+BigDecimal bigA = new BigDecimal("0.1");
+BigDecimal bigB = new BigDecimal("0.2");
+BigDecimal bigResult = bigA.add(bigB);
+// 결과: 0.3 (정확)
+</code></pre></pre>
+<h2>📊 <strong>IEEE 754 vs BigDecimal 비교</strong></h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>구분</th><th>IEEE 754 (double)</th><th>BigDecimal</th></tr></thead><tbody><tr><td><strong>표현 방식</strong></td><td>2진수 기반</td><td>10진수 기반</td></tr><tr><td><strong>정확도</strong></td><td>제한적 (53비트)</td><td>무제한</td></tr><tr><td><strong>메모리</strong></td><td>고정 (8 bytes)</td><td>가변 (20-40 bytes)</td></tr><tr><td><strong>성능</strong></td><td>빠름</td><td>느림</td></tr><tr><td><strong>적합한 용도</strong></td><td>과학적 계산</td><td>금융 계산</td></tr></tbody></table>
+<p><strong>BigDecimal의 내부 구조:</strong></p>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-java">// BigDecimal은 두 개의 정수로 구성
+// unscaledValue × 10^(-scale)
+BigDecimal amount = new BigDecimal("123.45");
+// unscaledValue = 12345
+// scale = 2
+// 실제 값 = 12345 × 10^(-2) = 123.45
+</code></pre></pre>
+<h3>Java에서 BigDecimal 사용</h3>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-java">import java.math.BigDecimal;
+import java.math.RoundingMode;
+
+// 기본 연산
+BigDecimal a = new BigDecimal("0.1");
+BigDecimal b = new BigDecimal("0.2");
+BigDecimal sum = a.add(b);                    // 덧셈
+BigDecimal diff = a.subtract(b);              // 뺄셈
+BigDecimal product = a.multiply(b);           // 곱셈
+BigDecimal quotient = a.divide(b, 10, RoundingMode.HALF_UP); // 나눗셈
+
+// 비교 연산
+boolean isGreater = a.compareTo(b) &gt; 0;       // a &gt; b
+boolean isEqual = a.compareTo(b) == 0;        // a == b
+
+// 정확한 이자 계산 예시
+public BigDecimal calculateInterest(BigDecimal principal, BigDecimal rate, int days) {
+    BigDecimal dailyRate = rate.divide(new BigDecimal("365"), 10, RoundingMode.HALF_UP);
+    BigDecimal onePlusRate = BigDecimal.ONE.add(dailyRate);
+    return principal.multiply(onePlusRate.pow(days)).subtract(principal);
+}
+</code></pre></pre>
+<h2>🔧 <strong>실무에서 BigDecimal 사용 시 주의사항</strong></h2>
+<h3>1. 생성자 사용법</h3>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-java">// ❌ 잘못된 방법
+BigDecimal wrong1 = new BigDecimal(0.1);        // 부동소수점 오류 포함
+BigDecimal wrong2 = new BigDecimal(0.1 + 0.2); // 이미 오류가 발생
+
+// ✅ 올바른 방법
+BigDecimal correct1 = new BigDecimal("0.1");    // 문자열로 생성
+BigDecimal correct2 = new BigDecimal("0.2");    // 문자열로 생성
+BigDecimal correct3 = BigDecimal.valueOf(0.1);  // valueOf 사용 (단, 정확하지 않을 수 있음)
+</code></pre></pre>
+<h3>2. 반올림 모드 설정</h3>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-java">import java.math.RoundingMode;
+
+public class RoundingExample {
+    
+    public BigDecimal roundToCurrency(BigDecimal amount) {
+        // 통화 단위로 반올림 (소수점 2자리)
+        return amount.setScale(2, RoundingMode.HALF_UP);
+    }
+    
+    public BigDecimal roundToPercent(BigDecimal rate) {
+        // 퍼센트 단위로 반올림 (소수점 4자리)
+        return rate.setScale(4, RoundingMode.HALF_UP);
+    }
+    
+    public BigDecimal roundToInterest(BigDecimal interest) {
+        // 이자 단위로 반올림 (소수점 2자리, 항상 올림)
+        return interest.setScale(2, RoundingMode.CEILING);
+    }
+}
+</code></pre></pre>
+<h3>3. 상수 정의</h3>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-java">public class FinancialConstants {
+    // 자주 사용하는 BigDecimal 상수들
+    public static final BigDecimal ZERO = BigDecimal.ZERO;
+    public static final BigDecimal ONE = BigDecimal.ONE;
+    public static final BigDecimal HUNDRED = new BigDecimal("100");
+    public static final BigDecimal THOUSAND = new BigDecimal("1000");
+    
+    // 이자율 관련
+    public static final BigDecimal ANNUAL_DAYS = new BigDecimal("365");
+    public static final BigDecimal MONTHLY_DAYS = new BigDecimal("30");
+    
+    // 수수료 관련
+    public static final BigDecimal DEFAULT_FEE_RATE = new BigDecimal("0.025"); // 2.5%
+}
+</code></pre></pre>
+<h3>언제 무엇을 사용할까?</h3>
+<p><strong>BigDecimal 사용해야 하는 경우:</strong></p>
+<ul>
+<li>✅ <strong>금융 계산</strong> (이자, 수수료, 잔액)</li>
+<li>✅ <strong>세금 계산</strong></li>
+<li>✅ <strong>정확한 소수점 연산이 필요한 경우</strong></li>
+<li>✅ <strong>법적 요구사항이 있는 경우</strong></li>
+</ul>
+<p><strong>double 사용해도 되는 경우:</strong></p>
+<ul>
+<li>✅ <strong>통계 계산</strong> (근사값으로 충분한 경우)</li>
+<li>✅ <strong>과학적 계산</strong></li>
+<li>✅ <strong>성능이 중요한 경우</strong> (단, 정확도는 포기)</li>
+</ul>
+<h2>🚀 <strong>최적화 팁</strong></h2>
+<h3>1. BigDecimal 객체 재사용</h3>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-java">public class OptimizedCalculator {
+    // 자주 사용하는 BigDecimal 객체들을 캐시
+    private static final BigDecimal[] CACHED_VALUES = {
+        BigDecimal.ZERO,
+        BigDecimal.ONE,
+        new BigDecimal("0.01"),
+        new BigDecimal("0.1"),
+        new BigDecimal("100"),
+        new BigDecimal("365")
+    };
+    
+    public BigDecimal getCachedValue(int index) {
+        return CACHED_VALUES[index];
+    }
+}
+</code></pre></pre>
+<h3>2. 적절한 scale 설정</h3>
+<pre><pre style="background-color: rgb(245, 245, 245); padding: 16px; border-radius: 4px; overflow: auto; margin-bottom: 24px;"><code class="language-java">public class ScaleOptimizer {
+    
+    // 통화 계산용 (소수점 2자리)
+    public BigDecimal roundToCurrency(BigDecimal amount) {
+        return amount.setScale(2, RoundingMode.HALF_UP);
+    }
+    
+    // 이자율 계산용 (소수점 6자리)
+    public BigDecimal roundToInterestRate(BigDecimal rate) {
+        return rate.setScale(6, RoundingMode.HALF_UP);
+    }
+    
+    // 세금 계산용 (소수점 2자리, 항상 올림)
+    public BigDecimal roundToTax(BigDecimal amount) {
+        return amount.setScale(2, RoundingMode.CEILING);
+    }
+}
+</code></pre></pre>
+<h2>📋 <strong>결론</strong></h2>
+<p><strong>부동소수점 오류는 금융 시스템에서 치명적입니다.</strong> <code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">0.1 + 0.2 ≠ 0.3</code> 같은 문제가 이자, 수수료, 잔액 계산 오류를 초래할 수 있습니다.</p>
+<p><strong>BigDecimal을 사용해야 하는 경우:</strong></p>
+<ul>
+<li>모든 금융 계산</li>
+<li>정확한 소수점 연산이 필요한 경우</li>
+<li>법적 요구사항이 있는 경우</li>
+</ul>
+<p><strong>BigDecimal 사용 시 주의사항:</strong></p>
+<ul>
+<li>문자열 생성자 사용 (<code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">new BigDecimal("0.1")</code>)</li>
+<li>적절한 scale과 rounding mode 설정</li>
+<li>상수 객체 재사용으로 성능 최적화</li>
+</ul>
+<p><strong>성능 vs 정확도 트레이드오프:</strong></p>
+<ul>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">double</code>: 빠르지만 부정확</li>
+<li><code style="background-color: rgb(245, 245, 245); padding: 2px 6px; border-radius: 4px; font-family: monospace;">BigDecimal</code>: 느리지만 정확</li>
+</ul>
+<h3>실무 적용 가이드</h3>
+<p><strong>Backend 개발자라면:</strong></p>
+<ul>
+<li>✅ 금융 관련 API는 반드시 BigDecimal 사용</li>
+<li>✅ 데이터베이스 스키마도 DECIMAL 타입 사용</li>
+<li>✅ API 응답에서도 정확한 소수점 자리수 보장</li>
+<li>✅ 단위 테스트로 정확성 검증</li>
+</ul>
+<p><strong>가상자산 시장에서는 더욱 중요합니다:</strong></p>
+<ul>
+<li><strong>극소량 거래</strong>: 1 satoshi (0.00000001 BTC) 단위 거래도 빈번</li>
+<li><strong>높은 정확도 요구</strong>: BTC는 8자리, ETH는 wei 단위까지 정확한 계산 필요</li>
+<li><strong>즉시 손실</strong>: 부동소수점 오류로 인한 거래 오류는 즉시 수백만원 손실</li>
+<li><strong>블록체인 특성</strong>: 한번 실행된 거래는 되돌릴 수 없음</li>
+</ul>
+<p><strong>가상자산 거래 시스템 개발 시 체크리스트:</strong></p>
+<ul>
+<li>✅ <strong>BigDecimal 사용</strong> (절대 double 사용 금지)</li>
+<li>✅ <strong>적절한 scale 설정</strong> (BTC: 8자리, ETH: wei 단위)</li>
+<li>✅ <strong>최소 거래 단위 검증</strong></li>
+<li>✅ <strong>잔액 부족 검증</strong></li>
+<li>✅ <strong>단위 테스트로 정확성 검증</strong></li>
+</ul>
+<p>금융 시스템의 핵심은 정확성입니다. 성능보다 정확성이 중요한 분야에서는 반드시 BigDecimal을 사용해야 합니다.</p>
+<hr>
+<h2>📊 <strong>참고 자료</strong></h2>
+<h3>공식 문서 및 가이드</h3>
+<ul>
+<li><strong><a href="https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/math/BigDecimal.html">Java BigDecimal 공식 문서</a></strong>: Java BigDecimal 클래스 공식 API 문서</li>
+<li><strong><a href="https://ieeexplore.ieee.org/document/4610935">IEEE 754 부동소수점 표준</a></strong>: IEEE 754 부동소수점 산술 표준</li>
+<li><strong><a href="https://docs.oracle.com/javase/tutorial/java/nutsandbolts/datatypes.html">Java 데이터 타입 가이드</a></strong>: Oracle 공식 Java 기본 데이터 타입 문서</li>
+</ul>
+<h3>개발자 커뮤니티 자료</h3>
+<ul>
+<li><strong><a href="https://stackoverflow.com/questions/tagged/bigdecimal">Stack Overflow - BigDecimal Best Practices</a></strong>: BigDecimal 관련 질문과 답변</li>
+<li><strong><a href="https://github.com/topics/bigdecimal">GitHub - BigDecimal Examples</a></strong>: 오픈소스 BigDecimal 사용 예시들</li>
+</ul></div></div><div class="MuiBox-root css-1cpq4zq"><hr class="MuiDivider-root MuiDivider-fullWidth css-7jtdmc"><h5 class="MuiTypography-root MuiTypography-h5 css-85yo2n">같은 카테고리의 다른 글</h5><div class="MuiGrid-root MuiGrid-container MuiGrid-spacing-xs-2 css-1eikg3m"><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] Serializable 깊이 파기 — Part 2: 바이트에서 다시 객체로, 그리고 함정들</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">직렬화된 바이트를 ObjectInputStream이 어떤 순서로 읽어 객체로 복원하는지, 그때 생성자가 호출되지 않는다는 점을 확인합니다. | serialVersionUID, transient, 커스텀 readObject·writeObject, 역직렬화 취약점, Java 직렬화의 현재로 마무리합니다.</p><div class="MuiBox-root css-107ld1r"></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 4월 5일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] Serializable 깊이 파기 — Part 1: 객체가 바이트가 되는 과정</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">Python이나 JavaScript와 달리 Java는 왜 Serializable을 선언해야 하는지, 메서드가 하나도 없는 이 인터페이스가 무슨 일을 하는지 묻는 글입니다. | ObjectOutputStream이 만든 실제 바이트를 열어 보고, 참조 객체가 들어 있을 때는 어떻게 되는지 확인합니다.</p><div class="MuiBox-root css-107ld1r"></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 4월 5일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] 주식 거래 엔진 직접 만들기 - Part 3: 오더북을 어떻게 구현할 것인가</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">주식 거래 엔진의 오더북을 TreeMap과 ArrayDeque 조합으로 만든 이유를, PriorityQueue, LinkedList, Skip List와 비교하며 설명합니다. | 주문 취소를 Lazy Removal로 처리한 방법과 Kafka를 연결하며 만난 멱등성 문제를 마지막에 둡니다.</p><div class="MuiBox-root css-107ld1r"></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 27일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] 주식 거래 엔진 직접 만들기 - Part 2: Phase 1 — 모놀리식으로 시작하기</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">단일 JAR 모놀리식 구조인 Phase 1에서 만난 문제를 차례로 다룹니다. | SELECT FOR UPDATE로 동시성을 해결했고, 락 보유 시간을 줄이고, 락 획득 순서를 통일해 데드락 위험을 없앴습니다. @Transactional 원칙과 Lazy Loading 함정도 짚습니다.</p><div class="MuiBox-root css-107ld1r"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Java</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Spring Boot</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">JPA</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">+2</span></div></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 27일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[Java Deep Dive] 주식 거래 엔진 직접 만들기 - Part 1: 왜 주식 거래 엔진인가</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">F-lab 멘토링 프로젝트로 주식 거래 엔진을 직접 설계하고 구현한 과정을 기록하는 시리즈의 첫 글입니다. | 프로젝트를 고른 기준과 멀티모듈 구조, Phase 로드맵, 시리즈 전체에서 답할 질문들을 먼저 밝힙니다.</p><div class="MuiBox-root css-107ld1r"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Java</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Spring Boot</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Kafka</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">+5</span></div></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 27일</span></div></div><div class="MuiGrid-root MuiGrid-item MuiGrid-grid-xs-12 MuiGrid-grid-sm-6 css-rpybyc"><div class="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 css-14k4xu3" style="--Paper-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);"><h6 class="MuiTypography-root MuiTypography-h6 css-3ctvre">[개발자가 직접 써봤어요] Claude Code 완전 가이드: 설치부터 멀티에이전트까지</h6><p class="MuiTypography-root MuiTypography-body2 css-mjbz3d">Claude Code를 Spring Boot와 Kafka 기반 주식 매매 엔진 프로젝트에 적용해 본 경험을 바탕으로, 설치부터 멀티에이전트까지 소개합니다. | CLAUDE.md, Skills, Subagents, Hooks, MCP, Agent Teams의 여섯 레이어와 Cursor AI와의 비교, 주의사항이 나옵니다.</p><div class="MuiBox-root css-107ld1r"><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Claude Code</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">AI</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">Developer Tools</span></div><div class="MuiChip-root MuiChip-outlined MuiChip-sizeSmall MuiChip-colorDefault MuiChip-outlinedDefault css-1g0usfa"><span class="MuiChip-label MuiChip-labelSmall css-oruufx">+4</span></div></div><span class="MuiTypography-root MuiTypography-caption css-cstg28">2026년 3월 9일</span></div></div></div></div><div class="MuiBox-root css-1b94f21"><a class="MuiTypography-root MuiTypography-inherit MuiLink-root MuiLink-underlineAlways css-104ms0" href="/blog/posts" data-discover="true"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="ArrowBackIcon"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z"></path></svg>게시글 목록으로 돌아가기</a></div><button class="MuiButtonBase-root MuiFab-root MuiFab-circular MuiFab-sizeMedium MuiFab-primary MuiFab-root MuiFab-circular MuiFab-sizeMedium MuiFab-primary css-1nl6bps" tabindex="0" type="button" aria-label="scroll to top" style="opacity: 0; visibility: hidden;"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-q7mezt" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="KeyboardArrowUpIcon"><path d="M7.41 15.41 12 10.83l4.59 4.58L18 14l-6-6-6 6z"></path></svg></button></div></div></div></div><footer style="text-align: center; padding: 2rem 0px; color: rgb(0, 0, 0); font-size: 0.9rem; border-top: 1px solid rgb(0, 0, 0); margin-top: auto; background-color: rgb(255, 255, 255);"><p>© 2025 DevTaco Blog. All rights reserved.</p></footer><div class="MuiBox-root css-1hyfx7x"><div class="visitor-counter MuiBox-root css-19midj6"><h6 class="MuiTypography-root MuiTypography-h6 MuiTypography-gutterBottom css-izz7ci">방문자 수</h6><div class="MuiBox-root css-zwd3xv"><h4 class="MuiTypography-root MuiTypography-h4 css-1dg27va">108</h4><p class="MuiTypography-root MuiTypography-body2 css-l6pb42">오늘</p><h6 class="MuiTypography-root MuiTypography-h6 css-kh42wg">총 108명</h6></div></div></div><div class="MuiBox-root css-1y95mt5" data-testid="terminal-navigation"><div class="MuiBox-root css-1kw3y0a"><p class="MuiTypography-root MuiTypography-body2 css-1fktdtb">devtaco@portfolio:~$ navigation</p><div class="MuiBox-root css-j0ozid"><p class="MuiTypography-root MuiTypography-body2 css-1cn40rb">⌘M to close</p><button class="MuiButtonBase-root MuiIconButton-root MuiIconButton-sizeMedium css-470314" tabindex="0" type="button" id=":r1:"><svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeSmall css-vh810p" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="CloseIcon"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg></button></div></div><div class="MuiBox-root css-13t3iqc"><div class="MuiBox-root css-0"><p class="MuiTypography-root MuiTypography-body2 css-cbhj4f">Navigation:</p><div class="MuiBox-root css-1kkt86i"><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">1 → home</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">2 → about</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">3 → posts</p></div></div><div class="MuiBox-root css-0"><p class="MuiTypography-root MuiTypography-body2 css-cbhj4f">External:</p><div class="MuiBox-root css-1kkt86i"><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">g → github</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">e → email</p><p class="MuiTypography-root MuiTypography-body2 css-bk17fl">l → linkedin</p></div></div></div><p class="MuiTypography-root MuiTypography-body2 css-1e7vt2">Press number keys (1,2,3) or letter keys (g,e,l) to navigate. Use ⌘+M to close.</p></div></div></div></body></html>
