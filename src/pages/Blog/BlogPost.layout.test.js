@@ -2,6 +2,7 @@ import { render, screen, waitFor, within, fireEvent } from '@testing-library/rea
 import { HelmetProvider } from 'react-helmet-async';
 import { MemoryRouter, Routes, Route, useLocation } from 'react-router-dom';
 import BlogPost from './BlogPost';
+import PostsShell from './PostsShell';
 import {
   getPostById,
   incrementViewCount,
@@ -57,7 +58,9 @@ const renderPost = () =>
     <HelmetProvider>
       <MemoryRouter initialEntries={['/posts/68']}>
         <Routes>
-          <Route path="/posts/:id" element={<BlogPost />} />
+          <Route element={<PostsShell />}>
+            <Route path="/posts/:id" element={<BlogPost />} />
+          </Route>
           <Route path="*" element={<LocationProbe />} />
         </Routes>
       </MemoryRouter>

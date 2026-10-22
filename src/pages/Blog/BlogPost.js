@@ -26,10 +26,9 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { getPostById, incrementViewCount, getAdjacentPosts, getRelatedPostsByCategory } from '../../services/posts';
 import ImageModal from '../../components/ui/ImageModal';
-import BlogListSidebar from './components/BlogListSidebar';
 import PostToc from './components/PostToc';
 import CodeBlock from './components/CodeBlock';
-import { useListSidebarData } from './useListSidebarData';
+import { useSidebarData, useSidebarRegistration } from './PostsShell';
 import { usePostHeadings, useActiveHeadingId } from './postToc';
 import { ACCENT, TAG_PILL } from './listTheme';
 import { formatPostDate } from './formatPostDate';
@@ -45,11 +44,21 @@ const BlogPost = () => {
   const [relatedPosts, setRelatedPosts] = useState([]);
   const [showScrollTop, setShowScrollTop] = useState(false);
 
-  // 왼쪽 사이드바(글 목록과 같은 데이터), 오른쪽 목차(렌더된 본문의 h2·h3에서 만든다)
-  const { categories, categoryCounts, tagCounts } = useListSidebarData();
+  // 영역 이름(경로 표시용). 사이드바 데이터는 틀(PostsShell)이 한 번만 불러온다.
+  const { categories } = useSidebarData();
+  // 오른쪽 목차는 렌더된 본문의 h2·h3에서 만든다
   const contentRef = useRef(null);
   const headings = usePostHeadings(contentRef, post && post.content);
   const activeHeadingId = useActiveHeadingId(headings);
+
+  // 틀의 사이드바에 알린다: 이 글의 영역을 선택 상태로 보이고(글을 불러오기 전에는 이전 선택 유지), 항목을 누르면 그 조건의 목록으로 간다.
+  useSidebarRegistration({
+    selectedCategoryKey: post ? post.category_key || 'all' : null,
+    selectedTags: [],
+    onCategoryClick: (key) => navigate(key === 'all' ? '/posts' : `/posts?category=${encodeURIComponent(key)}`),
+    onTagToggle: (tag) => navigate(`/posts?tags=${encodeURIComponent(tag)}`),
+    onOpenTagModal: () => navigate('/posts'),
+  });
   
   // URL에서 필터 조건 읽기 (useMemo로 메모이제이션하여 불필요한 재생성 방지)
   const categoryFromUrl = searchParams.get('category') || 'all';
@@ -621,7 +630,7 @@ const BlogPost = () => {
 
   if (loading) {
     return (
-      <Box sx={{ p: { xs: 2, md: 4 } }}>
+      <Box sx={{ flex: 1, minWidth: 0, p: { xs: 2, md: 4 } }}>
         {/* 데이터 로딩 중에는 아래에서 post 기반 <Helmet>이 렌더되지 않으므로, public/index.html의
             정적 <title> 폴백을 제거한 이후 실사용자가 겪을 수 있는 "빈 탭 제목" 방지용 기본값 */}
         <Helmet>
@@ -668,7 +677,7 @@ const BlogPost = () => {
 
   if (!post) {
     return (
-      <Box sx={{ p: 4, textAlign: 'center' }}>
+      <Box sx={{ flex: 1, minWidth: 0, p: 4, textAlign: 'center' }}>
         <Helmet>
           <title>게시글을 찾을 수 없습니다 | DevTaco Blog</title>
         </Helmet>
@@ -699,7 +708,6 @@ const BlogPost = () => {
     : (post.excerpt || '');
 
   const categoryName = (categories.find((category) => category.key === post.category_key) || {}).name || '';
-  const goToList = (query) => navigate(query ? `/posts?${query}` : '/posts');
 
   const contentSx = {
     '& h1, & h2, & h3, & h4, & h5, & h6': { fontWeight: 'bold', mt: 4, mb: 2, scrollMarginTop: '24px' },
@@ -736,14 +744,7 @@ const BlogPost = () => {
   };
 
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        alignItems: 'flex-start',
-        minHeight: '100vh',
-        '@media (max-width:760px)': { flexDirection: 'column', alignItems: 'stretch' },
-      }}
-    >
+    <>
       {post && (
         <Helmet>
           {/* react-helmet-async v3(React 19 경로)는 <title>의 자식이 여러 개(표현식+문자열)면
@@ -757,18 +758,6 @@ const BlogPost = () => {
           <meta name="twitter:card" content="summary" />
         </Helmet>
       )}
-
-      {/* 사이드바: 글 목록과 같은 것. 항목을 누르면 그 조건의 목록으로 간다 */}
-      <BlogListSidebar
-        categories={categories}
-        categoryCounts={categoryCounts}
-        selectedCategoryKey={post.category_key || 'all'}
-        onCategoryClick={(key) => goToList(key === 'all' ? '' : `category=${encodeURIComponent(key)}`)}
-        tagCounts={tagCounts}
-        selectedTags={[]}
-        onTagToggle={(tag) => goToList(`tags=${encodeURIComponent(tag)}`)}
-        onOpenTagModal={() => goToList('')}
-      />
 
       <Box
         component="main"
@@ -971,7 +960,7 @@ const BlogPost = () => {
           <KeyboardArrowUpIcon />
         </Fab>
       </Fade>
-    </Box>
+    </>
   );
 };
 

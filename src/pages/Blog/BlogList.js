@@ -16,10 +16,9 @@ import { useNavigate, useSearchParams, useNavigationType } from 'react-router-do
 import SearchIcon from '@mui/icons-material/Search';
 import { Helmet } from 'react-helmet-async';
 import { getPostsWithPageNumber, searchPostsWithPageNumber } from '../../services/posts';
-import BlogListSidebar from './components/BlogListSidebar';
 import PostCard from './components/PostCard';
 import { useSearchShortcut } from './useSearchShortcut';
-import { useListSidebarData } from './useListSidebarData';
+import { useSidebarData, useSidebarRegistration } from './PostsShell';
 import { ACCENT } from './listTheme';
 
 /** URL 동기화 시 매 렌더마다 새 []/새 배열이 들어가 selectedTags 의존 effect(디바운스 검색)가 불필요하게 재실행되는 것을 막기 위함 */
@@ -58,8 +57,8 @@ const BlogList = () => {
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [isSearchMode, setIsSearchMode] = useState(false);
-  // 사이드바 데이터(영역, 영역별·태그별 개수). 글 상세와 같은 훅을 쓴다.
-  const { categories, categoryCounts, tagCounts } = useListSidebarData();
+  // 영역 이름(카드의 영역 알약용). 사이드바 데이터는 틀(PostsShell)이 한 번만 불러온다.
+  const { categories } = useSidebarData();
   const searchInputRef = useRef(null);
   useSearchShortcut(searchInputRef);
   const [selectedCategoryKey, setSelectedCategoryKey] = useState('all');
@@ -411,9 +410,18 @@ const BlogList = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  // 틀의 사이드바에 지금 선택 상태와 항목을 눌렀을 때의 동작을 알린다.
+  useSidebarRegistration({
+    selectedCategoryKey,
+    selectedTags,
+    onCategoryClick: handleCategoryClick,
+    onTagToggle: handleTagClick,
+    onOpenTagModal: handleSearchModalOpen,
+  });
+
   if (loading) {
     return (
-      <Box sx={{ p: { xs: 2, md: 4 } }}>
+      <Box sx={{ flex: 1, minWidth: 0, p: { xs: 2, md: 4 } }}>
         <Helmet>
           <title>게시글 목록 | DevTaco Blog</title>
           <meta name="description" content="Java · Kotlin 백엔드 개발 경험과 학습 기록을 공유하는 기술 블로그의 게시글 목록" />
@@ -448,30 +456,11 @@ const BlogList = () => {
   }
 
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        alignItems: 'flex-start',
-        minHeight: '100vh',
-        '@media (max-width:760px)': { flexDirection: 'column', alignItems: 'stretch' },
-      }}
-    >
+    <>
       <Helmet>
         <title>게시글 목록 | DevTaco Blog</title>
         <meta name="description" content="Java · Kotlin 백엔드 개발 경험과 학습 기록을 공유하는 기술 블로그의 게시글 목록" />
       </Helmet>
-
-      {/* 사이드바: 본문 컨테이너 밖, 화면 왼쪽 끝에 붙는다 */}
-      <BlogListSidebar
-        categories={categories}
-        categoryCounts={categoryCounts}
-        selectedCategoryKey={selectedCategoryKey}
-        onCategoryClick={handleCategoryClick}
-        tagCounts={tagCounts}
-        selectedTags={selectedTags}
-        onTagToggle={handleTagClick}
-        onOpenTagModal={handleSearchModalOpen}
-      />
 
       <Box component="main" sx={{ flex: 1, minWidth: 0, p: { xs: 2, md: '32px 40px' } }}>
       <Box sx={{ maxWidth: 1360 }}>
@@ -641,7 +630,7 @@ const BlogList = () => {
           </Stack>
         </Box>
       </Modal>
-    </Box>
+    </>
   );
 };
 

@@ -1,7 +1,8 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import BlogList from './BlogList';
+import PostsShell from './PostsShell';
 import {
   getPostsWithPageNumber,
   searchPostsWithPageNumber,
@@ -45,7 +46,11 @@ const posts = [
 const renderList = (initialUrl = '/posts') =>
   render(
     <MemoryRouter initialEntries={[initialUrl]}>
-      <BlogList />
+      <Routes>
+        <Route element={<PostsShell />}>
+          <Route path="/posts" element={<BlogList />} />
+        </Route>
+      </Routes>
     </MemoryRouter>
   );
 

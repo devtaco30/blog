@@ -2,6 +2,7 @@ import { render, waitFor } from '@testing-library/react';
 import { HelmetProvider } from 'react-helmet-async';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import BlogPost from './BlogPost';
+import PostsShell from './PostsShell';
 import {
   getPostById,
   incrementViewCount,
@@ -65,7 +66,9 @@ test('글 제목이 document.title에 반영된다', async () => {
     <HelmetProvider>
       <MemoryRouter initialEntries={['/posts/1']}>
         <Routes>
-          <Route path="/posts/:id" element={<BlogPost />} />
+          <Route element={<PostsShell />}>
+            <Route path="/posts/:id" element={<BlogPost />} />
+          </Route>
         </Routes>
       </MemoryRouter>
     </HelmetProvider>
