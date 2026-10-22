@@ -108,4 +108,11 @@ describe('BlogList 조립', () => {
     const button = await screen.findByRole('button', { name: /일반 포스팅/ });
     expect(button).toHaveAttribute('aria-pressed', 'true');
   });
+
+  it('조건에 맞는 글이 없으면 안내 문구를 보여 준다 (영역과 기술을 함께 골라 0건이 된 경우)', async () => {
+    getPostsWithPageNumber.mockResolvedValue({ data: [], count: 0, error: null });
+    searchPostsWithPageNumber.mockResolvedValue({ data: [], count: 0, error: null });
+    renderList('/posts?category=ml-dl&tags=Python');
+    expect(await screen.findByText('조건에 맞는 글이 없습니다.')).toBeInTheDocument();
+  });
 });

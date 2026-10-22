@@ -596,7 +596,6 @@ const BlogList = () => {
       <Box
         sx={{
           display: 'flex',
-          alignItems: 'flex-start',
           border: '1px solid #e5e7eb',
           borderRadius: '10px',
           overflow: 'hidden',
@@ -613,7 +612,12 @@ const BlogList = () => {
           onTagToggle={handleTagClick}
           onOpenTagModal={handleSearchModalOpen}
         />
-        <Box sx={{ flex: 1, minWidth: 0, p: { xs: 2, md: 3 }, display: 'grid', gap: '10px' }}>
+        <Box sx={{ flex: 1, minWidth: 0, p: { xs: 2, md: 3 }, display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: '10px', alignContent: 'start' }}>
+          {posts.length === 0 && (
+            <Typography sx={{ py: 6, textAlign: 'center', color: 'text.secondary' }}>
+              조건에 맞는 글이 없습니다.
+            </Typography>
+          )}
           {posts.map((post) => (
             <PostCard
               key={post.id}

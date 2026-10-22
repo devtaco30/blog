@@ -63,6 +63,7 @@ const BlogListSidebar = ({
       component="nav"
       aria-label="글 필터"
       sx={{
+        boxSizing: 'border-box',
         width: { xs: '100%', md: 230 },
         flex: 'none',
         backgroundColor: '#f8f9fb',

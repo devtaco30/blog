@@ -43,6 +43,7 @@ const PostCard = ({ post, categoryName, onClick, onTagClick }) => {
         if (event.key === 'Enter') onClick(post);
       }}
       sx={{
+        minWidth: 0,
         border: '1px solid #e5e7eb',
         borderRadius: '10px',
         p: '14px 16px',
