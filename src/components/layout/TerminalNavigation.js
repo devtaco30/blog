@@ -17,7 +17,7 @@ const TerminalNavigation = ({ terminalOpen, closeTerminal, handleNavigationClick
       fontFamily: 'monospace',
       fontSize: '0.9rem',
       padding: 2,
-      borderTop: '`2px solid ${TERMINAL_ACCENT_COLOR}`',
+      borderTop: `2px solid ${TERMINAL_ACCENT_COLOR}`,
       zIndex: 1000,
       transform: terminalOpen ? 'translateY(0)' : 'translateY(100%)',
       transition: 'transform 0.3s ease'
