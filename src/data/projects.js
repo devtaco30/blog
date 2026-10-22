@@ -1,5 +1,38 @@
 export const projects = [
   {
+    title: '[Side Build] Apex — AI 면접 멘토',
+    description: [
+      '진단 → 학습 → 복습 → 성장 추적 루프를 제공하는 **AI 면접 멘토 서비스**',
+      '개념 학습 · 코드 리뷰 · 설계 면접의 **3세션 구조**',
+      '대화 · 진단 · 평가 · 계획 · 회고 **역할별 LLM 에이전트 분리**',
+      'tool 정의로 응답 형식을 고정하고 같은 스키마로 **재검증**',
+      '프롬프트 수정 전후를 **재실행 비교**로 평가하는 기준 수립'
+    ],
+    technologies: ['Python', 'FastAPI', 'PostgreSQL', 'pgvector', 'Redis', 'Claude API', 'React', 'Docker', 'Fly.io'],
+    period: '2026.04 - 현재'
+  },
+  {
+    title: '[Side Build] 주식 매매 엔진 — 주문 체결 코어',
+    description: [
+      '같은 매매 플로우를 **DB 락 기반 분산 처리**(v1)와 **인메모리 Single Writer**(v2) 두 가지로 구현해 비교',
+      'v2는 **링버퍼 단일 스레드** 메모리 계좌와 **UDP(Aeron)** 통신으로 주문 경로에서 브로커·DB 락 제거',
+      '동일 주문 워크로드(초당 192건)에서 주문 발행 → 첫 체결 **p99 14.6ms → 1.6ms** (약 89% 단축)',
+      '검토한 대안(락 안 쿼리 최적화, 조건부 원자 UPDATE, Redis Lua)과 트레이드오프를 **ADR로 기록**'
+    ],
+    technologies: ['Java', 'Spring Boot', 'PostgreSQL', 'Kafka', 'Redis', 'LMAX Disruptor', 'Aeron', 'JMH', 'k6'],
+    period: '2026.02 - 현재'
+  },
+  {
+    title: '[Side Build] Grit — 운동 기록 앱',
+    description: [
+      'PT 수업 기록 · 개인 운동 로그 · 팁 노트 검색 · 루틴 · Streak를 **한 앱으로 통합**',
+      '공개 데이터셋 4종 10,242장으로 **YOLOv8s 학습**',
+      '**온디바이스 ML 추론**으로 바벨 경로 분석, Galaxy A36 기준 처리 시간 **108초 → 20초** (81% 단축)'
+    ],
+    technologies: ['Kotlin', 'Spring Boot', 'PostgreSQL', 'React Native', 'Python', 'YOLO', 'OpenCV'],
+    period: '개인 프로젝트'
+  },
+  {
     title: '[블루밍비트] FCM Push 기능 고도화',
     description: [
       '**OneSignal → FCM** 전환 및 설정 누락 이슈 해결',
