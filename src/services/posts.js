@@ -448,3 +448,22 @@ export const getRelatedPostsByCategory = async (currentPostId, categoryKey = nul
     return { data: null, error };
   }
 };
+
+/**
+ * 발행된 모든 글의 태그 목록 조회 (BlogList 사이드바의 태그 개수 집계용)
+ * @returns {Promise<{data: Array<string[] | null> | null, error: Error | null}>}
+ */
+export const getPublishedPostTagLists = async () => {
+  try {
+    const { data, error } = await supabase
+      .from('posts')
+      .select('tags')
+      .eq('is_published', true);
+
+    if (error) throw error;
+    return { data: (data || []).map((row) => row.tags), error: null };
+  } catch (error) {
+    console.error('Error fetching published post tags:', error);
+    return { data: null, error };
+  }
+};
