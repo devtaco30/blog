@@ -212,6 +212,7 @@ const BlogPost = () => {
     return (
       <Box sx={{ 
         display: 'flex', 
+        flexDirection: { xs: 'column', sm: 'row' },
         justifyContent: 'space-between', 
         gap: 2,
         my: 3 
@@ -223,6 +224,7 @@ const BlogPost = () => {
             onClick={() => handleNavigate(prev.id)}
             sx={{
               flex: 1,
+              minWidth: 0,
               justifyContent: 'flex-start',
               textAlign: 'left',
               borderColor: '#000000',
@@ -233,7 +235,7 @@ const BlogPost = () => {
               }
             }}
           >
-            <Box>
+            <Box sx={{ minWidth: 0 }}>
               <Typography variant="caption" display="block" sx={{ color: 'text.secondary' }}>
                 이전글
               </Typography>
@@ -257,6 +259,7 @@ const BlogPost = () => {
             onClick={() => handleNavigate(next.id)}
             sx={{
               flex: 1,
+              minWidth: 0,
               justifyContent: 'flex-end',
               textAlign: 'right',
               borderColor: '#000000',
@@ -267,7 +270,7 @@ const BlogPost = () => {
               }
             }}
           >
-            <Box>
+            <Box sx={{ minWidth: 0 }}>
               <Typography variant="caption" display="block" sx={{ color: 'text.secondary' }}>
                 다음글
               </Typography>
@@ -934,7 +937,7 @@ const BlogPost = () => {
         <Box
           sx={{
             display: 'none',
-            '@media (min-width:1200px)': { display: 'block' },
+            '@media (min-width:1360px)': { display: 'block' },
             width: 260,
             flex: 'none',
             position: 'sticky',
