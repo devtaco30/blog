@@ -129,11 +129,6 @@ const About = () => {
                 color: '#ffffff',
                 border: '1px solid #000000'
               }} />
-              <Chip label="MSA 전문가" sx={{ 
-                backgroundColor: '#ffffff', 
-                color: '#000000',
-                border: '1px solid #000000'
-              }} />
               <Chip label="Spring Boot" sx={{ 
                 backgroundColor: '#ffffff', 
                 color: '#000000',

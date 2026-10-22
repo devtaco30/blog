@@ -27,6 +27,18 @@ describe('About 프로필 사진', () => {
   });
 });
 
+describe('About 프로필 칩', () => {
+  it('"MSA 전문가" 칩을 보여 주지 않는다', () => {
+    const { queryByText, getByText } = render(
+      <HelmetProvider>
+        <About />
+      </HelmetProvider>
+    );
+    expect(getByText('Spring Boot')).toBeInTheDocument();
+    expect(queryByText('MSA 전문가')).not.toBeInTheDocument();
+  });
+});
+
 describe('About 이력서 다운로드', () => {
   it('사진을 누르면 최신 이력서 PDF 를 내려받는다', () => {
     const clicked = [];
