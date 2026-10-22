@@ -768,7 +768,7 @@ const BlogPost = () => {
           display: 'flex',
           alignItems: 'flex-start',
           justifyContent: 'center',
-          gap: '32px',
+          gap: '64px',
         }}
       >
         <Box component="article" sx={{ flex: 1, minWidth: 0, maxWidth: 860 }}>
@@ -926,7 +926,7 @@ const BlogPost = () => {
         <Box
           sx={{
             display: 'none',
-            '@media (min-width:1360px)': { display: 'block' },
+            '@media (min-width:1440px)': { display: 'block' },
             width: 260,
             flex: 'none',
             position: 'sticky',
