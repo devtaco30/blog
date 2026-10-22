@@ -21,6 +21,12 @@ describe('Layout 본문 컨테이너', () => {
     expect(screen.queryByTestId('page-container')).not.toBeInTheDocument();
   });
 
+  it('GitHub Pages가 붙이는 끝 슬래시(/posts/)가 있어도 컨테이너 없이 그린다', () => {
+    renderAt('/posts/');
+    expect(screen.queryByTestId('page-container')).not.toBeInTheDocument();
+    expect(screen.getByText('본문')).toBeInTheDocument();
+  });
+
   it.each(['/', '/about', '/posts/68', '/admin/posts'])('%s는 지금처럼 폭이 제한된 컨테이너 안에 그린다', (path) => {
     renderAt(path);
     expect(screen.getByTestId('page-container')).toHaveTextContent('본문');

@@ -15,7 +15,8 @@ const Layout = ({ children }) => {
   const { terminalOpen, toggleTerminal, closeTerminal, handleNavigationClick } = useTerminalNavigation();
   const [showShortcut, setShowShortcut] = useState(true);
   const location = useLocation();
-  const isFullWidthPage = FULL_WIDTH_PATHS.includes(location.pathname);
+  // GitHub Pages는 /posts를 /posts/로 돌려보내므로 끝 슬래시를 떼고 비교한다.
+  const isFullWidthPage = FULL_WIDTH_PATHS.includes(location.pathname.replace(/\/+$/, ''));
   
   // 로그인 페이지에서는 네비게이션 숨김
   const isLoginPage = location.pathname === ROUTES.LOGIN || location.hash === HASH_ROUTES.LOGIN;
