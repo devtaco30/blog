@@ -27,7 +27,13 @@ describe('Layout 본문 컨테이너', () => {
     expect(screen.getByText('본문')).toBeInTheDocument();
   });
 
-  it.each(['/', '/about', '/posts/68', '/admin/posts'])('%s는 지금처럼 폭이 제한된 컨테이너 안에 그린다', (path) => {
+  it.each(['/posts/68', '/posts/68/'])('글 상세(%s)도 컨테이너 없이 그린다 (왼쪽 사이드바와 오른쪽 목차를 직접 배치하기 위해)', (path) => {
+    renderAt(path);
+    expect(screen.queryByTestId('page-container')).not.toBeInTheDocument();
+    expect(screen.getByText('본문')).toBeInTheDocument();
+  });
+
+  it.each(['/', '/about', '/admin/posts', '/login'])('%s는 지금처럼 폭이 제한된 컨테이너 안에 그린다', (path) => {
     renderAt(path);
     expect(screen.getByTestId('page-container')).toHaveTextContent('본문');
   });

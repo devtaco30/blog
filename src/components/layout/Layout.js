@@ -9,14 +9,15 @@ import VisitorCounter from '../ui/VisitorCounter';
 import { ROUTES, HASH_ROUTES } from '../../constants/routes';
 
 // 본문 폭 제한(컨테이너)을 씌우지 않는 페이지. 글 목록은 사이드바를 화면 왼쪽 끝에 붙이기 위해 직접 폭을 정한다.
-const FULL_WIDTH_PATHS = ['/posts'];
+// /posts(글 목록)와 /posts/<id>(글 상세). 끝 슬래시는 비교 전에 뗀다.
+const FULL_WIDTH_PATH_PATTERN = /^\/posts(\/[^/]+)?$/;
 
 const Layout = ({ children }) => {
   const { terminalOpen, toggleTerminal, closeTerminal, handleNavigationClick } = useTerminalNavigation();
   const [showShortcut, setShowShortcut] = useState(true);
   const location = useLocation();
   // GitHub Pages는 /posts를 /posts/로 돌려보내므로 끝 슬래시를 떼고 비교한다.
-  const isFullWidthPage = FULL_WIDTH_PATHS.includes(location.pathname.replace(/\/+$/, ''));
+  const isFullWidthPage = FULL_WIDTH_PATH_PATTERN.test(location.pathname.replace(/\/+$/, ''));
   
   // 로그인 페이지에서는 네비게이션 숨김
   const isLoginPage = location.pathname === ROUTES.LOGIN || location.hash === HASH_ROUTES.LOGIN;
