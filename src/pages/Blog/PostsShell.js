@@ -58,7 +58,7 @@ const PostsShell = () => {
           onOpenTagModal={() => handlersRef.current.onOpenTagModal && handlersRef.current.onOpenTagModal()}
         />
         {/* 목록과 상세가 같은 왼쪽·오른쪽 끝을 쓰도록 본문 여백은 여기서 한 번만 정한다 */}
-        <Box component="main" sx={{ flex: 1, minWidth: 0, p: { xs: 2, md: '32px 24px 32px 32px' } }}>
+        <Box component="main" sx={{ flex: 1, minWidth: 0, p: { xs: 2, md: '76px 24px 32px 32px' } }}>
           <Outlet />
         </Box>
       </Box>
