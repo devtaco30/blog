@@ -36,7 +36,7 @@ const SidebarProfile = () => (
         backgroundColor: ACCENT.selectedBg,
       }}
     >
-      {/* About 의 사진에서 얼굴만 잘라 흑백으로 만든 128px 파일 (원본은 2MB가 넘는다) */}
+      {/* 해골 캐릭터 그림에서 얼굴만 잘라 160px로 줄인 파일 */}
       <img
         src={`${process.env.PUBLIC_URL}/images/profile/avatar-sm.jpg`}
         alt="DevJack 프로필"
