@@ -36,11 +36,11 @@ const SidebarProfile = () => (
         backgroundColor: ACCENT.selectedBg,
       }}
     >
-      {/* 홈 화면에서 쓰던 프로필 사진을 얼굴이 원 안에 들어오도록 확대해서 보여 준다 */}
+      {/* About 의 사진에서 얼굴만 잘라 흑백으로 만든 128px 파일 (원본은 2MB가 넘는다) */}
       <img
-        src={`${process.env.PUBLIC_URL}/images/profile/profile.png`}
+        src={`${process.env.PUBLIC_URL}/images/profile/avatar-sm.jpg`}
         alt="DevJack 프로필"
-        style={{ width: '180%', height: '180%', objectFit: 'cover', transform: 'translate(-1%, 23%)' }}
+        style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
       />
     </Box>
     <Box sx={{ minWidth: 0 }}>

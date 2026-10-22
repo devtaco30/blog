@@ -24,7 +24,7 @@ const TerminalNavigation = ({ terminalOpen, closeTerminal, handleNavigationClick
     }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
         <Typography variant="body2" sx={{ color: TERMINAL_ACCENT_COLOR, fontFamily: 'monospace' }}>
-          devtaco@portfolio:~$ navigation
+          devjack@portfolio:~$ navigation
         </Typography>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
           <Typography variant="body2" sx={{ color: '#666666', fontFamily: 'monospace', fontSize: '0.8rem' }}>

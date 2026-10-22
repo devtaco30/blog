@@ -29,6 +29,6 @@ describe('SidebarProfile', () => {
 
   it('프로필 사진에 대체 텍스트가 있다', () => {
     setup();
-    expect(screen.getByAltText('DevJack 프로필')).toBeInTheDocument();
+    expect(screen.getByAltText('DevJack 프로필')).toHaveAttribute('src', expect.stringContaining('avatar-sm.jpg'));
   });
 });
