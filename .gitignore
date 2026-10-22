@@ -121,3 +121,6 @@ temp/
 # unrelated local files
 /test.py
 /source/
+
+# superpowers 브레인스토밍·실행 작업 폴더
+.superpowers/
