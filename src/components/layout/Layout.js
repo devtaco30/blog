@@ -146,7 +146,7 @@ const Layout = ({ children }) => {
         marginTop: 'auto',
         backgroundColor: '#ffffff'
       }}>
-        <p>© 2025 DevTaco Blog. All rights reserved.</p>
+        <p>© 2025 DevJack Blog. All rights reserved.</p>
       </footer>
 
       {/* Hidden Visitor Counter - 화면에는 보이지 않지만 방문자 카운팅 로직 실행 */}

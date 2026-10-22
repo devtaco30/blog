@@ -635,7 +635,7 @@ const BlogPost = () => {
         {/* 데이터 로딩 중에는 아래에서 post 기반 <Helmet>이 렌더되지 않으므로, public/index.html의
             정적 <title> 폴백을 제거한 이후 실사용자가 겪을 수 있는 "빈 탭 제목" 방지용 기본값 */}
         <Helmet>
-          <title>게시글 불러오는 중... | DevTaco Blog</title>
+          <title>게시글 불러오는 중... | DevJack Blog</title>
         </Helmet>
         {/* Breadcrumbs Skeleton */}
         <Box sx={{ mb: 3 }}>
@@ -680,7 +680,7 @@ const BlogPost = () => {
     return (
       <Box sx={{ p: 4, textAlign: 'center' }}>
         <Helmet>
-          <title>게시글을 찾을 수 없습니다 | DevTaco Blog</title>
+          <title>게시글을 찾을 수 없습니다 | DevJack Blog</title>
         </Helmet>
         <Typography variant="h4" gutterBottom>
           게시글을 찾을 수 없습니다
@@ -751,7 +751,7 @@ const BlogPost = () => {
         <Helmet>
           {/* react-helmet-async v3(React 19 경로)는 <title>의 자식이 여러 개(표현식+문자열)면
               hoist하지 못하고 빈 <title />을 렌더링함 → 반드시 단일 표현식(템플릿 리터럴)으로 전달 */}
-          <title>{`${post.title} | DevTaco Blog`}</title>
+          <title>{`${post.title} | DevJack Blog`}</title>
           <meta name="description" content={excerptText} />
           <meta property="og:title" content={post.title} />
           <meta property="og:description" content={excerptText} />

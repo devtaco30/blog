@@ -23,8 +23,8 @@ const About = () => {
       minHeight: '100vh'
     }}>
       <Helmet>
-        <title>소개 | DevTaco Blog</title>
-        <meta name="description" content="Java · Kotlin 백엔드 개발자 박종혁(DevTaco)의 경력, 기술 스택, 프로젝트 소개" />
+        <title>소개 | DevJack Blog</title>
+        <meta name="description" content="Java · Kotlin 백엔드 개발자 박종혁(DevJack)의 경력, 기술 스택, 프로젝트 소개" />
       </Helmet>
       {/* 헤더 섹션 */}
       <motion.div
@@ -99,7 +99,7 @@ const About = () => {
               fontWeight: 'bold',
               color: '#000000'
             }}>
-              박종혁 (DevTaco)
+              박종혁 (DevJack)
             </Typography>
             <Typography variant="h6" gutterBottom sx={{ 
               color: '#000000', 
@@ -114,7 +114,7 @@ const About = () => {
               mb: 3,
               color: '#000000'
             }}>
-              안녕하세요, DevTaco입니다 👋<br />
+              안녕하세요, DevJack입니다 👋<br />
               패션업계에서 디자이너로 일하다가 개발자로 전향한 지 벌써 6년이 되었습니다.<br />
               지금은 Java와 Kotlin을 주로 사용하며 Spring Boot 기반의 다양한 서비스를 만들고 있습니다.<br /><br />
               새로운 기술을 배우는 걸 즐기고, 읽기 좋은 코드를 작성하는 데 집중합니다.<br />

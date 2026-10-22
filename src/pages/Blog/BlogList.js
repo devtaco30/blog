@@ -423,7 +423,7 @@ const BlogList = () => {
     return (
       <Box>
         <Helmet>
-          <title>게시글 목록 | DevTaco Blog</title>
+          <title>게시글 목록 | DevJack Blog</title>
           <meta name="description" content="Java · Kotlin 백엔드 개발 경험과 학습 기록을 공유하는 기술 블로그의 게시글 목록" />
         </Helmet>
         <Typography variant="h4" sx={{ mb: 4 }}>
@@ -458,7 +458,7 @@ const BlogList = () => {
   return (
     <>
       <Helmet>
-        <title>게시글 목록 | DevTaco Blog</title>
+        <title>게시글 목록 | DevJack Blog</title>
         <meta name="description" content="Java · Kotlin 백엔드 개발 경험과 학습 기록을 공유하는 기술 블로그의 게시글 목록" />
       </Helmet>
 

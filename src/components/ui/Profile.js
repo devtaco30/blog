@@ -35,7 +35,7 @@ function Profile() {
               fontSize: { xs: '1.25rem', md: '1.5rem' }
             }}
           >
-            DevTaco
+            DevJack
           </Typography>
           <Typography 
             variant="body2" 

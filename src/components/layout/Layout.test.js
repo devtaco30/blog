@@ -38,3 +38,10 @@ describe('Layout 본문 컨테이너', () => {
     expect(screen.getByTestId('page-container')).toHaveTextContent('본문');
   });
 });
+
+describe('Layout 푸터', () => {
+  it('블로그 이름을 DevJack 으로 보여 준다', () => {
+    renderAt('/about');
+    expect(screen.getByText(/DevJack Blog/)).toBeInTheDocument();
+  });
+});
