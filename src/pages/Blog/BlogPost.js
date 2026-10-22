@@ -32,6 +32,7 @@ import { useSidebarData, useSidebarRegistration } from './PostsShell';
 import { usePostHeadings, useActiveHeadingId } from './postToc';
 import { ACCENT, TAG_PILL } from './listTheme';
 import { formatPostDate } from './formatPostDate';
+import { splitTitlePrefix } from './postTitle';
 
 const BlogPost = () => {
   const { id } = useParams();
@@ -707,6 +708,7 @@ const BlogPost = () => {
     ? post.excerpt.filter(Boolean).join(' ')
     : (post.excerpt || '');
 
+  const titleParts = splitTitlePrefix(post.title);
   const categoryName = (categories.find((category) => category.key === post.category_key) || {}).name || '';
 
   const contentSx = {
@@ -809,9 +811,17 @@ const BlogPost = () => {
 
           <Typography
             component="h1"
-            sx={{ fontSize: { xs: 24, md: 32 }, fontWeight: 800, lineHeight: 1.3, textWrap: 'balance', wordBreak: 'keep-all' }}
+            sx={{ fontSize: { xs: 24, md: 32 }, fontWeight: 700, lineHeight: 1.4, textWrap: 'pretty', wordBreak: 'keep-all' }}
           >
-            {post.title}
+            {titleParts.prefix && (
+              <>
+                {/* 시리즈 이름은 제목 위에 작게 따로 보인다 (긴 제목이 읽기 어려워서). h1 안에 두어 글자 전체는 그대로 유지한다 */}
+                <Box component="span" sx={{ display: 'block', mb: 1, fontSize: 14, fontWeight: 600, color: ACCENT.main }}>
+                  {titleParts.prefix}
+                </Box>{' '}
+              </>
+            )}
+            {titleParts.title}
           </Typography>
           <Typography sx={{ mt: 2, fontSize: 14, color: '#6b7280' }}>{formatPostDate(post.published_at)}</Typography>
           <Box sx={{ borderBottom: '1px solid #e5e7eb', mt: 3, mb: 4 }} />

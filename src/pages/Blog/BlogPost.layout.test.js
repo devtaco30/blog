@@ -130,4 +130,12 @@ describe('BlogPost 레이아웃', () => {
     await screen.findByRole('heading', { level: 1 });
     expect(screen.queryByText(/요약 첫 줄/)).not.toBeInTheDocument();
   });
+
+  it('제목 앞의 [시리즈 이름]은 대괄호 없이 제목 위에 따로 보이고, 나머지 제목과 함께 h1 안에 있다', async () => {
+    getPostById.mockResolvedValue({ data: { ...post, title: '[Java Deep Dive] 직렬화 깊이 파기 — Part 2' }, error: null });
+    renderPost();
+    const heading = await screen.findByRole('heading', { level: 1 });
+    expect(heading).toHaveTextContent('Java Deep Dive 직렬화 깊이 파기 — Part 2');
+    expect(within(heading).getByText('Java Deep Dive')).toBeInTheDocument();
+  });
 });
