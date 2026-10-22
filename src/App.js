@@ -9,7 +9,7 @@ import ProtectedRoute from './components/auth/ProtectedRoute';
 import LoginPage from './pages/Auth/LoginPage';
 
 // 페이지 컴포넌트들
-import Home from './pages/Home';
+import RootRedirect from './components/routing/RootRedirect';
 import { BlogList, BlogPost, PostsShell } from './pages/Blog';
 import About from './pages/About';
 
@@ -34,7 +34,7 @@ function AppContent() {
   return (
     <Layout>
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<RootRedirect />} />
         {/* 글 목록과 글 상세는 사이드바를 공유하는 틀 안에서 이동한다 (사이드바가 새로 그려지지 않게) */}
         <Route element={<PostsShell />}>
           <Route path="/posts" element={<BlogList />} />

@@ -47,7 +47,8 @@ async function main() {
     fs.readFileSync(path.join(BUILD_DIR, 'data/posts-list.json'), 'utf-8')
   );
   const posts = Array.isArray(postsList) ? postsList : (postsList.posts || []);
-  const allRoutes = ['/', '/posts', '/about', ...posts.map((p) => `/posts/${p.id}`)];
+  // '/'는 /posts로 이동만 하는 주소라 프리렌더하지 않는다 (홈 화면 제거)
+  const allRoutes = ['/posts', '/about', ...posts.map((p) => `/posts/${p.id}`)];
 
   // 단일 라우트 인자(예: `node scripts/prerender.js /posts/67`)가 주어지면 해당 라우트만
   // 프리렌더한다. 61개 라우트 전체(~193초)를 기다리지 않고 특정 라우트만 빠르게 반복

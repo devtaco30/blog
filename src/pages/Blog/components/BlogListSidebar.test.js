@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent, within } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import BlogListSidebar from './BlogListSidebar';
 
 const categories = [
@@ -28,7 +29,11 @@ const setup = (overrides = {}) => {
     onOpenTagModal: jest.fn(),
     ...overrides,
   };
-  render(<BlogListSidebar {...props} />);
+  render(
+    <MemoryRouter>
+      <BlogListSidebar {...props} />
+    </MemoryRouter>
+  );
   return props;
 };
 
@@ -97,5 +102,16 @@ describe('BlogListSidebar 기술', () => {
     expect(screen.queryByRole('button', { name: '전체 보기' })).not.toBeInTheDocument();
     expect(screen.getByText('영역')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /머신러닝·딥러닝/ })).toBeInTheDocument();
+  });
+});
+
+describe('BlogListSidebar 프로필', () => {
+  it('맨 위에 프로필 줄을 두어 About 으로 들어갈 수 있다', () => {
+    setup();
+    const nav = screen.getByRole('navigation', { name: '글 필터' });
+    expect(within(nav).getByRole('link', { name: 'About' })).toHaveAttribute('href', '/about');
+    const profile = within(nav).getByText('DevJack');
+    const firstGroup = within(nav).getByText('영역');
+    expect(profile.compareDocumentPosition(firstGroup) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 });

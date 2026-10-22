@@ -3,6 +3,7 @@ import { Box, Typography } from '@mui/material';
 import { getVisibleCategories } from '../getVisibleCategories';
 import { getAreaColor, ACCENT } from '../listTheme';
 import { getSidebarTags } from '../tagCounts';
+import SidebarProfile from './SidebarProfile';
 
 const TECH_DOT_COLOR = '#9ca3af';
 
@@ -85,6 +86,7 @@ const BlogListSidebar = ({
         },
       }}
     >
+      <SidebarProfile />
       <Typography sx={groupTitleSx}>영역</Typography>
       {visibleCategories.map((category) => (
         <FilterItem
