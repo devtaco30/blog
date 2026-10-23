@@ -38,7 +38,6 @@ export const projects = [
       '**OneSignal → FCM** 전환 및 설정 누락 이슈 해결',
       '**MongoDB → MySQL** 마이그레이션 완료',
       '**푸시 타입 추상화** 및 **토픽 기반 구독 시스템** 설계',
-      '푸시 전송 성능 **30% 향상**',
       '**실시간 푸시 알림** 시스템 구축'
     ],
     technologies: ['Kotlin', 'Spring Boot 3', 'Kafka', 'FCM', 'MySQL'],
@@ -50,7 +49,6 @@ export const projects = [
       '**Kafka** 기반 데이터 처리 파이프라인 구축',  
       '**KafkaStream + KTable** 기반 데이터 처리 파이프라인 추가',
       '**SNS별 전송 조건** 설계 및 **토큰 관리 자동화**',
-      '운영 효율성 ** 향상**',
       '**에러 복구 메커니즘** 구현으로 안정성 향상'
     ],
     technologies: ['Kotlin', 'Spring Boot 3', 'Kafka', 'KafkaStreams'],
@@ -61,7 +59,7 @@ export const projects = [
     description: [
       '**자산, 뉴스, 커뮤니티** 검색 기능 통합',
       '**Query Generator** 및 **하이라이팅 처리기** 구현',
-      '검색 속도 **40% 개선**',
+      '검색 응답 지연 **1.5~3초 → 200~450ms** 단축',
       '**글로벌 확장성**을 고려한 모델링 설계',
       '**ElasticSearch** 최적화'
     ],

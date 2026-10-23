@@ -23,6 +23,27 @@ describe('projects Side Builds', () => {
     expect(grit.period).toBe('2026.04 - 2026.06');
   });
 
+  it('검색 서비스는 이력서의 응답 시간 수치를 쓰고 근거 없는 40%는 쓰지 않는다', () => {
+    const search = projects.find((project) => project.title.includes('통합 검색'));
+    const text = search.description.join(' ');
+    expect(text).toContain('1.5~3초 → 200~450ms');
+    expect(text).not.toContain('40%');
+  });
+
+  it('푸시 기능에 이력서에 없는 30% 수치를 쓰지 않는다', () => {
+    const push = projects.find((project) => project.title.includes('FCM Push'));
+    expect(push.description.join(' ')).not.toContain('30%');
+  });
+
+  it('짝이 맞지 않는 ** 가 남아 있지 않다', () => {
+    projects.forEach((project) => {
+      project.description.forEach((line) => {
+        const withoutValidBold = line.replace(/\*\*[^*\s][^*]*\*\*/g, '');
+        expect(withoutValidBold).not.toContain('**');
+      });
+    });
+  });
+
   it('모든 항목에 기간과 기술 스택이 있다', () => {
     projects.forEach((project) => {
       expect(project.period).toBeTruthy();
