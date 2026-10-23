@@ -63,7 +63,9 @@ const ProjectsSection = () => {
                       fontSize: '1.05rem',
                       lineHeight: 1.3,
                       mb: 1,
-                      letterSpacing: '0.2px'
+                      letterSpacing: '0.2px',
+                      wordBreak: 'keep-all',
+                      textWrap: 'balance'
                     }}>
                       {project.title}
                     </Typography>
@@ -110,7 +112,9 @@ const ProjectsSection = () => {
                             fontSize: '0.9rem',
                             letterSpacing: '0.1px',
                             fontWeight: 400,
-                            flex: 1
+                            flex: 1,
+                            wordBreak: 'keep-all',
+                            textWrap: 'pretty'
                           }}>
                             {item.split('**').map((part, partIdx) => 
                               partIdx % 2 === 1 ? (
@@ -131,7 +135,9 @@ const ProjectsSection = () => {
                         lineHeight: 1.6,
                         fontSize: '0.9rem',
                         letterSpacing: '0.1px',
-                        fontWeight: 400
+                        fontWeight: 400,
+                        wordBreak: 'keep-all',
+                        textWrap: 'pretty'
                       }}>
                         {project.description}
                       </Typography>

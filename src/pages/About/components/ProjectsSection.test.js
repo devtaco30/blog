@@ -25,4 +25,12 @@ describe('ProjectsSection 카드 배치', () => {
     const titles = screen.getAllByRole('heading', { level: 6 }).map((heading) => heading.textContent);
     expect(titles).toEqual(projects.map((project) => project.title));
   });
+
+  it('제목과 본문이 단어 중간에서 줄바꿈되지 않도록 단어 단위로 끊는다', () => {
+    render(<ProjectsSection />);
+    const title = screen.getByText(projects[0].title);
+    expect(window.getComputedStyle(title).wordBreak).toBe('keep-all');
+    const bullet = screen.getByText(/진단 → 학습/);
+    expect(window.getComputedStyle(bullet.closest('p')).wordBreak).toBe('keep-all');
+  });
 });
