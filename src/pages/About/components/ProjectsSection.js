@@ -20,8 +20,9 @@ const ProjectsSection = () => {
       </Typography>
       
       <Box sx={{ 
-        columnCount: { xs: 1, sm: 2, md: 3 },
-        columnGap: 3,
+        display: 'grid',
+        gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' },
+        gap: 3,
         width: '100%'
       }}>
         {projects.map((project, index) => (
@@ -37,14 +38,10 @@ const ProjectsSection = () => {
                 stiffness: 100,
                 damping: 15
               }}
-            style={{
-              breakInside: 'avoid',
-              marginBottom: '24px',
-              display: 'block'
-            }}
+            style={{ height: '100%' }}
           >
                           <Card elevation={2} sx={{ 
-                height: 'auto',
+                height: '100%',
                 border: '1px solid #e0e0e0',
                 backgroundColor: '#ffffff',
                 transform: 'translateZ(0)',
