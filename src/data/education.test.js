@@ -22,7 +22,9 @@ describe('education 이력서와 맞춘 내용', () => {
     expect(kci.period).toBe('2019.12 - 2020.06');
   });
 
-  it('이력서에 없는 ESMOD는 담지 않는다', () => {
-    expect(schools.some((school) => school.includes('ESMOD'))).toBe(false);
+  it('이력서에 없어도 ESMOD 학력은 그대로 둔다', () => {
+    const esmod = education.find((item) => item.school.includes('ESMOD'));
+    expect(esmod.degree).toBe('란제리 전공');
+    expect(esmod.period).toBe('2014.02 졸업');
   });
 });

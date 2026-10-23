@@ -22,5 +22,11 @@ export const education = [
     degree: '컴퓨터공학과 학사 (중퇴)',
     period: '2006.03 - 2014.03',
     description: '컴퓨터공학과 재학 후 중퇴'
+  },
+  {
+    school: 'ESMOD SEOUL(에스모드)',
+    degree: '란제리 전공',
+    period: '2014.02 졸업',
+    description: '패션 디자인 및 란제리 전문 과정 수료'
   }
 ];
