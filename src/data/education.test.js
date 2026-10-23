@@ -15,11 +15,9 @@ describe('education 이력서와 맞춘 내용', () => {
     expect(hongik.period).toBe('2006.03 - 2014.03');
   });
 
-  it('이력서의 교육 과정(이스트캠프 와썹 AI, KCI)을 담는다', () => {
-    const east = education.find((item) => item.school.includes('이스트캠프'));
-    const kci = education.find((item) => item.school.includes('KCI'));
-    expect(east.period).toBe('2025.11 - 2026.04');
-    expect(kci.period).toBe('2019.12 - 2020.06');
+  it('교육 과정(이스트캠프, KCI)은 학력에 넣지 않는다', () => {
+    expect(schools.some((school) => school.includes('이스트캠프'))).toBe(false);
+    expect(schools.some((school) => school.includes('KCI'))).toBe(false);
   });
 
   it('이력서에 없어도 ESMOD 학력은 그대로 둔다', () => {
