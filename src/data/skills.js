@@ -3,13 +3,19 @@ export const skills = {
     { name: 'Java', level: 'Expert' },
     { name: 'Kotlin', level: 'Expert' },
     { name: 'Spring Boot', level: 'Expert' },
-    { name: 'JPA/Hibernate', level: 'Expert' }
+    { name: 'JPA/Hibernate', level: 'Expert' },
+    { name: 'MSA', level: 'Advanced' },
+    { name: 'Event-Driven', level: 'Advanced' },
+    { name: 'Python', level: 'Proficient' },
+    { name: 'React Native', level: 'Proficient' },
+    { name: 'Swift', level: 'Basic' }
   ],
-  infrastructure: ['MySQL', 'PostgreSQL', 'MongoDB', 'Redis', 'ElasticSearch', 'Kafka'],
+  infrastructure: ['MySQL', 'PostgreSQL', 'MongoDB', 'Redis', 'ElasticSearch', 'OpenSearch', 'Kafka'],
   tools: ['Git', 'Docker', 'AWS', 'Jenkins'],
   ai: [
     { name: 'Claude Code', icon: 'claude.svg' },
-    { name: 'Cursor', icon: 'cursor.svg' }
+    { name: 'Cursor', icon: 'cursor.svg' },
+    { name: 'Claude API', icon: 'claude.svg' }
   ],
   frontend: ['HTML/CSS', 'JavaScript', 'React', 'TypeScript']
 };
@@ -22,7 +28,12 @@ export const getProgressBarConfig = (skillName, category) => {
       'Java': 'Expert',
       'Kotlin': 'Expert',
       'Spring Boot': 'Expert',
-      'JPA/Hibernate': 'Expert'
+      'JPA/Hibernate': 'Expert',
+      'MSA': 'Advanced',
+      'Event-Driven': 'Advanced',
+      'Python': 'Proficient',
+      'React Native': 'Proficient',
+      'Swift': 'Basic'
     },
     'Infrastructure': {
       'MySQL': 'Advanced',
@@ -30,11 +41,13 @@ export const getProgressBarConfig = (skillName, category) => {
       'MongoDB': 'Proficient',
       'Redis': 'Advanced',
       'ElasticSearch': 'Proficient',
+      'OpenSearch': 'Proficient',
       'Kafka': 'Proficient'
     },
     'AI Tools': {
       'Claude Code': 'Proficient',
-      'Cursor': 'Proficient'
+      'Cursor': 'Proficient',
+      'Claude API': 'Proficient'
     },
     'Tools': {
       'Git': 'Advanced',

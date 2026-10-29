@@ -176,7 +176,7 @@ const CurrentFocusSection = () => {
                <Box sx={listItemContainerStyle}>
                  <Box sx={bulletStyle} />
                  <Typography variant="body1" sx={listItemStyle}>
-                   블록체인/Web3
+                   LLM 기반 AI 에이전트 개발
                  </Typography>
                </Box>
                <Box sx={listItemContainerStyle}>

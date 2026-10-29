@@ -57,3 +57,15 @@ describe('About 이력서 다운로드', () => {
     expect(clicked[0].download).toBe('백엔드_개발자_박종혁_이력서.pdf');
   });
 });
+
+describe('About 소개 문구', () => {
+  it('경력 햇수를 이력서와 같은 5년으로 적고 6년은 남기지 않는다', () => {
+    const { container } = render(
+      <HelmetProvider>
+        <About />
+      </HelmetProvider>
+    );
+    expect(container.textContent).toContain('개발자로 전향한 지 벌써 5년');
+    expect(container.textContent).not.toContain('6년');
+  });
+});
