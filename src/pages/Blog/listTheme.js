@@ -15,6 +15,7 @@ const AREA_COLORS = {
   'language-runtime': { color: '#d97706', bg: '#fff1dc' },
   product: { color: '#0f9d8a', bg: '#dff5f1' },
   'dev-tools': { color: '#db2777', bg: '#fde6f0' },
+  'ai-usage': { color: '#16a34a', bg: '#e3f6e8' },
 };
 
 export const getAreaColor = (categoryKey) => AREA_COLORS[categoryKey] || FALLBACK_AREA_COLOR;

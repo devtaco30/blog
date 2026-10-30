@@ -12,6 +12,10 @@ describe('getAreaColor', () => {
     expect(getAreaColor('dev-tools')).toEqual({ color: '#db2777', bg: '#fde6f0' });
   });
 
+  it('AI 활용 영역은 초록색 글자와 연초록 배경이다', () => {
+    expect(getAreaColor('ai-usage')).toEqual({ color: '#16a34a', bg: '#e3f6e8' });
+  });
+
   it('글이 1편뿐인 영역과 모르는 key와 값이 없을 때는 회색이다', () => {
     const gray = { color: '#6b7280', bg: '#eef0f3' };
     expect(getAreaColor('blockchain')).toEqual(gray);
