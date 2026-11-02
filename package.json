@@ -45,6 +45,7 @@
     "eject": "react-scripts eject",
     "generate-posts-list": "node scripts/generate-posts-list.js",
     "prerender": "node scripts/prerender.js",
+    "test:scripts": "node --test scripts/*.test.js",
     "build:prerender": "npm run build && npm run prerender"
   },
   "eslintConfig": {

@@ -1,6 +1,8 @@
 const fs = require('fs');
 const path = require('path');
 const { createClient } = require('@supabase/supabase-js');
+const { toSiteUrl, buildSitemap } = require('./sitemap');
+const { buildLlmsTxt } = require('./llms');
 // .env.local이 있으면 사용, 없으면 .env 사용
 console.log('🔍 환경변수 로딩 시작...');
 console.log('📁 현재 디렉토리:', process.cwd());
@@ -37,6 +39,7 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 // 출력 파일 경로
 const outputFile = path.join(__dirname, '../public/data/posts-list.json');
 const sitemapFile = path.join(__dirname, '../public/sitemap.xml');
+const llmsFile = path.join(__dirname, '../public/llms.txt');
 
 // 현재 날짜
 const currentDate = new Date().toISOString().split('T')[0];
@@ -76,7 +79,7 @@ async function generatePostsList() {
 
       // sitemap용 URL 추가
       sitemapUrls.push({
-        loc: `https://devtaco30.github.io/blog/posts/${post.id}`,
+        loc: toSiteUrl(`posts/${post.id}`),
         lastmod: publishedDate,
         changefreq: 'monthly',
         priority: '0.7'
@@ -93,11 +96,13 @@ async function generatePostsList() {
   fs.writeFileSync(outputFile, JSON.stringify(postsList, null, 2));
   
   // sitemap.xml 생성
-  const sitemapContent = generateSitemap(sitemapUrls);
+  const sitemapContent = buildSitemap(sitemapUrls, currentDate);
   fs.writeFileSync(sitemapFile, sitemapContent);
+  fs.writeFileSync(llmsFile, buildLlmsTxt(postsList));
   
   console.log(`✅ posts-list.json 생성 완료!`);
   console.log(`✅ sitemap.xml 생성 완료!`);
+  console.log(`✅ llms.txt 생성 완료!`);
   console.log(`📁 위치: ${outputFile}`);
   console.log(`🗺️ sitemap: ${sitemapFile}`);
   console.log(`📝 게시글 개수: ${postsList.length}개`);
@@ -114,44 +119,3 @@ async function generatePostsList() {
 
 // 메인 함수 실행
 generatePostsList();
-
-function generateSitemap(posts) {
-  const baseUrls = [
-    {
-      loc: 'https://devtaco30.github.io/blog/',
-      lastmod: currentDate,
-      changefreq: 'weekly',
-      priority: '1.0'
-    },
-    {
-      loc: 'https://devtaco30.github.io/blog/about',
-      lastmod: currentDate,
-      changefreq: 'monthly',
-      priority: '0.8'
-    },
-    {
-      loc: 'https://devtaco30.github.io/blog/posts',
-      lastmod: currentDate,
-      changefreq: 'weekly',
-      priority: '0.9'
-    }
-  ];
-
-  const allUrls = [...baseUrls, ...posts];
-  
-  let sitemap = '<?xml version="1.0" encoding="UTF-8"?>\n';
-  sitemap += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
-  
-  allUrls.forEach(url => {
-    sitemap += `  <url>\n`;
-    sitemap += `    <loc>${url.loc}</loc>\n`;
-    sitemap += `    <lastmod>${url.lastmod}</lastmod>\n`;
-    sitemap += `    <changefreq>${url.changefreq}</changefreq>\n`;
-    sitemap += `    <priority>${url.priority}</priority>\n`;
-    sitemap += `  </url>\n`;
-  });
-  
-  sitemap += '</urlset>';
-  
-  return sitemap;
-}
