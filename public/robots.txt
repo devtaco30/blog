@@ -2,4 +2,4 @@
 User-agent: *
 Disallow:
 
-Sitemap: https://devtaco30.github.io/devtaco-blog/sitemap.xml
+Sitemap: https://devtaco30.github.io/blog/sitemap.xml
