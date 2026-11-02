@@ -75,3 +75,49 @@ test('글 제목이 document.title에 반영된다', async () => {
   );
   await waitFor(() => expect(document.title).toContain('테스트 글 제목'));
 });
+
+test('canonical 링크와 og:url이 끝 슬래시 주소를 가리키고 JSON-LD(BlogPosting)가 head에 들어간다', async () => {
+  getPostById.mockResolvedValue({
+    data: {
+      id: 7,
+      title: 'SEO 테스트 글',
+      excerpt: ['요약 문장'],
+      content: '# 본문',
+      tags: ['Java'],
+      is_published: true,
+      published_at: Date.UTC(2026, 9, 22, 3, 0, 0),
+    },
+    error: null,
+  });
+  incrementViewCount.mockResolvedValue({ data: null, error: null });
+  getAdjacentPosts.mockResolvedValue({ prev: null, next: null, error: null });
+  getRelatedPostsByCategory.mockResolvedValue({ data: [], error: null });
+  getAllCategories.mockResolvedValue({ data: [], error: null });
+  getPostCountsByAllCategories.mockResolvedValue({ data: {}, error: null });
+  getPublishedPostTagLists.mockResolvedValue({ data: [], error: null });
+
+  render(
+    <HelmetProvider>
+      <MemoryRouter initialEntries={['/posts/7']}>
+        <Routes>
+          <Route element={<PostsShell />}>
+            <Route path="/posts/:id" element={<BlogPost />} />
+          </Route>
+        </Routes>
+      </MemoryRouter>
+    </HelmetProvider>
+  );
+
+  const expectedUrl = 'https://devtaco30.github.io/blog/posts/7/';
+  await waitFor(() =>
+    expect(document.querySelector('link[rel="canonical"]')?.getAttribute('href')).toBe(expectedUrl)
+  );
+  expect(document.querySelector('meta[property="og:url"]').getAttribute('content')).toBe(expectedUrl);
+
+  const ldScript = document.querySelector('script[type="application/ld+json"]');
+  expect(ldScript).not.toBeNull();
+  const ld = JSON.parse(ldScript.textContent);
+  expect(ld['@type']).toBe('BlogPosting');
+  expect(ld.headline).toBe('SEO 테스트 글');
+  expect(ld.mainEntityOfPage).toBe(expectedUrl);
+});

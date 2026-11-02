@@ -25,6 +25,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { getPostById, incrementViewCount, getAdjacentPosts, getRelatedPostsByCategory } from '../../services/posts';
+import { getPostUrl, buildPostJsonLd } from './postSeo';
 import ImageModal from '../../components/ui/ImageModal';
 import PostToc from './components/PostToc';
 import CodeBlock from './components/CodeBlock';
@@ -761,8 +762,11 @@ const BlogPost = () => {
           <meta property="og:title" content={post.title} />
           <meta property="og:description" content={excerptText} />
           <meta property="og:type" content="article" />
-          <meta property="og:url" content={`https://devtaco30.github.io/blog/posts/${post.id}`} />
+          <link rel="canonical" href={getPostUrl(post.id)} />
+          <meta property="og:url" content={getPostUrl(post.id)} />
           <meta name="twitter:card" content="summary" />
+          {/* 검색엔진·AI가 글의 제목·발행일·작성자를 구조화된 값으로 읽는다. 자식은 단일 표현식으로 전달해야 hoist된다 */}
+          <script type="application/ld+json">{JSON.stringify(buildPostJsonLd(post, excerptText))}</script>
         </Helmet>
       )}
 
