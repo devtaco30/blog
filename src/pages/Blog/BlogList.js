@@ -15,6 +15,7 @@ import {
 import { useNavigate, useSearchParams, useNavigationType } from 'react-router-dom';
 import SearchIcon from '@mui/icons-material/Search';
 import { Helmet } from 'react-helmet-async';
+import { getSiteUrl } from './postSeo';
 import { getPostsWithPageNumber, searchPostsWithPageNumber } from '../../services/posts';
 import PostCard from './components/PostCard';
 import { useSearchShortcut } from './useSearchShortcut';
@@ -459,6 +460,7 @@ const BlogList = () => {
     <>
       <Helmet>
         <title>게시글 목록 | DevJack Blog</title>
+        <link rel="canonical" href={getSiteUrl('posts')} />
         <meta name="description" content="Java · Kotlin 백엔드 개발 경험과 학습 기록을 공유하는 기술 블로그의 게시글 목록" />
       </Helmet>
 
