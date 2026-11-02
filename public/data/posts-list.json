@@ -1,11 +1,49 @@
 [
   {
+    "id": 73,
+    "slug": "post-73",
+    "title": "[AI 사용기] AI로 블로그를 써봤습니다 - Part 1: 지침 대신 훅으로 문체 검사하기",
+    "date": "2026-11-02",
+    "tags": [
+      "Claude Code",
+      "Hook",
+      "CLAUDE.md",
+      "서브에이전트",
+      "글쓰기"
+    ],
+    "excerpt": [
+      "블로그 쓰기를 AI에게 맡겼더니 문체 지침을 지키지 않아서, 지침 문장을 더 적는 대신 훅(Hook)으로 검사하게 했습니다.",
+      "훅이 처음에 동작하지 않은 이유와 지금 걸어 둔 훅 세 개, 그리고 훅이 AI의 어미 분포를 스크립트에 얼마나 가깝게 만드는지 네 조로 실험한 결과를 정리했습니다."
+    ]
+  },
+  {
+    "id": 71,
+    "slug": "post-71",
+    "title": "[Java Deep Dive] 주식 거래 엔진 직접 만들기 - Part 4: v2 구조, DB 락 없이 메모리와 스레드 하나로 처리하기",
+    "date": "2026-10-29",
+    "tags": [
+      "Java",
+      "Single Writer",
+      "LMAX Disruptor",
+      "저널",
+      "스냅샷",
+      "샤딩"
+    ],
+    "excerpt": [
+      "v1은 주문마다 DB 조회와 DB 락을 거쳤고, v2는 계좌 상태를 메모리에 두고 스레드 하나만 고치도록 구현해서 락이 필요 없습니다.",
+      "주문이 api, 계좌 워커, 매칭 워커를 거쳐 체결되는 흐름과, 메모리의 계좌 상태를 저널과 스냅샷으로 되살리는 방법을 정리했습니다."
+    ]
+  },
+  {
     "id": 68,
     "slug": "post-68",
     "title": "[Java Deep Dive] Serializable 깊이 파기 — Part 2: 바이트에서 다시 객체로, 그리고 함정들",
     "date": "2026-04-05",
     "tags": [],
-    "excerpt": []
+    "excerpt": [
+      "직렬화된 바이트를 ObjectInputStream이 어떤 순서로 읽어 객체로 복원하는지, 그때 생성자가 호출되지 않는다는 점을 확인합니다.",
+      "serialVersionUID, transient, 커스텀 readObject·writeObject, 역직렬화 취약점, Java 직렬화의 현재로 마무리합니다."
+    ]
   },
   {
     "id": 67,
@@ -13,7 +51,10 @@
     "title": "[Java Deep Dive] Serializable 깊이 파기 — Part 1: 객체가 바이트가 되는 과정",
     "date": "2026-04-05",
     "tags": [],
-    "excerpt": []
+    "excerpt": [
+      "Python이나 JavaScript와 달리 Java는 왜 Serializable을 선언해야 하는지, 메서드가 하나도 없는 이 인터페이스가 무슨 일을 하는지 묻는 글입니다.",
+      "ObjectOutputStream이 만든 실제 바이트를 열어 보고, 참조 객체가 들어 있을 때는 어떻게 되는지 확인합니다."
+    ]
   },
   {
     "id": 66,
@@ -21,7 +62,10 @@
     "title": "[Java Deep Dive] 주식 거래 엔진 직접 만들기 - Part 3: 오더북을 어떻게 구현할 것인가",
     "date": "2026-03-27",
     "tags": [],
-    "excerpt": []
+    "excerpt": [
+      "주식 거래 엔진의 오더북을 TreeMap과 ArrayDeque 조합으로 만든 이유를, PriorityQueue, LinkedList, Skip List와 비교하며 설명합니다.",
+      "주문 취소를 Lazy Removal로 처리한 방법과 Kafka를 연결하며 만난 멱등성 문제를 마지막에 둡니다."
+    ]
   },
   {
     "id": 65,
@@ -35,7 +79,10 @@
       "비관적락",
       "Transactional"
     ],
-    "excerpt": []
+    "excerpt": [
+      "단일 JAR 모놀리식 구조인 Phase 1에서 만난 문제를 차례로 다룹니다.",
+      "SELECT FOR UPDATE로 동시성을 해결했고, 락 보유 시간을 줄이고, 락 획득 순서를 통일해 데드락 위험을 없앴습니다. @Transactional 원칙과 Lazy Loading 함정도 짚습니다."
+    ]
   },
   {
     "id": 64,
@@ -52,7 +99,10 @@
       "멘토링",
       "사이드프로젝트"
     ],
-    "excerpt": []
+    "excerpt": [
+      "F-lab 멘토링 프로젝트로 주식 거래 엔진을 직접 설계하고 구현한 과정을 기록하는 시리즈의 첫 글입니다.",
+      "프로젝트를 고른 기준과 멀티모듈 구조, Phase 로드맵, 시리즈 전체에서 답할 질문들을 먼저 밝힙니다."
+    ]
   },
   {
     "id": 63,
@@ -68,7 +118,10 @@
       "MCP",
       "Agent"
     ],
-    "excerpt": []
+    "excerpt": [
+      "Claude Code를 Spring Boot와 Kafka 기반 주식 매매 엔진 프로젝트에 적용해 본 경험을 바탕으로, 설치부터 멀티에이전트까지 소개합니다.",
+      "CLAUDE.md, Skills, Subagents, Hooks, MCP, Agent Teams의 여섯 레이어와 Cursor AI와의 비교, 주의사항이 나옵니다."
+    ]
   },
   {
     "id": 62,
@@ -84,7 +137,10 @@
       "Ultralytics",
       "Instance Segmentation"
     ],
-    "excerpt": []
+    "excerpt": [
+      "YOLO로 고양이와 강아지 탐지 모델을 직접 학습하고, 차량 파손 범위를 이미지 세그멘테이션으로 예측하고, 영상에서 객체를 트래킹합니다.",
+      "탐지용 데이터셋 폴더 구조와 바운딩 박스 좌표 형식, Roboflow 사용법도 있습니다."
+    ]
   },
   {
     "id": 61,
@@ -100,7 +156,10 @@
       "mAP",
       "IoU"
     ],
-    "excerpt": []
+    "excerpt": [
+      "분류, 위치 파악, 객체 탐지가 어떻게 다른지, 2-Stage와 1-Stage Detector의 차이, YOLO의 작동 원리와 버전 역사를 정리합니다.",
+      "Ultralytics로 음식 이미지 분류 모델을 직접 훈련하고 평가합니다."
+    ]
   },
   {
     "id": 60,
@@ -115,7 +174,10 @@
       "OCR",
       "Tesseract"
     ],
-    "excerpt": []
+    "excerpt": [
+      "마우스 콜백으로 사용자가 클릭한 4점을 받아 투시 변환을 적용하고, 문서를 평면처럼 펼칩니다.",
+      "저장한 이미지에 OCR을 돌려 반자동 문서 스캔 흐름을 완성합니다."
+    ]
   },
   {
     "id": 59,
@@ -127,7 +189,10 @@
       "VideoCapture",
       "동영상"
     ],
-    "excerpt": []
+    "excerpt": [
+      "OpenCV의 VideoCapture로 동영상 파일과 실시간 캠에서 프레임을 읽고, waitKey로 재생 속도와 종료를 제어합니다.",
+      "좌우 반전, 원하는 순간의 이미지 캡처와 저장, 캡처한 이미지의 사분면 출력으로 마무리합니다."
+    ]
   },
   {
     "id": 58,
@@ -135,7 +200,10 @@
     "title": "EST AI - OpenCV : NumPy 리뷰 & 이미지 기초",
     "date": "2026-03-09",
     "tags": [],
-    "excerpt": []
+    "excerpt": [
+      "이미지가 NumPy 배열로 표현된다는 점을 확인하고, OpenCV로 이미지를 읽어 화면에 표시합니다.",
+      "BGR과 RGB의 차이, 색상 공간 변환, OTSU 이진화, 히스토그램이 나옵니다."
+    ]
   },
   {
     "id": 57,
@@ -152,7 +220,10 @@
       "Topic Modeling",
       "Visualization"
     ],
-    "excerpt": []
+    "excerpt": [
+      "BERTopic이 내부에서 SBERT 임베딩, UMAP 차원 축소, HDBSCAN 군집화, c-TF-IDF 키워드 추출 순서로 동작하는 과정을 따라갑니다.",
+      "Siamese 네트워크 구조와 원문 대 요약문의 토픽 분포 비교도 있습니다."
+    ]
   },
   {
     "id": 55,
@@ -169,7 +240,10 @@
       "SBERT",
       "KoT5"
     ],
-    "excerpt": []
+    "excerpt": [
+      "한국어 SNS 대화 데이터를 요약, 문장 임베딩, 토픽 모델링, 감성 분석 순으로 처리하는 텍스트 마이닝 파이프라인을 사전 학습 모델만으로 만듭니다.",
+      "KoT5 요약 모델, KR-SBERT, BERTopic을 사용합니다."
+    ]
   },
   {
     "id": 54,
@@ -184,7 +258,10 @@
       "Positional Encoding",
       "Hugging Face"
     ],
-    "excerpt": []
+    "excerpt": [
+      "RNN 계열이 느리고 긴 시퀀스에서 앞부분 정보를 잃는다는 한계에서 Transformer가 나온 배경을 설명합니다.",
+      "Self-Attention 계산 과정, Positional Encoding, 전체 구조와 Hugging Face Transformers 라이브러리 사용법을 다룹니다."
+    ]
   },
   {
     "id": 53,
@@ -200,7 +277,10 @@
       "Word2Vec",
       "Embedding"
     ],
-    "excerpt": []
+    "excerpt": [
+      "RNN이 시퀀스 데이터를 처리하는 방식과 기울기 소실, 장기 의존성 문제를 짚고, 이를 보완한 LSTM과 GRU를 비교합니다.",
+      "Word2Vec과 Embedding 레이어를 거쳐 네이버 영화 리뷰 감성 분석으로 실습합니다."
+    ]
   },
   {
     "id": 52,
@@ -211,7 +291,10 @@
       "Deep Learning",
       "CNN"
     ],
-    "excerpt": []
+    "excerpt": [
+      "이미지 분류에서 MLP가 가진 한계를 CNN으로 넘는 과정을 따라갑니다.",
+      "Conv2D와 MaxPooling2D 구성, 과대적합을 줄이는 데이터 증강과 Dropout, VGG16 전이학습이 나옵니다."
+    ]
   },
   {
     "id": 51,
@@ -222,7 +305,10 @@
       "Java",
       "HashMap"
     ],
-    "excerpt": []
+    "excerpt": [
+      "HashMap의 putVal과 resize 메서드 코드를 라인별 주석과 함께 읽습니다.",
+      "resize에서 쓰이는 두 AND 연산(e.hash & oldCap, e.hash & (newCap - 1))이 해시 코드에 어떤 영향을 주는지 확인합니다."
+    ]
   },
   {
     "id": 50,
@@ -233,7 +319,10 @@
       "Java",
       "HashMap"
     ],
-    "excerpt": []
+    "excerpt": [
+      "HashMap은 Key-Value를 배열에 저장하는 구현체이고, 해시 코드를 AND 연산으로 배열 인덱스로 바꿉니다.",
+      "putVal과 resize의 코드는 2부에서 이어집니다."
+    ]
   },
   {
     "id": 49,
@@ -248,7 +337,10 @@
       "Adam",
       "ReLU"
     ],
-    "excerpt": []
+    "excerpt": [
+      "Linear, Step, Sigmoid, ReLU, Softmax 활성화 함수와 최적화 함수의 종류를 비교하고, 중간층에 비선형 함수가 필요한 이유를 설명합니다.",
+      "강아지와 고양이 이미지를 NPZ 파일로 전처리해 MLP로 분류하는 실습도 합니다."
+    ]
   },
   {
     "id": 48,
@@ -261,7 +353,10 @@
       "Multi-Classification",
       "MLP"
     ],
-    "excerpt": []
+    "excerpt": [
+      "MNIST 손글씨 데이터로 0~9 다중 분류 모델을 만들고, 활성화 함수(sigmoid, relu)와 최적화 함수(SGD, Adam)를 조합한 세 모델의 성능을 비교합니다.",
+      "모델 저장과 불러오기, ModelCheckpoint와 EarlyStopping, 외부 이미지 예측까지 있습니다."
+    ]
   },
   {
     "id": 47,
@@ -274,7 +369,10 @@
       "Multi-Layer Perceptron",
       "MLP"
     ],
-    "excerpt": []
+    "excerpt": [
+      "퍼셉트론의 구조와 작동 방식, 그리고 단층 퍼셉트론이 XOR 문제를 풀지 못하는 이유를 설명합니다.",
+      "활성화 함수의 미분 가능성, 기울기 소실 문제를 거쳐 다층 퍼셉트론(MLP)이 XOR을 해결하는 과정을 따라갑니다."
+    ]
   },
   {
     "id": 46,
@@ -287,7 +385,10 @@
       "Keras",
       "Neural Network"
     ],
-    "excerpt": []
+    "excerpt": [
+      "유방암 데이터 이진 분류 실습으로 신경망의 구조와 작동 원리를 확인합니다.",
+      "입력층·은닉층·출력층의 역할, 가중치, 선형과 비선형 변환, 학습과 예측의 차이, 머신러닝과 딥러닝의 근본적인 차이가 나옵니다."
+    ]
   },
   {
     "id": 45,
@@ -300,7 +401,10 @@
       "Keras",
       "Neural Networ"
     ],
-    "excerpt": []
+    "excerpt": [
+      "딥러닝이 무엇인지, 머신러닝과 어디서 갈리는지 설명하고 TensorFlow와 Keras로 신경망을 구성합니다.",
+      "학생의 공부 시간으로 수학 성적을 예측하는 회귀 모델을 선형 회귀와 신경망 두 방식으로 만들어 비교합니다."
+    ]
   },
   {
     "id": 44,
@@ -317,7 +421,10 @@
       "Backend",
       "Concurrency"
     ],
-    "excerpt": []
+    "excerpt": [
+      "Java Thread 객체가 OS 스레드와 어떻게 연결되는지, Thread.start()를 호출하면 내부에서 무슨 일이 일어나는지 추적합니다.",
+      "JVM의 스레드 관리 방식과 스레드 생성 비용, 스레드 풀이 필요한 이유가 있습니다."
+    ]
   },
   {
     "id": 43,
@@ -334,7 +441,10 @@
       "Backend",
       "Concurrency"
     ],
-    "excerpt": []
+    "excerpt": [
+      "프로세스는 메모리 공간을 가진 컨테이너이고, 스레드는 그 안에서 실제 작업을 하는 실행 단위입니다.",
+      "스레드의 메모리 구조, 스케줄링, 컨텍스트 스위칭 비용, 동기화를 운영체제 관점에서 봅니다."
+    ]
   },
   {
     "id": 42,
@@ -351,7 +461,10 @@
       "Backend",
       "Performance"
     ],
-    "excerpt": []
+    "excerpt": [
+      "G1GC가 Young GC, Mixed GC, Full GC를 각각 어떤 단계로 수행하는지 따라갑니다.",
+      "예제 코드로 객체 할당과 RSet 업데이트를 확인하고, 튜닝 목표와 모니터링 포인트로 끝납니다."
+    ]
   },
   {
     "id": 41,
@@ -365,7 +478,10 @@
       "Garbage Collection",
       "Java"
     ],
-    "excerpt": []
+    "excerpt": [
+      "G1GC가 힙을 Region 단위로 나누는 이유와 Freelist, RSet, CSet, SATB, TAMS, Tri-Color Marking의 역할을 설명합니다.",
+      "STW(Stop-The-World)가 왜 생기는지, G1GC가 그 시간을 어떻게 줄이는지도 있습니다."
+    ]
   },
   {
     "id": 39,
@@ -380,7 +496,10 @@
       "Kotlin",
       "Backend"
     ],
-    "excerpt": []
+    "excerpt": [
+      "예제 코드를 한 줄씩 따라가며 JVM이 클래스를 언제 로드하고 static 변수와 인스턴스 변수를 어디에 두는지 확인합니다.",
+      "상속 관계에서 객체가 만들어질 때의 초기화 순서와 String Constant Pool도 이어집니다."
+    ]
   },
   {
     "id": 38,
@@ -396,7 +515,10 @@
       "AMI",
       "Silhouette Analysis"
     ],
-    "excerpt": []
+    "excerpt": [
+      "정답 레이블이 없는 데이터에서 패턴을 찾는 비지도 학습과 K-Means 군집화의 동작 과정을 설명합니다.",
+      "붓꽃 데이터로 실습하고, ARI·AMI·실루엣 분석과 엘보우 기법으로 최적의 클러스터 수를 정합니다."
+    ]
   },
   {
     "id": 37,
@@ -408,7 +530,10 @@
       "Classification",
       "Linear Classification"
     ],
-    "excerpt": []
+    "excerpt": [
+      "직원의 이직 여부를 예측하는 프로젝트로, 연령대·성별·부서별 이직률을 확인하고 가설 세 개를 검증합니다.",
+      "Logistic Regression과 Linear SVC로 학습한 뒤 교차 검증과 Classification Report로 평가합니다."
+    ]
   },
   {
     "id": 36,
@@ -424,7 +549,10 @@
       "RMSE",
       "R2 Score"
     ],
-    "excerpt": []
+    "excerpt": [
+      "회귀는 연속적인 실수 값을 예측하는 분야이고, 선형 회귀는 그것을 직선(1차식)으로 예측하는 모델입니다.",
+      "w와 b를 찾는 최소제곱법과 경사하강법, 평가 지표, LinearRegression과 SGDRegressor 사용법을 익힙니다."
+    ]
   },
   {
     "id": 35,
@@ -432,7 +560,10 @@
     "title": "EST AI - Machine Learning 실습 (타이타닉 데이터 시각화 및 특성공학)",
     "date": "2025-12-11",
     "tags": [],
-    "excerpt": []
+    "excerpt": [
+      "Deck, Pclass, 성별, 승선항, 연령에 따라 생존·사망이 어떻게 갈리는지 타이타닉 데이터를 시각화합니다.",
+      "시각화로 본 패턴을 바탕으로 Family_Size를 만들고 Binning과 One-hot Encoding을 적용합니다."
+    ]
   },
   {
     "id": 34,
@@ -442,7 +573,10 @@
     "tags": [
       "Machine Learning"
     ],
-    "excerpt": []
+    "excerpt": [
+      "Kaggle 타이타닉 데이터로 승객의 생존 여부를 예측하려면 먼저 결측치를 채워야 합니다.",
+      "Embarked, Fare, Age, Cabin 컬럼을 상관관계와 그룹화, apply 함수로 하나씩 보정합니다."
+    ]
   },
   {
     "id": 33,
@@ -450,7 +584,10 @@
     "title": "EST AI - Decision Tree",
     "date": "2025-12-10",
     "tags": [],
-    "excerpt": []
+    "excerpt": [
+      "스무고개처럼 질문을 반복해 데이터를 나누는 의사결정나무의 구조와 지니 불순도, 사전 가지치기를 소개합니다.",
+      "버섯 데이터로 독버섯을 분류하며 교차 검증, Graphviz 시각화, 특성 중요도를 확인합니다."
+    ]
   },
   {
     "id": 32,
@@ -462,7 +599,10 @@
       "operating-system",
       "system-call"
     ],
-    "excerpt": []
+    "excerpt": [
+      "가상머신과 하이퍼바이저를 정리하다 보니 자주 나오는 커널이 정확히 무엇인지 궁금해져서 쓴 글입니다.",
+      "프로세스, 메모리, 파일 시스템, 장치, 보안 관리와 System Call, 커널 공간과 사용자 공간, 커널의 종류가 나옵니다."
+    ]
   },
   {
     "id": 31,
@@ -474,7 +614,10 @@
       "KNN",
       "scikit-learn"
     ],
-    "excerpt": []
+    "excerpt": [
+      "모델이 훈련 데이터에만 맞춰지는 과대적합과 그 반대인 과소적합, 일반화의 의미부터 짚습니다.",
+      "KNN 알고리즘의 원리와 k 값을 다루고, Iris 데이터로 붓꽃 품종을 분류해 k에 따른 모델 복잡도 곡선을 그립니다."
+    ]
   },
   {
     "id": 30,
@@ -487,7 +630,10 @@
       "Docker",
       "Hypervisor"
     ],
-    "excerpt": []
+    "excerpt": [
+      "가상머신이 시스템 가상머신과 프로세스 가상머신으로 나뉘고, JVM이 왜 프로세스 가상머신인지 따져 봅니다.",
+      "하이퍼바이저와 컨테이너(Docker)의 관계, VM과 컨테이너의 리소스 사용량 비교 테스트, 개발 환경 활용법이 있습니다."
+    ]
   },
   {
     "id": 29,
@@ -499,7 +645,10 @@
       "KNN",
       "scikit-learn"
     ],
-    "excerpt": []
+    "excerpt": [
+      "BMI 데이터 하나로 머신러닝 7단계를 처음부터 끝까지 직접 돌려 봅니다.",
+      "문제 정의, 데이터 수집과 전처리, 탐색적 데이터 분석, 모델 학습, 평가 지표 이해 순서입니다."
+    ]
   },
   {
     "id": 28,
@@ -510,7 +659,10 @@
       "Machine Learning",
       "AI"
     ],
-    "excerpt": []
+    "excerpt": [
+      "AI, 머신러닝, 딥러닝의 포함 관계와 머신러닝의 역사, 종류를 훑습니다.",
+      "머신러닝 7단계 과정, 규칙 기반 전문가 시스템과의 차이, 비만도 데이터 실습, 윤리적 고려사항이 나옵니다."
+    ]
   },
   {
     "id": 27,
@@ -522,7 +674,10 @@
       "Programming",
       "Pandas"
     ],
-    "excerpt": []
+    "excerpt": [
+      "HR 데이터에 describe()를 적용해 통계량을 확인하고, 교육 수준별 평균 연봉을 groupby로 구합니다.",
+      "여러 기준으로 그룹화하는 방법과 상관계수 분석으로 끝납니다."
+    ]
   },
   {
     "id": 26,
@@ -534,7 +689,10 @@
       "Programming",
       "Data Visualization"
     ],
-    "excerpt": []
+    "excerpt": [
+      "미국 환경 보호국이 공개한 자동차 234종의 연비(mpg) 데이터를 불러와 구조를 살펴봅니다.",
+      "다중 조건 필터링과 groupby 집계로 연비를 분석하고 그래프로 그립니다."
+    ]
   },
   {
     "id": 25,
@@ -548,7 +706,10 @@
       "apply",
       "lambda"
     ],
-    "excerpt": []
+    "excerpt": [
+      "apply 함수와 lambda 함수로 Series와 DataFrame의 각 요소, 행, 열에 함수를 적용합니다.",
+      "groupby 집계와 다중 조건 필터링으로 넘어갑니다."
+    ]
   },
   {
     "id": 24,
@@ -560,7 +721,10 @@
       "Programming",
       "Matplotlib"
     ],
-    "excerpt": []
+    "excerpt": [
+      "Matplotlib으로 선 그래프와 막대 그래프를 그립니다.",
+      "스타일, 그리드, 축 눈금, 제목과 레이블 설정, 여러 그래프를 한 화면에 그리는 방법이 있고 교통사고 데이터 분석으로 마무리합니다."
+    ]
   },
   {
     "id": 23,
@@ -573,7 +737,10 @@
       "Pandas",
       "DataFrame"
     ],
-    "excerpt": []
+    "excerpt": [
+      "Series를 복합 조건으로 필터링할 때 &, | 연산자 앞뒤에 괄호가 필요한 이유부터 짚습니다.",
+      "이어서 DataFrame의 생성과 조작, 집계 함수를 익히고 범죄 데이터 분석으로 실습합니다."
+    ]
   },
   {
     "id": 22,
@@ -585,7 +752,10 @@
       "Programming",
       "Pandas"
     ],
-    "excerpt": []
+    "excerpt": [
+      "Pandas Series는 index와 value로 이루어진 1차원 데이터이고, 리스트와 딕셔너리로 만드는 방법을 보여 줍니다.",
+      "인덱스 설정과 변경, 인덱싱과 슬라이싱, 불리언 인덱싱을 따라갑니다."
+    ]
   },
   {
     "id": 21,
@@ -598,7 +768,10 @@
       "Numpy",
       "Array"
     ],
-    "excerpt": []
+    "excerpt": [
+      "reshape()로 배열 형태를 바꾸는 방법과 인덱싱·슬라이싱이 결과의 차원을 어떻게 다르게 만드는지 확인합니다.",
+      "불리언 인덱싱, & 와 and의 차이, 통계 함수, 파일 입출력을 거쳐 실제 데이터 분석 예제까지 갑니다."
+    ]
   },
   {
     "id": 20,
@@ -611,7 +784,10 @@
       "Numpy",
       "Array"
     ],
-    "excerpt": []
+    "excerpt": [
+      "Numpy 배열(ndarray)과 파이썬 리스트가 자료형과 연산에서 어떻게 다른지 비교합니다.",
+      "배열 생성과 연산, 자료형 우선순위, float64와 float32의 차이, 차원을 차례로 봅니다."
+    ]
   },
   {
     "id": 19,
@@ -638,7 +814,10 @@
       "Data Analysis",
       "Descriptive Statistics"
     ],
-    "excerpt": []
+    "excerpt": [
+      "통계는 데이터를 수집하고, 요약하고, 추론하는 3단계 과정입니다.",
+      "양적·질적 데이터와 네 가지 척도, 모집단과 표본, 기술통계와 추론통계, 분석 방법을 고르는 기준이 나옵니다."
+    ]
   },
   {
     "id": 17,
@@ -651,7 +830,10 @@
       "Dictionary",
       "Function"
     ],
-    "excerpt": []
+    "excerpt": [
+      "딕셔너리는 key:value 한 쌍으로 이루어진 자료구조이고, 값을 변경·추가·삭제하고 순회하는 방법을 코드로 확인합니다.",
+      "함수를 정의하고 사용하는 방법은 실습 예제로 마무리합니다."
+    ]
   },
   {
     "id": 16,
@@ -663,7 +845,10 @@
       "Programming",
       "NestedLoop"
     ],
-    "excerpt": []
+    "excerpt": [
+      "반복문에서 인덱스를 얻는 세 가지 방법 중 enumerate()가 권장되는 이유를 range(len())과 비교합니다.",
+      "이중 for문과 zip() 함수 언패킹 조합까지 실습 예제로 확인합니다."
+    ]
   },
   {
     "id": 15,
@@ -693,7 +878,10 @@
     "tags": [
       "Python"
     ],
-    "excerpt": []
+    "excerpt": [
+      "리스트와 튜플은 수정 가능 여부, 메모리, 용도가 어떻게 다른지 표로 비교합니다.",
+      "인덱싱과 슬라이싱, 조건문, 반복문의 기본 사용법도 있습니다."
+    ]
   },
   {
     "id": 13,
@@ -705,7 +893,10 @@
       "Programming",
       "Variable"
     ],
-    "excerpt": []
+    "excerpt": [
+      "Python은 인터프리터 방식 언어입니다. 컴파일 방식(Java)과 속도와 난이도가 어떻게 다른지 비교합니다.",
+      "변수 이름 규칙, 표기법, 문자열, 연산자를 순서대로 익힙니다."
+    ]
   },
   {
     "id": 12,
@@ -719,7 +910,10 @@
       "AI Workflow",
       "Machine Learning"
     ],
-    "excerpt": []
+    "excerpt": [
+      "인공지능 윤리 토론에서 나온 모라벡의 역설, 불쾌한 골짜기, 트롤리 딜레마를 소개합니다.",
+      "Orange3를 설치해서 인공지능 개발의 7과정대로 데이터를 분석해 봅니다."
+    ]
   },
   {
     "id": 11,
@@ -733,7 +927,10 @@
       "생성형AI",
       "프롬프트엔지니어링"
     ],
-    "excerpt": []
+    "excerpt": [
+      "AI, 머신러닝, 딥러닝이 각각 무엇인지, 분석형과 생성형 인공지능이 어떻게 다른지 설명합니다.",
+      "프롬프트를 잘 쓰는 방법 6가지, 할루시네이션, AI 관련 진로와 학습 로드맵까지 담았습니다."
+    ]
   },
   {
     "id": 9,
