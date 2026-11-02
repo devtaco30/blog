@@ -131,8 +131,13 @@ const BlogPost = () => {
   useEffect(() => {
     if (post && !loading && !viewCountIncremented) {
       const viewKey = `viewed_${id}`;
-      
-      if (!sessionStorage.getItem(viewKey)) {
+      // 배포 때 프리렌더(scripts/prerender.js)와 본인 브라우저는 이 플래그로 조회수에서 제외한다.
+      // VisitorCounter.js의 방문자 수 제외와 같은 키를 쓴다.
+      const excluded = localStorage.getItem('excludeFromVisitorCount') === 'true';
+
+      if (excluded) {
+        setViewCountIncremented(true);
+      } else if (!sessionStorage.getItem(viewKey)) {
         setViewCountIncremented(true); // 즉시 상태 변경
         
         incrementViewCount(id).then(({ data: updatedPost, error }) => {

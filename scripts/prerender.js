@@ -89,7 +89,13 @@ async function main() {
   try {
     for (const route of routes) {
       const page = await browser.newPage();
-      const url = `http://localhost:${PORT}${BASE}${route === '/' ? '/' : route}`;
+      // 프리렌더 탭이 방문자 수·조회수로 집계되지 않게 한다. 탭마다 sessionStorage가 비어 있어
+      // 중복 방지에 걸리지 않기 때문이다. 페이지 스크립트가 돌기 전에 localStorage에 제외 플래그를 넣는다.
+      // (VisitorCounter.js, BlogPost.js가 같은 키 excludeFromVisitorCount를 읽는다)
+      await page.evaluateOnNewDocument(() => {
+        localStorage.setItem('excludeFromVisitorCount', 'true');
+      });
+      const url =`http://localhost:${PORT}${BASE}${route === '/' ? '/' : route}`;
       await page.goto(url, { waitUntil: 'networkidle0', timeout: 60000 });
       await page.waitForSelector('#root *', { timeout: 30000 });
       // 본문 텍스트(마크다운 렌더 결과)가 실제로 채워질 때까지 대기 (데이터 fetch가
