@@ -44,9 +44,11 @@ const Layout = ({ children }) => {
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          zIndex: 100
+          zIndex: 100,
+          // 이 줄은 화면 가로 전체를 덮는다. 빈 곳은 클릭을 통과시켜 아래 요소가 눌리게 한다.
+          pointerEvents: 'none'
         }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, pointerEvents: 'auto' }}>
             <IconButton 
               onClick={toggleTerminal}
               sx={{
