@@ -138,4 +138,16 @@ describe('BlogPost 레이아웃', () => {
     expect(heading).toHaveTextContent('Java Deep Dive 직렬화 깊이 파기 — Part 2');
     expect(within(heading).getByText('Java Deep Dive')).toBeInTheDocument();
   });
+
+  it('사이드바를 닫으면 본문 최대 폭이 860px에서 1080px로 넓어진다', async () => {
+    window.localStorage.clear();
+    renderPost();
+    await screen.findByRole('heading', { level: 1 });
+    const article = document.querySelector('article');
+    expect(article).toHaveStyle({ maxWidth: '860px' });
+
+    const sidebar = await screen.findByRole('navigation', { name: '글 필터' });
+    fireEvent.click(within(sidebar).getByRole('button', { name: '사이드바 닫기' }));
+    expect(article).toHaveStyle({ maxWidth: '1080px' });
+  });
 });

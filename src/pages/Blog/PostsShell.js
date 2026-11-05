@@ -75,7 +75,10 @@ const PostsShell = () => {
     });
   }, []);
 
-  const contextValue = useMemo(() => ({ data, updateSelection, handlersRef }), [data, updateSelection]);
+  const contextValue = useMemo(
+    () => ({ data, updateSelection, handlersRef, isSidebarOpen }),
+    [data, updateSelection, isSidebarOpen]
+  );
 
   return (
     <SidebarContext.Provider value={contextValue}>
@@ -167,6 +170,9 @@ const PostsShell = () => {
 
 /** 사이드바 데이터(영역 목록, 영역별 개수, 태그별 개수). 틀 안의 페이지에서 쓴다. */
 export const useSidebarData = () => useContext(SidebarContext).data;
+
+/** 사이드바가 열려 있는지. 글 상세가 본문 폭을 정할 때 쓴다. */
+export const useIsSidebarOpen = () => useContext(SidebarContext).isSidebarOpen;
 
 /**
  * 지금 페이지가 사이드바에 알릴 것: 선택 상태와 항목을 눌렀을 때의 동작.

@@ -29,11 +29,16 @@ import { getPostUrl, buildPostJsonLd } from './postSeo';
 import ImageModal from '../../components/ui/ImageModal';
 import PostToc from './components/PostToc';
 import CodeBlock from './components/CodeBlock';
-import { useSidebarData, useSidebarRegistration } from './PostsShell';
+import { useSidebarData, useSidebarRegistration, useIsSidebarOpen } from './PostsShell';
+import { SIDEBAR_TOGGLE_DURATION } from './components/BlogListSidebar';
 import { usePostHeadings, useActiveHeadingId } from './postToc';
 import { ACCENT, TAG_PILL } from './listTheme';
 import { formatPostDate } from './formatPostDate';
 import { splitTitlePrefix } from './postTitle';
+
+// 글 상세 본문 최대 폭. 사이드바가 닫혀 있으면 넓힌다.
+const ARTICLE_MAX_WIDTH = 860;
+const ARTICLE_MAX_WIDTH_SIDEBAR_CLOSED = 1080;
 
 const BlogPost = () => {
   const { id } = useParams();
@@ -48,6 +53,7 @@ const BlogPost = () => {
 
   // 영역 이름(경로 표시용). 사이드바 데이터는 틀(PostsShell)이 한 번만 불러온다.
   const { categories } = useSidebarData();
+  const isSidebarOpen = useIsSidebarOpen();
   // 오른쪽 목차는 렌더된 본문의 h2·h3에서 만든다
   const contentRef = useRef(null);
   const headings = usePostHeadings(contentRef, post && post.content);
@@ -771,7 +777,18 @@ const BlogPost = () => {
       )}
 
       <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: '48px' }}>
-        <Box component="article" sx={{ flex: 1, minWidth: 0, maxWidth: 860 }}>
+        <Box
+          component="article"
+          sx={{
+            flex: 1,
+            minWidth: 0,
+            // 사이드바를 닫으면 생긴 자리만큼 본문을 넓힌다. 한 줄이 너무 길어지지 않게 상한은 둔다
+            // (글자 크기 16.8px에서 한 줄 약 71자 → 약 89자).
+            maxWidth: isSidebarOpen ? ARTICLE_MAX_WIDTH : ARTICLE_MAX_WIDTH_SIDEBAR_CLOSED,
+            transition: `max-width ${SIDEBAR_TOGGLE_DURATION} ease`,
+            '@media (prefers-reduced-motion: reduce)': { transition: 'none' },
+          }}
+        >
           {/* 경로 */}
           <Box component="nav" aria-label="경로" sx={{ display: 'flex', flexWrap: 'wrap', gap: '6px', fontSize: 13, color: '#6b7280', mb: 2 }}>
             <Link component={RouterLink} to="/" underline="hover" color="inherit">Home</Link>
