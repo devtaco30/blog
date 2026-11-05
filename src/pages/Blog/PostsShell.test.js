@@ -4,8 +4,10 @@ import { MemoryRouter, Routes, Route, useNavigate } from 'react-router-dom';
 import PostsShell, { useSidebarRegistration, useSidebarData } from './PostsShell';
 import { getPublishedPostTagLists } from '../../services/posts';
 import { getAllCategories, getPostCountsByAllCategories } from '../../services/categories';
+import Layout from '../../components/layout/Layout';
 
 jest.mock('../../services/posts', () => ({ getPublishedPostTagLists: jest.fn() }));
+jest.mock('../../components/ui/VisitorCounter', () => () => null);
 jest.mock('../../services/categories', () => ({
   getAllCategories: jest.fn(),
   getPostCountsByAllCategories: jest.fn(),
@@ -108,5 +110,83 @@ describe('PostsShell', () => {
     fireEvent.click(screen.getByRole('button', { name: '로딩 글 열기' }));
     expect(await screen.findByText('로딩 중인 글')).toBeInTheDocument();
     expect(within(screen.getByRole('navigation', { name: '글 필터' })).getByRole('button', { name: /머신러닝·딥러닝/ })).toHaveAttribute('aria-pressed', 'true');
+  });
+});
+
+describe('PostsShell 사이드바 여닫기', () => {
+  const SIDEBAR_OPEN_STORAGE_KEY = 'devtaco.sidebarOpen';
+
+  // 실제 앱처럼 Layout(왼쪽 위 ☰ 줄) 안에 틀을 그린다. 닫힌 상태의 버튼은 그 줄에 들어간다.
+  const renderInLayout = () =>
+    render(
+      <MemoryRouter initialEntries={['/posts']}>
+        <Layout>
+          <Routes>
+            <Route element={<PostsShell />}>
+              <Route path="/posts" element={<PageA onCategoryClick={() => {}} />} />
+            </Route>
+          </Routes>
+        </Layout>
+      </MemoryRouter>
+    );
+
+  beforeEach(() => {
+    window.localStorage.clear();
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it('처음에는 사이드바가 열려 있고, 닫기 버튼은 사이드바 안에 있다', async () => {
+    renderInLayout();
+    const sidebar = await screen.findByRole('navigation', { name: '글 필터' });
+    const closeButton = within(sidebar).getByRole('button', { name: '사이드바 닫기' });
+    expect(closeButton).toHaveAttribute('aria-expanded', 'true');
+    expect(screen.queryByRole('button', { name: '사이드바 열기' })).not.toBeInTheDocument();
+  });
+
+  it('닫으면 사이드바가 감춰지고 ☰ 아래에 열기 버튼이 생기며, 열기를 누르면 다시 보인다', async () => {
+    renderInLayout();
+    const sidebar = await screen.findByRole('navigation', { name: '글 필터' });
+    fireEvent.click(within(sidebar).getByRole('button', { name: '사이드바 닫기' }));
+
+    expect(screen.queryByRole('navigation', { name: '글 필터' })).not.toBeInTheDocument();
+    const openButton = screen.getByRole('button', { name: '사이드바 열기' });
+    expect(openButton).toHaveAttribute('aria-expanded', 'false');
+    expect(sidebar).not.toContainElement(openButton);
+    // 닫기 버튼이 사라지므로 포커스는 열기 버튼으로 옮긴다 (키보드 사용자가 위치를 잃지 않게)
+    expect(openButton).toHaveFocus();
+
+    fireEvent.click(openButton);
+    const reopened = screen.getByRole('navigation', { name: '글 필터' });
+    expect(reopened).toBe(sidebar);
+    expect(screen.queryByRole('button', { name: '사이드바 열기' })).not.toBeInTheDocument();
+    expect(within(reopened).getByRole('button', { name: '사이드바 닫기' })).toHaveFocus();
+  });
+
+  it('닫은 상태를 브라우저 저장소에 남겨서 새로 그려도 닫힌 채로 시작한다', async () => {
+    const { unmount } = renderInLayout();
+    const sidebar = await screen.findByRole('navigation', { name: '글 필터' });
+    fireEvent.click(within(sidebar).getByRole('button', { name: '사이드바 닫기' }));
+    expect(window.localStorage.getItem(SIDEBAR_OPEN_STORAGE_KEY)).toBe('false');
+    unmount();
+
+    renderInLayout();
+    expect(await screen.findByRole('button', { name: '사이드바 열기' })).toBeInTheDocument();
+    expect(screen.queryByRole('navigation', { name: '글 필터' })).not.toBeInTheDocument();
+  });
+
+  it('저장소를 쓸 수 없는 환경(사생활 보호 창 등)이면 열린 상태로 시작하고 여닫기도 된다', async () => {
+    jest.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
+      throw new Error('SecurityError');
+    });
+    jest.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      throw new Error('SecurityError');
+    });
+    renderInLayout();
+    const sidebar = await screen.findByRole('navigation', { name: '글 필터' });
+    fireEvent.click(within(sidebar).getByRole('button', { name: '사이드바 닫기' }));
+    expect(screen.getByRole('button', { name: '사이드바 열기' })).toBeInTheDocument();
   });
 });

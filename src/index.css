@@ -1,3 +1,19 @@
+/* 페이지 스크롤바를 얇고 연하게. scrollbar-color는 상속되므로 코드 블록 등 안쪽 스크롤바도 같은 색이 된다. */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.22) transparent;
+}
+
+/* scrollbar-color를 지원하지 않는 Safari용 */
+html::-webkit-scrollbar {
+  width: 8px;
+}
+
+html::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.22);
+  border-radius: 4px;
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
