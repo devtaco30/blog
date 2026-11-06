@@ -4,6 +4,7 @@ import { getVisibleCategories } from '../getVisibleCategories';
 import { getAreaColor, ACCENT } from '../listTheme';
 import { getSidebarTags } from '../tagCounts';
 import SidebarProfile from './SidebarProfile';
+import { MOBILE_MEDIA_QUERY } from '../sidebarLayout';
 
 const TECH_DOT_COLOR = '#9ca3af';
 const SIDEBAR_WIDTH = 290;
@@ -102,13 +103,13 @@ const BlogListSidebar = ({
         '&:hover::-webkit-scrollbar-thumb': { backgroundColor: SCROLLBAR_THUMB_COLOR },
         backgroundColor: '#ffffff',
         borderRight: isOpen ? '1px solid #e5e7eb' : 0,
-        // 좁은 화면에서는 사이드바가 본문 위로 쌓이므로 여닫지 않고 늘 보여 준다.
-        '@media (max-width:760px)': {
+        // 좁은 화면에서는 사이드바를 본문 위에 쌓는다. 닫은 상태는 넓은 화면과 똑같이 지킨다.
+        // (세로로 쌓이면 폭을 0으로 줄여도 높이가 남으므로, 닫혀 있으면 아예 그리지 않는다.)
+        [MOBILE_MEDIA_QUERY]: {
           position: 'static',
           height: 'auto',
           width: '100%',
-          visibility: 'visible',
-          display: 'block',
+          display: isOpen ? 'block' : 'none',
           borderRight: 0,
           borderBottom: '1px solid #e5e7eb',
         },
@@ -122,12 +123,12 @@ const BlogListSidebar = ({
           width: SIDEBAR_WIDTH,
           // 위쪽은 화면 왼쪽 위에 떠 있는 메뉴 아이콘(⌘+M)이 차지하는 높이만큼 비운다.
           p: '76px 16px 24px 24px',
-          '@media (max-width:760px)': { width: '100%' },
+          [MOBILE_MEDIA_QUERY]: { width: '100%' },
         }}
       >
         {closeButton && (
           // 닫기 버튼은 ☰ 버튼과 같은 높이(위 20px)에, 사이드바 오른쪽 끝에 둔다.
-          <Box sx={{ position: 'absolute', top: 20, right: 16, '@media (max-width:760px)': { display: 'none' } }}>
+          <Box sx={{ position: 'absolute', top: 20, right: 16 }}>
             {closeButton}
           </Box>
         )}

@@ -7,6 +7,7 @@ import SidebarToggleButton from './components/SidebarToggleButton';
 import { useListSidebarData } from './useListSidebarData';
 import { useSidebarOpen } from './useSidebarOpen';
 import { useHeaderSlot } from '../../components/layout/headerSlot';
+import { MOBILE_MEDIA_QUERY } from './sidebarLayout';
 
 const SidebarContext = createContext(null);
 
@@ -21,6 +22,9 @@ const CLOSED_MIN_CONTENT_LEFT = 72;
 // 닫힌 상태에서는 이 값이 72px 이상이 되도록 모자란 만큼만 왼쪽 여백을 늘린다.
 // 창이 1520px 이상이면 32px 그대로이고, 좁아질수록 조금씩 늘어나 경계에서 본문이 튀지 않는다.
 const CLOSED_PADDING_LEFT = `max(${MAIN_PADDING_LEFT}px, calc(${CLOSED_MIN_CONTENT_LEFT}px - max(0px, (100vw - ${SHELL_MAX_WIDTH}px) / 2)))`;
+
+// 사이드바가 닫혔을 때 본문 위쪽 여백. 넓은 화면 기본값(76px)과 같게, 왼쪽 위 ☰ 줄 아래에서 본문이 시작한다.
+const CLOSED_PADDING_TOP = 76;
 
 // 여닫기 버튼(☰ 아래 열기, 사이드바 안 닫기)이 나타나는 시간과 사라지는 시간
 const BUTTON_FADE_IN_DURATION = '0.3s';
@@ -91,7 +95,7 @@ const PostsShell = () => {
           maxWidth: SHELL_MAX_WIDTH,
           mx: 'auto',
           minHeight: '100vh',
-          '@media (max-width:760px)': { flexDirection: 'column', alignItems: 'stretch' },
+          [MOBILE_MEDIA_QUERY]: { flexDirection: 'column', alignItems: 'stretch' },
         }}
       >
         <BlogListSidebar
@@ -127,9 +131,12 @@ const PostsShell = () => {
             transition: 'padding-left 0.2s ease',
             '@media (prefers-reduced-motion: reduce)': { transition: 'none' },
             // 사이드바가 닫혀 있으면, 왼쪽 위 버튼이 놓이는 세로 줄을 본문이 비우도록 왼쪽 여백을 정한다.
-            // (760px 이하에서는 버튼을 숨기고 사이드바를 본문 위에 보여 주므로 적용하지 않는다.)
+            // 창 폭과 상관없이 같다 (좁은 화면에서도 닫은 상태를 유지하고 열기 버튼을 보여 주므로).
+            // 위쪽도 ☰ 줄(⌘+M 안내 포함, 스크롤 100px 전까지 떠 있음)을 비운다. 900px 미만 기본 위 여백은 16px라 제목과 겹친다.
+            // 위 p의 md 값이 덮어쓰지 않도록 같은 breakpoint로 지정한다.
             ...(!isSidebarOpen && {
-              '@media (min-width:761px)': { paddingLeft: CLOSED_PADDING_LEFT },
+              pl: { xs: CLOSED_PADDING_LEFT, md: CLOSED_PADDING_LEFT },
+              pt: { xs: `${CLOSED_PADDING_TOP}px`, md: `${CLOSED_PADDING_TOP}px` },
             }),
           }}
         >
@@ -159,7 +166,6 @@ const PostsShell = () => {
                     transition: `opacity ${BUTTON_FADE_IN_DURATION} ease ${SIDEBAR_TOGGLE_DURATION}`,
                   }),
               '@media (prefers-reduced-motion: reduce)': { transition: 'none' },
-              '@media (max-width:760px)': { display: 'none' },
             }}
           />,
           headerSlot
